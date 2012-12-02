@@ -5,7 +5,7 @@
  * @copyright		Copyright 2012, materializing.
  * @link			http://www.materializing.net/
  * @author			arata
- * @package			slug.controllers
+ * @package			slug.models
  * @version			1.0.0
  * @license			MIT
  */
@@ -23,7 +23,7 @@ class Slug extends BaserPluginAppModel {
  * @var string
  * @access public
  */
-	var $plugin = 'slug';
+	var $plugin = 'Slug';
 /**
  * バリデーション
  *
