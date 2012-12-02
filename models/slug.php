@@ -31,32 +31,29 @@ class Slug extends BaserPluginAppModel {
  * @access public
  */
 	var $validate = array(
-		'name'=>array(
-			array(
+		'name' => array(
+			'maxLength' => array(
 				'rule'		=> array('maxLength', 255),
 				'message'	=> 'スラッグは255文字以内で入力してください。'
 			),
-			array(
-				'rule'		=>	array('duplicate', 'name'),
-				'message'	=> '既に登録のあるスラッグです。'
+			'checkNameStatus' => array(
+				'rule'		=>	array('checkNameStatus'),
+				'message'	=> '有効の際はスラッグを入力して下さい。'
 			)
 		)
 	);
 /**
- * beforeValidate
+ * カスタムバリデーション
+ * スラッグ名が未入力で有効チェックが入ってる場合はエラーとする
  * 
- * @return boolean
- * @access public
+ * @param array $checkData
+ * @return boolean 
  */
-	function beforeValidate() {
-
-		parent::beforeValidate();
+	function checkNameStatus($checkData) {
 
 		if(empty($this->data[$this->alias]['name']) && $this->data[$this->alias]['status']) {
-			$this->invalidate('name', '有効の際はスラッグを入力して下さい。');
 			return false;
 		}
-
 		return true;
 
 	}
