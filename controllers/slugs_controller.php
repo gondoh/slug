@@ -161,8 +161,8 @@ class SlugsController extends BaserPluginAppController {
 			$this->redirect(array('action' => 'index'));
 		}
 		if($this->_changeStatus($id, true)) {
-		$this->Session->setFlash('「有効」状態に変更しました。');
-		$this->redirect(array('action' => 'index'));
+			$this->Session->setFlash('「有効」状態に変更しました。');
+			$this->redirect(array('action' => 'index'));
 		}
 		$this->Session->setFlash('処理に失敗しました。');
 		$this->redirect(array('action' => 'index'));
