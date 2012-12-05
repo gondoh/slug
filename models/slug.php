@@ -5,7 +5,7 @@
  * @copyright		Copyright 2012, materializing.
  * @link			http://www.materializing.net/
  * @author			arata
- * @package			slug.controllers
+ * @package			slug.models
  * @version			1.0.0
  * @license			MIT
  */
@@ -23,7 +23,7 @@ class Slug extends BaserPluginAppModel {
  * @var string
  * @access public
  */
-	var $plugin = 'slug';
+	var $plugin = 'Slug';
 /**
  * バリデーション
  *
@@ -39,10 +39,6 @@ class Slug extends BaserPluginAppModel {
 			'checkNameStatus' => array(
 				'rule'		=>	array('checkNameStatus'),
 				'message'	=> '有効の際はスラッグを入力して下さい。'
-			),
-			'duplicate' => array(
-				'rule'		=>	array('duplicate', 'name'),
-				'message'	=> '既に登録のあるスラッグです。'
 			)
 		)
 	);
@@ -60,6 +56,20 @@ class Slug extends BaserPluginAppModel {
 		}
 		return true;
 
+	}
+/**
+ * 初期値取得
+ *
+ * @access public
+ * @return array
+ */
+	function getDefaultValue() {
+		$array = array(
+			'Slug' => array(
+				'status' => 1
+			)
+		);
+		return $array;
 	}
 
 }
