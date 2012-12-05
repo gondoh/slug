@@ -15,6 +15,7 @@
 	<td>
 		<ul>
 			<li><?php $bcBaser->link('スラッグ一覧', array('plugin' => 'slug', 'admin' => true, 'controller' => 'slugs', 'action'=>'index')) ?></li>
+			<li><?php $bcBaser->link('スラッグ設定', array('plugin' => 'slug', 'admin' => true, 'controller' => 'slug_configs', 'action'=>'index')) ?></li>
 		</ul>
 	</td>
 </tr>

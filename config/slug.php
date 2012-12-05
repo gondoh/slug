@@ -6,7 +6,7 @@
  * @link			http://www.materializing.net/
  * @author			arata
  * @package			slug.config
- * @version			1.0.0
+ * @version			1.1.0
  * @license			MIT
  */
 /**
@@ -20,6 +20,13 @@ $config['BcApp.adminNavi.slug'] = array(
 					'admin' => true,
 					'plugin' => 'slug',
 					'controller' => 'slugs',
+					'action' => 'index')
+			),
+			array('name' => 'プラグイン設定',
+				'url' => array(
+					'admin' => true,
+					'plugin' => 'slug',
+					'controller' => 'slug_configs',
 					'action' => 'index')
 			)
 	)
