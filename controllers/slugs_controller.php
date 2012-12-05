@@ -46,7 +46,7 @@ class SlugsController extends BaserPluginAppController {
  */
 	var $crumbs = array(
 		array('name' => 'プラグイン管理', 'url' => array('plugin' => '', 'controller' => 'plugins', 'action' => 'index')),
-		array('name' => 'slug管理', 'url' => array('plugin' => 'slug', 'controller' => 'slugs', 'action' => 'index'))
+		array('name' => 'スラッグ管理', 'url' => array('plugin' => 'slug', 'controller' => 'slugs', 'action' => 'index'))
 	);
 /**
  * [ADMIN] スラッグ一覧表示
@@ -161,8 +161,8 @@ class SlugsController extends BaserPluginAppController {
 			$this->redirect(array('action' => 'index'));
 		}
 		if($this->_changeStatus($id, true)) {
-		$this->Session->setFlash('「有効」状態に変更しました。');
-		$this->redirect(array('action' => 'index'));
+			$this->Session->setFlash('「有効」状態に変更しました。');
+			$this->redirect(array('action' => 'index'));
 		}
 		$this->Session->setFlash('処理に失敗しました。');
 		$this->redirect(array('action' => 'index'));
