@@ -6,7 +6,6 @@
  * @link			http://www.materializing.net/
  * @author			arata
  * @package			slug.controllers
- * @version			1.0.0
  * @license			MIT
  */
 class SlugHookComponent extends Object {

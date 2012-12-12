@@ -1,12 +1,11 @@
 <?php
 /**
- * [ADMIN] slug
+ * [HookBehavior] slug
  *
  * @copyright		Copyright 2012, materializing.
  * @link			http://www.materializing.net/
  * @author			arata
  * @package			slug.models
- * @version			1.0.0
  * @license			MIT
  */
 class SlugHookBehavior extends ModelBehavior {
@@ -32,7 +31,6 @@ class SlugHookBehavior extends ModelBehavior {
 			// $SlugModel = ClassRegistry::init('Slug.Slug');
 			// return $SlugModel->validates($model->data);
 		}
-
 		return true;
 
 	}
@@ -64,10 +62,10 @@ class SlugHookBehavior extends ModelBehavior {
  * @param array $query
  * @return array
  */
-	function beforeFind($model, $query) {
+	function beforeFind(&$model, $query) {
 
 		if($model->alias == 'BlogPost') {
-			// 最近の投稿を find する際に実行
+			// 最近の投稿、ブログ記事前後移動を find する際に実行
 			// TODO get_recent_entries に呼ばれる find 判定に、より良い方法があったら改修する
 			if(count($query['fields']) === 2) {
 				if(($query['fields']['0'] == 'no') && ($query['fields']['1'] == 'name')) {

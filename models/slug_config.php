@@ -6,7 +6,6 @@
  * @link			http://www.materializing.net/
  * @author			arata
  * @package			slug.models
- * @version			1.1.0
  * @license			MIT
  */
 class SlugConfig extends BaserPluginAppModel {

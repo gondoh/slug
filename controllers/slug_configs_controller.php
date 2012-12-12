@@ -1,12 +1,11 @@
 <?php
 /**
- * [ADMIN] slug
+ * [Controller] slug
  *
  * @copyright		Copyright 2012, materializing.
  * @link			http://www.materializing.net/
  * @author			arata
  * @package			slug.controllers
- * @version			1.1.0
  * @license			MIT
  */
 class SlugConfigsController extends BaserPluginAppController {

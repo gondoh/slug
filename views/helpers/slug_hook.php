@@ -1,12 +1,11 @@
 <?php
 /**
- * [ADMIN] slug
+ * [HookHelper] slug
  *
  * @copyright		Copyright 2012, materializing.
  * @link			http://www.materializing.net/
  * @author			arata
  * @package			slug.views
- * @version			1.0.0
  * @license			MIT
  */
 class SlugHookHelper extends AppHelper {
@@ -50,5 +49,35 @@ class SlugHookHelper extends AppHelper {
 		}
 		return $out;		
 	}
+/* TODO ブログ記事の「前の記事、次の記事」のリンクを変更する
+	function afterBaserGetLink(&$html, $url, $out) {
 
+		if(empty($this->params['admin'])) {
+			if($this->params['plugin'] == 'blog') {
+				if($this->params['controller'] == 'blog') {
+					if($this->params['action'] == 'archives') {
+
+						$parseUrl = Router::parse($url);
+
+						$SlugModel = ClassRegistry::init('Slug.Slug');
+						$blogContentId = $this->View->viewVars['blogContent']['BlogContent']['id'];
+						$conditions = array(
+							'Slug.blog_content_id'	=> $blogContentId,
+							'Slug.blog_post_no'		=> $parseUrl['pass']['0']
+						);
+						$data = $SlugModel->find('first', array('conditions' => $conditions));
+						if($data) {
+							$parseUrl['pass']['0'] = $data['Slug']['name'];
+							$url = Router::url($parseUrl);
+						}
+
+					}
+				}
+			}
+		}
+
+		return $out;
+
+	}
+*/
 }

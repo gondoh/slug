@@ -6,7 +6,6 @@
  * @link			http://www.materializing.net/
  * @author			arata
  * @package			slug.views
- * @version			1.1.0
  * @license			MIT
  */
 class SlugHelper extends AppHelper {
