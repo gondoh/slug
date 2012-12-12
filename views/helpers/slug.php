@@ -22,28 +22,32 @@ class SlugHelper extends AppHelper {
 		$SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
 		$SlugConfigs = $SlugConfigModel->findExpanded();
 
+		$actionName = '/archives';
+		if($SlugConfigs['ignore_archives'] === '1') {
+			$actionName = '';
+		}
 		if($SlugConfigs['permalink_structure'] === '1') {
 			// 記事タイトル
-			return '/archives/' . $data['name'];
+			return $actionName . '/' . $data['name'];
 
 		} elseif($SlugConfigs['permalink_structure'] === '2') {
 			// 記事ID
-			return '/archives/' . $data['id'];
+			return $actionName . '/' . $data['id'];
 
 		} elseif($SlugConfigs['permalink_structure'] === '3') {
 			// 記事ID（6桁）
-			return '/archives/' . sprintf('%06d', $data['id']);
+			return $actionName . '/' . sprintf('%06d', $data['id']);
 
 		} elseif($SlugConfigs['permalink_structure'] === '4') {
 			// /2012/12/01/sample-post/
-			return '/archives/' . date('Y/m/d', strtotime($data['posts_date'])) . '/' . $data['name'];
+			return $actionName . '/' . date('Y/m/d', strtotime($data['posts_date'])) . '/' . $data['name'];
 
 		} elseif($SlugConfigs['permalink_structure'] === '5') {
 			// /2012/12/sample-post/
-			return '/archives/' . date('Y/m', strtotime($data['posts_date'])) . '/' . $data['name'];
+			return $actionName . '/' . date('Y/m', strtotime($data['posts_date'])) . '/' . $data['name'];
 
 		} else {
-			return '/archives/' . $slug['name'];
+			return $actionName . '/' . $slug['name'];
 
 		}
 
