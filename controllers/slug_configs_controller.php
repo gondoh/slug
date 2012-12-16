@@ -81,11 +81,33 @@ class SlugConfigsController extends BaserPluginAppController {
 			
 		}
 
-		$this->set('permalink_structure', $this->SlugConfig->permalink_structure);
+		$this->set('permalink_structure', $this->addSampleShow($this->SlugConfig->permalink_structure));
 		$this->set('active_all_slugs', $this->SlugConfig->active_all_slugs);
 		$this->set('ignore_archives', $this->SlugConfig->ignore_archives);
 		$this->pageTitle = 'スラッグプラグイン設定';
 		$this->help = 'slugs_index';
+
+	}
+/**
+ * スラッグ構造の表示例を調整する
+ * 
+ * @param array $array
+ * @return array
+ */
+	function addSampleShow($array = array()) {
+
+		foreach ($array as $key => $value) {
+			if($key == 0) {
+				$array[$key] = $value . '（標準のブログ記事NO）';
+			}
+			if($key == 4) {
+				$array[$key] = $value . '（/' . date('Y/m/d') . '/sample-post' . '）';
+			}
+			if($key == 5) {
+				$array[$key] = $value . '（/' . date('Y/m') . '/sample-post' . '）';
+			}
+		}
+		return $array;
 
 	}
 

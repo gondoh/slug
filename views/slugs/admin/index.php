@@ -17,27 +17,33 @@
 			<tr><th style="width: 90px;">操作</th>
 				<th><?php echo $paginator->sort(array(
 						'asc' => $bcBaser->getImg('admin/blt_list_down.png', array('alt' => '昇順', 'title' => '昇順')).' NO',
-						'desc' => $bcBaser->getImg('admin/blt_list_up.png', array('alt' => '降順', 'title' => '降順')).' NO'), 'id', array('escape' => false, 'class' => 'btn-direction')) ?>
+						'desc' => $bcBaser->getImg('admin/blt_list_up.png', array('alt' => '降順', 'title' => '降順')).' NO'),
+						'id', array('escape' => false, 'class' => 'btn-direction')) ?>
 				</th>
 				<th><?php echo $paginator->sort(array(
 						'asc' => $bcBaser->getImg('admin/blt_list_down.png', array('alt' => '昇順', 'title' => '昇順')).' 記事ID',
-						'desc' => $bcBaser->getImg('admin/blt_list_up.png', array('alt' => '降順', 'title' => '降順')).' 記事ID'), 'blog_post_id', array('escape' => false, 'class' => 'btn-direction')) ?>
+						'desc' => $bcBaser->getImg('admin/blt_list_up.png', array('alt' => '降順', 'title' => '降順')).' 記事ID'),
+						'blog_post_id', array('escape' => false, 'class' => 'btn-direction')) ?>
 				</th>
 				<th><?php echo $paginator->sort(array(
 						'asc' => $bcBaser->getImg('admin/blt_list_down.png', array('alt' => '昇順', 'title' => '昇順')).' 記事NO',
-						'desc' => $bcBaser->getImg('admin/blt_list_up.png', array('alt' => '降順', 'title' => '降順')).' 記事NO'), 'blog_post_no', array('escape' => false, 'class' => 'btn-direction')) ?>
+						'desc' => $bcBaser->getImg('admin/blt_list_up.png', array('alt' => '降順', 'title' => '降順')).' 記事NO'),
+						'blog_post_no', array('escape' => false, 'class' => 'btn-direction')) ?>
 				</th>
 				<th><?php echo $paginator->sort(array(
 						'asc' => $bcBaser->getImg('admin/blt_list_down.png', array('alt' => '昇順', 'title' => '昇順')).' スラッグ',
-						'desc' => $bcBaser->getImg('admin/blt_list_up.png', array('alt' => '降順', 'title' => '降順')).' スラッグ'), 'name', array('escape' => false, 'class' => 'btn-direction')) ?>
+						'desc' => $bcBaser->getImg('admin/blt_list_up.png', array('alt' => '降順', 'title' => '降順')).' スラッグ'),
+						'name', array('escape' => false, 'class' => 'btn-direction')) ?>
 				</th>
 				<th><?php echo $paginator->sort(array(
 						'asc' => $bcBaser->getImg('admin/blt_list_down.png', array('alt' => '昇順', 'title' => '昇順')).' 登録日',
-						'desc' => $bcBaser->getImg('admin/blt_list_up.png', array('alt' => '降順', 'title' => '降順')).' 登録日'), 'created', array('escape' => false, 'class' => 'btn-direction')) ?>
+						'desc' => $bcBaser->getImg('admin/blt_list_up.png', array('alt' => '降順', 'title' => '降順')).' 登録日'),
+						'created', array('escape' => false, 'class' => 'btn-direction')) ?>
 					<br />
 					<?php echo $paginator->sort(array(
 						'asc' => $bcBaser->getImg('admin/blt_list_down.png', array('alt' => '昇順', 'title' => '昇順')).' 更新日',
-						'desc' => $bcBaser->getImg('admin/blt_list_up.png', array('alt' => '降順', 'title' => '降順')).' 更新日'), 'modified', array('escape' => false, 'class' => 'btn-direction')) ?>
+						'desc' => $bcBaser->getImg('admin/blt_list_up.png', array('alt' => '降順', 'title' => '降順')).' 更新日'),
+						'modified', array('escape' => false, 'class' => 'btn-direction')) ?>
 				</th>
 			</tr>
 		</thead>

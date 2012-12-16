@@ -30,12 +30,12 @@ class SlugConfig extends BaserPluginAppModel {
  * @access public
  */
 	var $permalink_structure = array(
-		'0' => '自由入力',
-		'1'	=> 'ブログ記事タイトル',
+		'0' => 'デフォルト',
+		'1'	=> 'スラッグ',
 		'2' => 'ブログ記事ID',
-		'3' => 'ブログ記事ID（6桁）',
-		'4'	=> '日付とブログ記事タイトル（/2012/12/01/sample-post/）',
-		'5'	=> '年月とブログ記事タイトル（/2012/12/sample-post/）'
+		'3' => 'ブログ記事ID（6桁表記）',
+		'4'	=> '日付とスラッグ',
+		'5'	=> '年月とスラッグ'
 	);
 	var $active_all_slugs = array(
 		'0' => '有効化しない',
