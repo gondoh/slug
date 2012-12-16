@@ -18,15 +18,16 @@
 	<?php echo $bcForm->hidden('Slug.name') ?>
 <?php endif ?>
 
-<?php echo $bcForm->input('Slug.status', array('type' => 'checkbox', 'label' => '有効')) ?>
-<?php echo $bcForm->error('Slug.status') ?>
+<?php // echo $bcForm->input('Slug.status', array('type' => 'checkbox', 'label' => '有効')) ?>
+<?php // echo $bcForm->error('Slug.status') ?>
 
 <?php echo $html->image('admin/icn_help.png',array('id' => 'helpSlugName', 'class' => 'btn help', 'alt' => 'ヘルプ')) ?>
 <div id="helptextSlugName" class="helptext">
 	<ul>
-		<li>ブログ記事URLを任意の文字列として表示します。</li>
-		<li>「有効」のチェックボックスにチェックを入れることで、この記事に対してのスラッグが有効化されます。</li>
-		<li>表示形式は <small>http://〜/BLOG/archives/設定スラッグ</small> となります。</li>
+		<li>ブログ記事URLを任意の文字列として設定します。</li>
+		<li>表示形式は <small>http://〜/BLOG/
+			<?php if(!$slug->slugConfigs['ignore_archives']): ?>archives/<?php endif ?>
+			設定スラッグ</small> となります。</li>
 	</ul>
 </div>
 <?php echo $bcForm->error('Slug.name') ?>

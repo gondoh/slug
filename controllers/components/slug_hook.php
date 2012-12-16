@@ -16,7 +16,7 @@ class SlugHookComponent extends Object {
  * @access public
  */
 	var $registerHooks = array(
-		'startup', 'beforeRender', 'afterBlogPostAdd', 'afterBlogPostEdit', 'shutdown');
+		'initialize', 'startup', 'beforeRender', 'afterBlogPostAdd', 'afterBlogPostEdit', 'shutdown');
 /**
  * コントローラー
  *
@@ -52,6 +52,16 @@ class SlugHookComponent extends Object {
 		$SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
 		$this->slugConfigs = $SlugConfigModel->findExpanded();
 		$this->SlugModel = ClassRegistry::init('Slug.Slug');
+	}
+/**
+ * initialize
+ * 
+ * @param Controller $controller 
+ */
+	function initialize(&$controller) {
+		// BlogHelper の不在エラーが出るため読込
+		$controller->helpers[] = 'Blog.Blog';
+		
 	}
 /**
  * startup
@@ -90,14 +100,10 @@ class SlugHookComponent extends Object {
 				}
 
 				if($this->slugConfigs['permalink_structure'] === '1') {
-					// 記事タイトル
-					$blogPostConditions = array(
-						'BlogPost.name' => $slug,
-						'BlogPost.blog_content_id' => $controller->blogContent['BlogContent']['id']
-					);
-					$blogPost = $controller->BlogPost->find('first', array('conditions' => $blogPostConditions, 'recursive' => -1));
+					// スラッグ
 					$conditions = array(
-						'Slug.blog_post_id' => $blogPost['BlogPost']['id']
+						'Slug.name' => $slug,
+						'Slug.blog_content_id' => $controller->blogContent['BlogContent']['id'],
 					);
 				} elseif($this->slugConfigs['permalink_structure'] === '2' || $this->slugConfigs['permalink_structure'] === '3') {
 					// 記事ID or 記事ID（6桁）
@@ -108,7 +114,11 @@ class SlugHookComponent extends Object {
 				} elseif($this->slugConfigs['permalink_structure'] === '4') {
 					if($paramsCount >= 2) {
 						// /2012/12/01/sample-post/
-						$blogPostConditions = array(
+						$conditions = array(
+							'Slug.name' => $slug,
+							'Slug.blog_content_id' => $controller->blogContent['BlogContent']['id']
+						);
+						/*$blogPostConditions = array(
 							'BlogPost.name' => $slug,
 							'BlogPost.posts_date >=' => $postDayBegin,
 							'BlogPost.posts_date <' => $postDayEnd,
@@ -117,12 +127,16 @@ class SlugHookComponent extends Object {
 						$blogPost = $controller->BlogPost->find('first', array('conditions' => $blogPostConditions, 'recursive' => -1));
 						$conditions = array(
 							'Slug.blog_post_id' => $blogPost['BlogPost']['id']
-						);
+						);*/
 					}
 				} elseif($this->slugConfigs['permalink_structure'] === '5') {
 					if($paramsCount >= 2) {
 						// /2012/12/sample-post/
-						$blogPostConditions = array(
+						$conditions = array(
+							'Slug.name' => $slug,
+							'Slug.blog_content_id' => $controller->blogContent['BlogContent']['id']
+						);
+						/*$blogPostConditions = array(
 							'BlogPost.name' => $slug,
 							'BlogPost.posts_date >=' => $postDayBegin,
 							'BlogPost.posts_date <' => $postDayEnd,
@@ -131,7 +145,7 @@ class SlugHookComponent extends Object {
 						$blogPost = $controller->BlogPost->find('first', array('conditions' => $blogPostConditions, 'recursive' => -1));
 						$conditions = array(
 							'Slug.blog_post_id' => $blogPost['BlogPost']['id']
-						);
+						);*/
 					}
 				} else {
 					$conditions = array(
@@ -290,9 +304,9 @@ class SlugHookComponent extends Object {
 		}
 
 		if($this->slugConfigs['permalink_structure'] === '1') {
-			// 記事タイトル
-			$this->slugName = $post['name'];
-			return $post['name'];
+			// スラッグ
+			$this->slugName = $data['name'];
+			return $data['name'];
 
 		} elseif($this->slugConfigs['permalink_structure'] === '2') {
 			// 記事ID
@@ -306,13 +320,13 @@ class SlugHookComponent extends Object {
 
 		} elseif($this->slugConfigs['permalink_structure'] === '4') {
 			// /2012/12/01/sample-post/
-			$this->slugName = date('Y/m/d', strtotime($post['posts_date'])) . '/' . $post['name'];
-			return date('Y/m/d', strtotime($post['posts_date'])) . '/' . $post['name'];
+			$this->slugName = date('Y/m/d', strtotime($post['posts_date'])) . '/' . $data['name'];
+			return date('Y/m/d', strtotime($post['posts_date'])) . '/' . $data['name'];
 
 		} elseif($this->slugConfigs['permalink_structure'] === '5') {
 			// /2012/12/sample-post/
-			$this->slugName = date('Y/m', strtotime($post['posts_date'])) . '/' . $post['name'];
-			return date('Y/m', strtotime($post['posts_date'])) . '/' . $post['name'];
+			$this->slugName = date('Y/m', strtotime($post['posts_date'])) . '/' . $data['name'];
+			return date('Y/m', strtotime($post['posts_date'])) . '/' . $data['name'];
 
 		}
 
