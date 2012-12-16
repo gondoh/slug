@@ -15,7 +15,7 @@ class SlugHookHelper extends AppHelper {
  * @var array
  * @access public
  */
-	var $registerHooks = array('afterFormInput');
+	var $registerHooks = array('afterFormInput', 'afterBaserGetLink', 'afterRender');
 /**
  * ビュー
  * 
@@ -23,11 +23,20 @@ class SlugHookHelper extends AppHelper {
  */
 	var $View = null;
 /**
+ * slug設定情報
+ * 
+ * @var array
+ * @access public
+ */
+	var $slugConfigs = array();
+/**
  * Construct 
  * 
  */
 	function __construct() {
 		parent::__construct();
+		$SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
+		$this->slugConfigs = $SlugConfigModel->findExpanded();
 		$this->View = ClassRegistry::getObject('view');
 	}
 /**
@@ -47,37 +56,139 @@ class SlugHookHelper extends AppHelper {
 				}
 			}
 		}
-		return $out;		
+		return $out;
 	}
-/* TODO ブログ記事の「前の記事、次の記事」のリンクを変更する
+/**
+ * afterBaserGetLink
+ * 
+ * @param Object $html
+ * @param string $url
+ * @param string $out
+ * @return string 
+ */
 	function afterBaserGetLink(&$html, $url, $out) {
 
 		if(empty($this->params['admin'])) {
-			if($this->params['plugin'] == 'blog') {
+
+			$parseUrl = Router::parse($url);
+			$PluginContent = ClassRegistry::init('PluginContent');
+			if($PluginContent) {
+				$conditions = array(
+					'fields' => array('name', 'plugin', 'content_id'),
+					'conditions' => array(
+						'PluginContent.name' => $parseUrl['controller'],
+						'PluginContent.plugin' => 'blog'
+					)
+				);
+				$pluginContent = $PluginContent->find('first', $conditions);
+			}
+
+			if($parseUrl['controller'] == 'blog') {
+				$out = $this->convertOutputArchivesLink($out, $parseUrl['pass'], $pluginContent['PluginContent']);
+			}
+
+			/*if($this->params['plugin'] == 'blog') {
 				if($this->params['controller'] == 'blog') {
-					if($this->params['action'] == 'archives') {
-
-						$parseUrl = Router::parse($url);
-
-						$SlugModel = ClassRegistry::init('Slug.Slug');
-						$blogContentId = $this->View->viewVars['blogContent']['BlogContent']['id'];
-						$conditions = array(
-							'Slug.blog_content_id'	=> $blogContentId,
-							'Slug.blog_post_no'		=> $parseUrl['pass']['0']
-						);
-						$data = $SlugModel->find('first', array('conditions' => $conditions));
-						if($data) {
-							$parseUrl['pass']['0'] = $data['Slug']['name'];
-							$url = Router::url($parseUrl);
+					//if($this->params['action'] == 'archives') {
+						if($parseUrl['plugin'] == 'blog') {
+							if($parseUrl['controller'] == 'blog') {
+								if($parseUrl['action'] == 'archives') {
+									$out = $this->convertOutputArchivesLink($out, $parseUrl['pass'], $pluginContent['PluginContent']);
+								}
+							}
 						}
-
+					//}
+					if($this->params['action'] == 'archives') {
+						$out = $this->convertOutputArchivesLink($out, $parseUrl['pass']);
 					}
 				}
-			}
+			} else {
+				// ブログ記事へのリンクを変更する
+				if($pluginContent['PluginContent']['plugin'] == 'blog') {
+					$out = $this->convertOutputArchivesLink($out, $parseUrl['pass'], $pluginContent['PluginContent']);
+				}
+			}*/
+
 		}
 
 		return $out;
 
 	}
-*/
+/**
+ * archives除外設定が有効な場合は、archives を省いたURLリンクを生成して返す
+ * 
+ * @param string $out
+ * @param array $pass
+ * @param array $pluginContent
+ * @return string 
+ */
+	function convertOutputArchivesLink($out = '', $pass = array(), $pluginContent = array()) {
+
+		if($this->slugConfigs['ignore_archives'] === '1') {
+
+			$countPass = count($pass);
+			$pattern = '/href\=\"(.+)\/archives\/(.+)\"/';
+
+			if($countPass === 1 || $countPass === 2) {
+				if($countPass === 1) {
+					$no = $pass['0'];
+				} elseif($countPass === 2) {
+					$no = $pass['1'];
+				}
+				$SlugModel = ClassRegistry::init('Slug.Slug');
+				if($pluginContent) {
+					$blogContentId = $pluginContent['content_id'];
+				} else {
+					$blogContentId = $this->View->viewVars['blogContent']['BlogContent']['id'];
+				}
+				$conditions = array(
+					'Slug.blog_content_id'	=> $blogContentId,
+					'Slug.blog_post_no'		=> $no
+				);
+				$data = $SlugModel->find('first', array('conditions' => $conditions));
+				// ブログ記事 No が入ってきてスラッグが取得できた場合
+				// ※ ブログ記事前後移動
+				if($data) {
+					$no = $data['Slug']['name'];
+				}
+				$out = preg_replace($pattern, 'href="$1' . '/$2' . '"', $out);
+				//$out = preg_replace($pattern, 'href="$1' . '/' . $no . '"', $out);
+			} else {
+				$out = preg_replace($pattern, 'href="$1' . '/$2' . '"', $out);
+			}
+
+		} else {
+			/*
+			$countPass = count($pass);
+			$pattern = '/href\=\"(.+)\/archives\/(.+)\"/';
+
+			if($countPass === 1) {
+				$no = $pass['0'];
+				$SlugModel = ClassRegistry::init('Slug.Slug');
+				if($pluginContent) {
+					$blogContentId = $pluginContent['content_id'];
+				} else {
+					$blogContentId = $this->View->viewVars['blogContent']['BlogContent']['id'];
+				}
+				$conditions = array(
+					'Slug.blog_content_id'	=> $blogContentId,
+					'Slug.blog_post_no'		=> $no
+				);
+				$data = $SlugModel->find('first', array('conditions' => $conditions));
+				// ブログ記事 No が入ってきてスラッグが取得できた場合
+				// ※ ブログ記事前後移動
+				if($data) {
+					$no = $data['Slug']['name'];
+				}
+				$out = preg_replace($pattern, 'href="$1' . '/archives/' . $no . '"', $out);
+			} else {
+				$out = preg_replace($pattern, 'href="$1' . '/archives/$2' . '"', $out);
+			}
+			*/
+		}
+
+		return $out;
+
+	}
+
 }

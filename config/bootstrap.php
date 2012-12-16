@@ -20,11 +20,18 @@ if($SlugConfigs['ignore_archives'] === '1') {
 	if($PluginContent) {
 		$agent = Configure::read('BcRequest.agent');
 		$agentAlias = Configure::read('BcRequest.agentAlias');
+		$parameter = getUrlParamFromEnv();
+		$pluginContent = $PluginContent->currentPluginContent($parameter);
 		if($pluginContent) {
 			$pluginContentName = $pluginContent['PluginContent']['name'];
 			$pluginName = $pluginContent['PluginContent']['plugin'];
 			if(!$agent) {
-				Router::connect("/{$pluginContentName}/*", array('plugin' => $pluginName, 'controller'=> $pluginName, 'action' => 'archives'));
+				$parseUrl = Router::parse($url);
+				if($parseUrl['action'] != 'index') {
+					Router::connect("/{$pluginContentName}/*", array('plugin' => $pluginName, 'controller'=> $pluginName, 'action' => 'archives'));
+				} else {
+					Router::connect("/{$pluginContentName}/index", array('plugin' => $pluginName, 'controller'=> $pluginName, 'action' => 'index'));
+				}
 				//Router::connect("/{$pluginContentName}/:action/*", array('plugin' => $pluginName, 'controller'=> $pluginName));
 			} else {
 				Router::connect("/{$agentAlias}/{$pluginContentName}/*", array('prefix'	=> $agentPrefix, 'plugin' => $pluginName, 'controller'=> $pluginName, 'action' => 'archives'));
