@@ -16,24 +16,8 @@ class SlugHookBehavior extends ModelBehavior {
  * @access public
  */
 	var $registerHooks = array(
-			'BlogPost'	=> array('beforeValidate', 'afterDelete', 'beforeFind')
+			'BlogPost'	=> array('afterDelete', 'beforeFind')
 	);
-/**
- * beforeValidate
- * 
- * @param Object $model
- * @return boolean
- * @access public
- */
-	function beforeValidate($model) {
-
-		if($model->alias == 'BlogPost') {
-			// $SlugModel = ClassRegistry::init('Slug.Slug');
-			// return $SlugModel->validates($model->data);
-		}
-		return true;
-
-	}
 /**
  * afterDelete
  * 
@@ -65,12 +49,23 @@ class SlugHookBehavior extends ModelBehavior {
 	function beforeFind(&$model, $query) {
 
 		if($model->alias == 'BlogPost') {
+
+			// ブログ記事取得の際にスラッグ情報も併せて取得する
+			$association = array(
+				'Slug' => array(
+					'className' => 'Slug.Slug',
+					'foreignKey' => 'blog_post_id'
+				)
+			);
+			$model->bindModel(array('hasOne' => $association));
+
 			// 最近の投稿、ブログ記事前後移動を find する際に実行
 			// TODO get_recent_entries に呼ばれる find 判定に、より良い方法があったら改修する
 			if(count($query['fields']) === 2) {
 				if(($query['fields']['0'] == 'no') && ($query['fields']['1'] == 'name')) {
 					$query['fields'][] = 'id';
 					$query['fields'][] = 'posts_date';
+					$query['recursive'] = 2;
 				}
 			}
 		}

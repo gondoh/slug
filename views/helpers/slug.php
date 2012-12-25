@@ -33,6 +33,56 @@ class SlugHelper extends AppHelper {
 		$this->slugConfigs = $SlugConfigModel->findExpanded();
 	}
 /**
+ * スラッグを定義する
+ * 
+ * @param array $data
+ * @param array $post
+ * @return string
+ * @access public 
+ */
+	function getSlugName($data, $post) {
+
+		if(!$this->slugConfigs['active_all_slug']) {
+			$this->slugName = $post['no'];
+			return $post['no'];
+		}
+		if(!$data['status']) {
+			$this->slugName = $post['no'];
+			return $post['no'];
+		}
+
+		if($this->slugConfigs['permalink_structure'] === '1') {
+			// スラッグ
+			$this->slugName = $data['name'];
+			return $data['name'];
+
+		} elseif($this->slugConfigs['permalink_structure'] === '2') {
+			// 記事ID
+			$this->slugName = $post['id'];
+			return $post['id'];
+
+		} elseif($this->slugConfigs['permalink_structure'] === '3') {
+			// 記事ID（6桁）
+			$this->slugName = sprintf('%06d', $post['id']);
+			return sprintf('%06d', $post['id']);
+
+		} elseif($this->slugConfigs['permalink_structure'] === '4') {
+			// /2012/12/01/sample-post/
+			$this->slugName = date('Y/m/d', strtotime($post['posts_date'])) . '/' . $data['name'];
+			return date('Y/m/d', strtotime($post['posts_date'])) . '/' . $data['name'];
+
+		} elseif($this->slugConfigs['permalink_structure'] === '5') {
+			// /2012/12/sample-post/
+			$this->slugName = date('Y/m', strtotime($post['posts_date'])) . '/' . $data['name'];
+			return date('Y/m', strtotime($post['posts_date'])) . '/' . $data['name'];
+
+		}
+
+		$this->slugName = $data['name'];
+		return $data['name'];
+
+	}
+/**
  * スラッグ用URLを生成する
  * 
  * @param array $data

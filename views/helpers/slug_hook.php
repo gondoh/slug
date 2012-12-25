@@ -15,7 +15,7 @@ class SlugHookHelper extends AppHelper {
  * @var array
  * @access public
  */
-	var $registerHooks = array('afterFormInput', 'afterBaserGetLink', 'afterRender');
+	var $registerHooks = array('afterFormInput', 'afterBaserGetLink', 'beforeRender');
 /**
  * ビュー
  * 
@@ -72,19 +72,45 @@ class SlugHookHelper extends AppHelper {
 
 			$parseUrl = Router::parse($url);
 			$PluginContent = ClassRegistry::init('PluginContent');
-			if($PluginContent) {
-				$conditions = array(
-					'fields' => array('name', 'plugin', 'content_id'),
-					'conditions' => array(
-						'PluginContent.name' => $parseUrl['controller'],
-						'PluginContent.plugin' => 'blog'
-					)
-				);
-				$pluginContent = $PluginContent->find('first', $conditions);
-			}
 
 			if($parseUrl['controller'] == 'blog') {
-				$out = $this->convertOutputArchivesLink($out, $parseUrl['pass'], $pluginContent['PluginContent']);
+
+				if($PluginContent) {
+					$conditions = array(
+						'fields' => array('name', 'plugin', 'content_id'),
+						'conditions' => array(
+							'PluginContent.name' => $parseUrl['controller'],
+							'PluginContent.plugin' => 'blog'
+						)
+					);
+					$pluginContent = $PluginContent->find('first', $conditions);
+					$out = $this->convertOutputArchivesLink($out, $parseUrl['pass'], $pluginContent['PluginContent']);
+				}
+
+			} elseif($parseUrl['action'] == 'archives') {
+
+				// blogPost() ではプラグイン名が入ってこないためチェックする
+				if($PluginContent) {
+					$conditions = array(
+						'fields' => array('name', 'plugin', 'content_id'),
+						'conditions' => array(
+							'PluginContent.name' => $parseUrl['controller']
+						)
+					);
+					$pluginContents = $PluginContent->find('all', $conditions);
+					if($pluginContents) {
+						foreach ($pluginContents as $key => $value) {
+							if($value['PluginContent']['plugin'] == 'blog') {
+								$pluginContent = $value;
+								break;
+							}
+						}
+						if($pluginContent) {
+							$out = $this->convertOutputArchivesLink($out, $parseUrl['pass'], $pluginContent['PluginContent']);
+						}
+					}
+				}
+
 			}
 
 			/*if($this->params['plugin'] == 'blog') {
@@ -189,6 +215,11 @@ class SlugHookHelper extends AppHelper {
 
 		return $out;
 
+	}
+
+	public function beforeRender() {
+
+		$hoge = 0;
 	}
 
 }
