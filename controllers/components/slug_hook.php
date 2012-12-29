@@ -84,19 +84,6 @@ class SlugHookComponent extends Object {
  */
 	function startup(&$controller) {
 
-		if($controller->name == 'BlogPosts') {
-			// ブログ記事編集・追加画面で実行
-			if($controller->action == 'admin_edit' || $controller->action == 'admin_add') {
-				$association = array(
-					'Slug' => array(
-						'className' => 'Slug.Slug',
-						'foreignKey' => 'blog_post_id'
-					)
-				);
-				$controller->BlogPost->bindModel(array('hasOne' => $association));
-			}
-		}
-
 		// ブログ記事へのリンクをクリックした際に実行
 		// ブログ記事ページ表示の際に、記事NOをスラッグに置き換える
 		if(!empty($controller->params['plugin'])) {
