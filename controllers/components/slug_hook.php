@@ -161,7 +161,7 @@ class SlugHookComponent extends Object {
 					if(!empty($conditions)) {
 						$data = $this->SlugModel->find('first', array('conditions' => $conditions));
 						// ブログ記事NOをURLの引数と見立てている
-						if($data && $data['Slug']['status']) {
+						if($data) {
 							$controller->params['pass'][0] = $data['Slug']['blog_post_no'];
 						}
 					}
@@ -273,20 +273,22 @@ class SlugHookComponent extends Object {
 
 		if($controller->action == 'admin_add') {
 			$controller->data['Slug']['blog_post_id'] = $controller->BlogPost->getLastInsertId();
-			// 重複スラッグを探索して、重複していれば No をつける
-			// TODO Noをカウントする仕様に改修する
-			$data = $this->SlugModel->find('first', array(
-				'conditions' => array(
-					'Slug.name' => $controller->data['Slug']['name']
-				))
-			);
-			if($data) {
-				$controller->data['Slug']['name'] = $controller->data['Slug']['name'] . '-2';
-			}
-			unset($data);
 		} else {
 			$controller->data['Slug']['blog_post_id'] = $controller->BlogPost->id;
 		}
+
+		// 重複スラッグを探索して、重複していれば重複個数＋１をつける
+		$data = $this->SlugModel->find('all', array(
+			'conditions' => array(
+				'Slug.name' => $controller->data['Slug']['name']
+			))
+		);
+		if($data) {
+			$countData = count($data);
+			$countData = $countData + 1;
+			$controller->data['Slug']['name'] = $controller->data['Slug']['name'] . '-' . $countData;
+		}
+		unset($data);
 
 		if(empty($controller->data['Slug']['id'])) {
 			$this->SlugModel->create($controller->data['Slug']);
