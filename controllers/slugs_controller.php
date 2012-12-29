@@ -24,6 +24,13 @@ class SlugsController extends BaserPluginAppController {
  */
 	var $uses = array('Slug.Slug');
 /**
+ * ヘルパー
+ *
+ * @var array
+ * @access public
+ */
+	var $helpers = array('Blog.Blog');
+/**
  * コンポーネント
  * 
  * @var     array
@@ -72,6 +79,7 @@ class SlugsController extends BaserPluginAppController {
 
 		$this->pageTitle = '設定済スラッグ一覧';
 		$this->search = 'slugs_index';
+		$this->help = 'slugs_index';
 
 	}
 /**
