@@ -115,34 +115,44 @@ class SlugHookHelper extends AppHelper {
 			} elseif($countPass === 2) {
 				$no = $parseUrl['pass']['1'];
 			}
-			$SlugModel = ClassRegistry::init('Slug.Slug');
-			if($pluginContent) {
-				$blogContentId = $pluginContent['content_id'];
+
+			$judgeArchiveTag = false;
+			if($parseUrl['pass']['0'] != 'tag') {
+				$SlugModel = ClassRegistry::init('Slug.Slug');
+				if($pluginContent) {
+					$blogContentId = $pluginContent['content_id'];
+				} else {
+					$blogContentId = $this->View->viewVars['blogContent']['BlogContent']['id'];
+				}
+				$conditions = array(
+					'Slug.blog_content_id'	=> $blogContentId,
+					'Slug.blog_post_no'		=> $no
+				);
+				$data = $SlugModel->find('first', array('conditions' => $conditions));
+				// ブログ記事 No が入ってきてスラッグが取得できた場合
+				// ※ ブログ記事前後移動
+				if($data) {
+					$no = $this->Slug->getSlugName($data['Slug'], $data['BlogPost']);
+				}
 			} else {
-				$blogContentId = $this->View->viewVars['blogContent']['BlogContent']['id'];
-			}
-			$conditions = array(
-				'Slug.blog_content_id'	=> $blogContentId,
-				'Slug.blog_post_no'		=> $no
-			);
-			$data = $SlugModel->find('first', array('conditions' => $conditions));
-			// ブログ記事 No が入ってきてスラッグが取得できた場合
-			// ※ ブログ記事前後移動
-			if($data) {
-				$no = $this->Slug->getSlugName($data['Slug'], $data['BlogPost']);
+				$judgeArchiveTag = true;
 			}
 		}
 
 		$pattern = '/href\=\"(.+)\/archives\/(.+)\"/';
 		if(!empty($no)) {
+			// タグへのリンクの際は tag/ を付加する
+			if($judgeArchiveTag) {
+				$no = 'tag' . DS . $no;
+			}
 			if($this->slugConfigs['SluConfig']['ignore_archives'] === '1') {
-				$out = preg_replace($pattern, 'href="$1' . '/' . $no . '"', $out);
+				$out = preg_replace($pattern, 'href="$1' . DS . $no . '"', $out);
 			} else {
 				$out = preg_replace($pattern, 'href="$1' . '/archives/' . $no . '"', $out);
 			}
 		} else {
 			if($this->slugConfigs['SluConfig']['ignore_archives'] === '1') {
-				$out = preg_replace($pattern, 'href="$1' . '/' . '$2' . '"', $out);
+				$out = preg_replace($pattern, 'href="$1' . DS . '$2' . '"', $out);
 			}
 		}
 
