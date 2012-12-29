@@ -24,6 +24,18 @@ class Slug extends BaserPluginAppModel {
  */
 	var $plugin = 'Slug';
 /**
+ * belongsTo
+ * 
+ * @var array
+ * @access @public
+ */
+	var $belongsTo = array(
+		'BlogPost' => array(
+			'className'	=> 'Blog.BlogPost',
+			'foreignKey' => 'blog_post_id'
+			)
+		);
+/**
  * バリデーション
  *
  * @var array
