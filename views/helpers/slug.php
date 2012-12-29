@@ -30,7 +30,7 @@ class SlugHelper extends AppHelper {
 	function __construct() {
 		parent::__construct();
 		$SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
-		$this->slugConfigs = $SlugConfigModel->findExpanded();
+		$this->slugConfigs = array('SluConfig' => $SlugConfigModel->findExpanded());
 	}
 /**
  * スラッグを定義する
@@ -42,44 +42,40 @@ class SlugHelper extends AppHelper {
  */
 	function getSlugName($data, $post) {
 
-		if(!$this->slugConfigs['active_all_slug']) {
-			$this->slugName = $post['no'];
-			return $post['no'];
-		}
 		if(!$data['status']) {
 			$this->slugName = $post['no'];
 			return $post['no'];
 		}
 
-		if($this->slugConfigs['permalink_structure'] === '1') {
+		if($this->slugConfigs['SluConfig']['permalink_structure'] === '1') {
 			// スラッグ
 			$this->slugName = $data['name'];
 			return $data['name'];
 
-		} elseif($this->slugConfigs['permalink_structure'] === '2') {
+		} elseif($this->slugConfigs['SluConfig']['permalink_structure'] === '2') {
 			// 記事ID
 			$this->slugName = $post['id'];
 			return $post['id'];
 
-		} elseif($this->slugConfigs['permalink_structure'] === '3') {
+		} elseif($this->slugConfigs['SluConfig']['permalink_structure'] === '3') {
 			// 記事ID（6桁）
 			$this->slugName = sprintf('%06d', $post['id']);
 			return sprintf('%06d', $post['id']);
 
-		} elseif($this->slugConfigs['permalink_structure'] === '4') {
+		} elseif($this->slugConfigs['SluConfig']['permalink_structure'] === '4') {
 			// /2012/12/01/sample-post/
 			$this->slugName = date('Y/m/d', strtotime($post['posts_date'])) . '/' . $data['name'];
 			return date('Y/m/d', strtotime($post['posts_date'])) . '/' . $data['name'];
 
-		} elseif($this->slugConfigs['permalink_structure'] === '5') {
+		} elseif($this->slugConfigs['SluConfig']['permalink_structure'] === '5') {
 			// /2012/12/sample-post/
 			$this->slugName = date('Y/m', strtotime($post['posts_date'])) . '/' . $data['name'];
 			return date('Y/m', strtotime($post['posts_date'])) . '/' . $data['name'];
 
 		}
 
-		$this->slugName = $data['name'];
-		return $data['name'];
+		$this->slugName = $post['no'];
+		return $post['no'];
 
 	}
 /**
@@ -92,32 +88,32 @@ class SlugHelper extends AppHelper {
 	function getSlugUrl($slug, $data){
 
 		$actionName = '/archives';
-		if($this->slugConfigs['ignore_archives'] === '1') {
+		if($this->slugConfigs['SluConfig']['ignore_archives'] === '1') {
 			$actionName = '';
 		}
 
-		if($this->slugConfigs['permalink_structure'] === '1') {
+		if($this->slugConfigs['SluConfig']['permalink_structure'] === '1') {
 			// スラッグ
 			return $actionName . '/' . $slug['name'];
 
-		} elseif($this->slugConfigs['permalink_structure'] === '2') {
+		} elseif($this->slugConfigs['SluConfig']['permalink_structure'] === '2') {
 			// 記事ID
 			return $actionName . '/' . $data['id'];
 
-		} elseif($this->slugConfigs['permalink_structure'] === '3') {
+		} elseif($this->slugConfigs['SluConfig']['permalink_structure'] === '3') {
 			// 記事ID（6桁）
 			return $actionName . '/' . sprintf('%06d', $data['id']);
 
-		} elseif($this->slugConfigs['permalink_structure'] === '4') {
+		} elseif($this->slugConfigs['SluConfig']['permalink_structure'] === '4') {
 			// /2012/12/01/sample-post/
 			return $actionName . '/' . date('Y/m/d', strtotime($data['posts_date'])) . '/' . $slug['name'];
 
-		} elseif($this->slugConfigs['permalink_structure'] === '5') {
+		} elseif($this->slugConfigs['SluConfig']['permalink_structure'] === '5') {
 			// /2012/12/sample-post/
 			return $actionName . '/' . date('Y/m', strtotime($data['posts_date'])) . '/' . $slug['name'];
 
 		} else {
-			return $actionName . '/' . $slug['name'];
+			return $actionName . '/' . $data['no'];
 
 		}
 
@@ -153,7 +149,7 @@ class SlugHelper extends AppHelper {
 	function category($post = array(), $options = array()) {
 
 		$out = $this->Blog->getCategory($post, $options);
-		if($this->slugConfigs['ignore_archives'] === '1') {
+		if($this->slugConfigs['SluConfig']['ignore_archives'] === '1') {
 			$pattern = '/href\=\"(.+)\/archives\/(.+)\"/';
 			$out = preg_replace($pattern, 'href="$1' . '/$2' . '"', $out);
 		}
@@ -186,7 +182,7 @@ class SlugHelper extends AppHelper {
 		}
 		if($moreLink && trim($post['BlogPost']['detail']) && trim($post['BlogPost']['detail']) != "<br>") {
 			$moreLinkHtml = '<p class="more">'.$this->Html->link($moreLink, array('admin'=>false,'plugin'=>'', 'controller'=>$this->Blog->blogContent['name'],'action'=>'archives', $post['BlogPost']['no'],'#'=>'post-detail'), null,null,false).'</p>';
-			if($this->slugConfigs['ignore_archives'] === '1') {
+			if($this->slugConfigs['SluConfig']['ignore_archives'] === '1') {
 				$pattern = '/href\=\"(.+)\/archives\/(.+)\"/';
 				$moreLinkHtml = preg_replace($pattern, 'href="$1' . '/$2' . '"', $moreLinkHtml);
 			}
@@ -210,7 +206,7 @@ class SlugHelper extends AppHelper {
 	function getCategoryList($categories, $depth=3, $count = false, $options = array()) {
 
 		$out = $this->Blog->_getCategoryList($categories,$depth, 1, $count, $options);
-		if($this->slugConfigs['ignore_archives'] === '1') {
+		if($this->slugConfigs['SluConfig']['ignore_archives'] === '1') {
 			$pattern = '/href\=\"(.+?)\/archives\/(.+?)\"/';
 			$out = preg_replace($pattern, 'href="$1' . '/$2' . '"', $out);
 		}

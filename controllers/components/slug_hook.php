@@ -57,7 +57,7 @@ class SlugHookComponent extends Object {
 		parent::__construct();
 
 		$SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
-		$this->slugConfigs = $SlugConfigModel->findExpanded();
+		$this->slugConfigs = array('SluConfig' => $SlugConfigModel->findExpanded());
 		$this->SlugModel = ClassRegistry::init('Slug.Slug');
 
 		App::import('Helper', 'Slug.Slug');
@@ -123,19 +123,19 @@ class SlugHookComponent extends Object {
 						$slug = $controller->params['pass']['0'];
 					}
 
-					if($this->slugConfigs['permalink_structure'] === '1') {
+					if($this->slugConfigs['SluConfig']['permalink_structure'] === '1') {
 						// スラッグ
 						$conditions = array(
 							'Slug.name' => $slug,
 							'Slug.blog_content_id' => $controller->blogContent['BlogContent']['id'],
 						);
-					} elseif($this->slugConfigs['permalink_structure'] === '2' || $this->slugConfigs['permalink_structure'] === '3') {
+					} elseif($this->slugConfigs['SluConfig']['permalink_structure'] === '2' || $this->slugConfigs['SluConfig']['permalink_structure'] === '3') {
 						// 記事ID or 記事ID（6桁）
 						$conditions = array(
 							'Slug.blog_post_id' => intval($slug),
 							'Slug.blog_content_id' => $controller->blogContent['BlogContent']['id'],
 						);
-					} elseif($this->slugConfigs['permalink_structure'] === '4') {
+					} elseif($this->slugConfigs['SluConfig']['permalink_structure'] === '4') {
 						if($paramsCount >= 2) {
 							// /2012/12/01/sample-post/
 							$conditions = array(
@@ -143,7 +143,7 @@ class SlugHookComponent extends Object {
 								'Slug.blog_content_id' => $controller->blogContent['BlogContent']['id']
 							);
 						}
-					} elseif($this->slugConfigs['permalink_structure'] === '5') {
+					} elseif($this->slugConfigs['SluConfig']['permalink_structure'] === '5') {
 						if($paramsCount >= 2) {
 							// /2012/12/sample-post/
 							$conditions = array(
@@ -185,7 +185,7 @@ class SlugHookComponent extends Object {
 			// ブログ記事編集・追加画面で実行
 			// TODO startup で処理したかったが、$controller->data に入れるとそれを全て上書きしてしまうのでダメだった
 			if($controller->action == 'admin_edit' || $controller->action == 'admin_add') {
-				$controller->data['SlugConfig'] = $this->slugConfigs;
+				$controller->data['SlugConfig'] = $this->slugConfigs['SluConfig'];
 			}
 		}
 

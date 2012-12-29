@@ -26,7 +26,7 @@
 	<ul>
 		<li>ブログ記事URLを任意の文字列として設定します。</li>
 		<li>表示形式は <small>http://〜/BLOG/
-			<?php if(!$slug->slugConfigs['ignore_archives']): ?>archives/<?php endif ?>
+			<?php if(!$slug->slugConfigs['SluConfig']['ignore_archives']): ?>archives/<?php endif ?>
 			設定スラッグ</small> となります。</li>
 	</ul>
 </div>
