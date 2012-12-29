@@ -37,10 +37,6 @@ class SlugConfig extends BaserPluginAppModel {
 		'4'	=> '日付とスラッグ',
 		'5'	=> '年月とスラッグ'
 	);
-	var $active_all_slugs = array(
-		'0' => '有効化しない',
-		'1' => '有効化する'
-	);
 	var $ignore_archives = array(
 		'0' => '省略しない',
 		'1' => '省略する'

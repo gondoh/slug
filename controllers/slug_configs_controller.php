@@ -82,7 +82,6 @@ class SlugConfigsController extends BaserPluginAppController {
 		}
 
 		$this->set('permalink_structure', $this->addSampleShow($this->SlugConfig->permalink_structure));
-		$this->set('active_all_slugs', $this->SlugConfig->active_all_slugs);
 		$this->set('ignore_archives', $this->SlugConfig->ignore_archives);
 		$this->pageTitle = 'スラッグプラグイン設定';
 		$this->help = 'slugs_index';

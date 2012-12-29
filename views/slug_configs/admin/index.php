@@ -26,21 +26,6 @@
 		</td>
 	</tr>
 	<tr>
-		<th><?php echo $bcForm->label('SlugConfig.active_all_slug', '全てのスラッグを有効化') ?>
-			<?php echo $html->image('admin/icn_help.png', array('id' => 'helpActiveAllSlug', 'class' => 'btn help', 'alt' => 'ヘルプ')) ?>
-			<div id="helptextActiveAllSlug" class="helptext">
-				<ul>
-					<li>全てのブログ記事のスラッグを有効化します。</li>
-					<li>ブログ記事個別で「無効」を選択した場合はそちらが優先されます。</li>
-				</ul>
-			</div>
-		</th>
-		<td>
-			<?php echo $bcForm->input('SlugConfig.active_all_slug', array('type' => 'radio', 'options' => $active_all_slugs)) ?>
-			<?php echo $bcForm->error('SlugConfig.active_all_slug') ?>
-		</td>
-	</tr>
-	<tr>
 		<th><?php echo $bcForm->label('SlugConfig.ignore_archives', 'archivesの省略') ?>
 			<?php echo $html->image('admin/icn_help.png', array('id' => 'helpIgnoreArchives', 'class' => 'btn help', 'alt' => 'ヘルプ')) ?>
 			<div id="helptextIgnoreArchives" class="helptext">
