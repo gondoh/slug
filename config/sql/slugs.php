@@ -1,6 +1,6 @@
 <?php 
 /* SVN FILE: $Id$ */
-/* Slugs schema generated on: 2012-11-25 05:11:26 : 1353789446*/
+/* Slugs schema generated on: 2012-12-29 23:12:54 : 1356791574*/
 class SlugsSchema extends CakeSchema {
 	var $name = 'Slugs';
 
@@ -21,7 +21,6 @@ class SlugsSchema extends CakeSchema {
 		'blog_content_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 8),
 		'blog_post_no' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 8),
 		'name' => array('type' => 'string', 'null' => true, 'default' => NULL),
-		'status' => array('type' => 'boolean', 'null' => true, 'default' => NULL),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1))

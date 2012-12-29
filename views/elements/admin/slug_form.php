@@ -18,9 +18,6 @@
 	<?php echo $bcForm->hidden('Slug.name') ?>
 <?php endif ?>
 
-<?php // echo $bcForm->input('Slug.status', array('type' => 'checkbox', 'label' => '有効')) ?>
-<?php // echo $bcForm->error('Slug.status') ?>
-
 <?php echo $html->image('admin/icn_help.png',array('id' => 'helpSlugName', 'class' => 'btn help', 'alt' => 'ヘルプ')) ?>
 <div id="helptextSlugName" class="helptext">
 	<ul>
@@ -35,7 +32,7 @@
 <?php if($this->action == 'admin_edit'): ?>
 <div class="box-tolink align-left">
 	<?php if($bcForm->value('BlogPost.status')): ?>
-		<?php if($bcForm->value('Slug.name') && $bcForm->value('Slug.status')): ?>
+		<?php if($bcForm->value('Slug.name')): ?>
 	URL：<?php $bcBaser->link(
 			$bcBaser->getUri('/' . $blogContent['BlogContent']['name'] . $slug->getSlugUrl($this->data['Slug'], $this->data['BlogPost'])),
 			'/' . $blogContent['BlogContent']['name'] . $slug->getSlugUrl($this->data['Slug'], $this->data['BlogPost'])) ?>

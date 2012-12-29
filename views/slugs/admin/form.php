@@ -36,17 +36,20 @@ $(window).load(function() {
 		</td>
 	</tr>
 	<tr>
-		<th class="col-head"><?php echo $bcForm->label('Slug.status', '状態') ?></th>
-		<td class="col-input">
-			<?php echo $bcForm->input('Slug.status', array('type' => 'checkbox', 'label' => '有効')) ?>
-			<?php echo $bcForm->error('Slug.status') ?>
-		</td>
-	</tr>
-	<tr>
 		<th class="col-head"><?php echo $bcForm->label('Slug.created', '登録日') ?></th>
 		<td class="col-input">
 			<?php echo $bcForm->value('Slug.created') ?>
 			<?php echo $bcForm->input('Slug.created', array('type' => 'hidden')) ?>
+		</td>
+	</tr>
+	<tr>
+		<th class="col-head">ブログ記事情報</th>
+		<td class="col-input">
+			<ul><?php $blogContentData = $slug->getBlogContentData($bcForm->value('BlogPost.blog_content_id')) ?>
+				<li>ブログ名：<?php echo $blogContentData['BlogContent']['title'] ?></li>
+				<li>タイトル：<?php echo $bcForm->value('BlogPost.name') ?></li>
+				<li>作成日：<?php echo $bcForm->value('BlogPost.posts_date') ?></li>
+			</ul>
 		</td>
 	</tr>
 </table>

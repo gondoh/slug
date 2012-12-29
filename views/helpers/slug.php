@@ -42,11 +42,6 @@ class SlugHelper extends AppHelper {
  */
 	function getSlugName($data, $post) {
 
-		if(!$data['status']) {
-			$this->slugName = $post['no'];
-			return $post['no'];
-		}
-
 		if($this->slugConfigs['SluConfig']['permalink_structure'] === '1') {
 			// スラッグ
 			$this->slugName = $data['name'];
@@ -134,6 +129,25 @@ class SlugHelper extends AppHelper {
 		}
 
 		return false;
+
+	}
+/**
+ * ブログ記事が属するブログデータを取得する
+ * 
+ * @param int $blogContentId
+ * @return array
+ */
+	function getBlogContentData($blogContentId = null) {
+
+		$data = array();
+		$BlogContent = ClassRegistry::init('Blog.BlogContent');
+		$data = $BlogContent->find('first', array(
+				'conditions' => array('BlogContent.id' => $blogContentId),
+				'fields' => array('id', 'name', 'title'),
+				'recursive' => -1
+			));
+
+		return $data;
 
 	}
 /**

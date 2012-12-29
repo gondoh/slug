@@ -20,12 +20,11 @@
 						'desc' => $bcBaser->getImg('admin/blt_list_up.png', array('alt' => '降順', 'title' => '降順')).' NO'),
 						'id', array('escape' => false, 'class' => 'btn-direction')) ?>
 				</th>
-				<th><?php echo $paginator->sort(array(
-						'asc' => $bcBaser->getImg('admin/blt_list_down.png', array('alt' => '昇順', 'title' => '昇順')).' 記事ID',
-						'desc' => $bcBaser->getImg('admin/blt_list_up.png', array('alt' => '降順', 'title' => '降順')).' 記事ID'),
-						'blog_post_id', array('escape' => false, 'class' => 'btn-direction')) ?>
+				<th>
+					ブログ名
 				</th>
-				<th><?php echo $paginator->sort(array(
+				<th>
+					<?php echo $paginator->sort(array(
 						'asc' => $bcBaser->getImg('admin/blt_list_down.png', array('alt' => '昇順', 'title' => '昇順')).' 記事NO',
 						'desc' => $bcBaser->getImg('admin/blt_list_up.png', array('alt' => '降順', 'title' => '降順')).' 記事NO'),
 						'blog_post_no', array('escape' => false, 'class' => 'btn-direction')) ?>
@@ -50,20 +49,12 @@
 	<tbody>
 <?php if(!empty($datas)): ?>
 	<?php foreach($datas as $key => $data): ?>
-		<?php if (!$data['Slug']['status'] == '1'): ?>
-			<?php $class=' class="unpublish disablerow sortable"'; ?>
-		<?php else: ?>
-			<?php $class=' class="publish sortable"'; ?>
-		<?php endif; ?>
-	<tr<?php echo $class; ?>>
+	<tr>
 		<td class="row-tools">
-		<?php if($data['Slug']['status'] == '1'): ?>
-			<?php $bcBaser->link($bcBaser->getImg('admin/icn_tool_unpublish.png', array('width' => 24, 'height' => 24, 'alt' => '無効', 'class' => 'btn')),
-					array('action' => 'unpublish', $data['Slug']['id']), array('title' => '無効', 'class' => 'btn-unpublish')) ?>
-		<?php elseif($data['Slug']['status'] == '0'): ?>
-			<?php $bcBaser->link($bcBaser->getImg('admin/icn_tool_publish.png', array('width' => 24, 'height' => 24, 'alt' => '有効', 'class' => 'btn')),
-					array('action' => 'publish', $data['Slug']['id']), array('title' => '有効', 'class' => 'btn-publish')) ?>
-		<?php endif ?>
+		<?php // ブログ記事編集画面へ移動 ?>
+		<?php $bcBaser->link($bcBaser->getImg('admin/icn_tool_check.png', array('width' => 24, 'height' => 24, 'alt' => 'ブログ記事編集', 'class' => 'btn')),
+				array('admin' => true, 'plugin' => 'blog', 'controller' => 'blog_posts', 'action' => 'edit', $data['BlogPost']['blog_content_id'], $data['BlogPost']['id']), array('title' => 'ブログ記事編集')) ?>
+
 		<?php $bcBaser->link($bcBaser->getImg('admin/icn_tool_edit.png', array('width' => 24, 'height' => 24, 'alt' => '編集', 'class' => 'btn')),
 				array('action' => 'edit', $data['Slug']['id']), array('title' => '編集')) ?>
 		<?php $bcBaser->link($bcBaser->getImg('admin/icn_tool_delete.png', 
@@ -73,9 +64,16 @@
 				sprintf('ID：' . $data['Slug']['id'] . 'のデータを本当に削除してもいいですか？'), false) ?>
 		</td>
 		<td style="width: 45px;"><?php echo $data['Slug']['id']; ?></td>
-		<td style="width: 45px;"><?php echo $data['Slug']['blog_post_id']; ?></td>
-		<td style="width: 45px;"><?php echo $data['Slug']['blog_post_no']; ?></td>
-		<td><?php echo $data['Slug']['name']; ?></td>
+		<td>
+			<?php $blogContentData = $slug->getBlogContentData($data['BlogPost']['blog_content_id']) ?>
+			<?php echo $blogContentData['BlogContent']['title'] ?>
+		</td>
+		<td style="width: 45px;">
+			<?php echo $data['Slug']['blog_post_no']; ?>
+		</td>
+		<td>
+			<?php echo $bcBaser->link($data['Slug']['name'], array('action' => 'edit', $data['Slug']['id']), array('title' => '編集')) ?>
+		</td>
 		<td style="white-space: nowrap">
 			<?php echo $bcTime->format('Y-m-d', $data['Slug']['created']) ?>
 			<br />
