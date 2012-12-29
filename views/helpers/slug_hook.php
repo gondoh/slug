@@ -15,13 +15,20 @@ class SlugHookHelper extends AppHelper {
  * @var array
  * @access public
  */
-	var $registerHooks = array('afterFormInput', 'afterBaserGetLink', 'beforeRender');
+	var $registerHooks = array('afterFormInput', 'afterBaserGetLink');
 /**
  * ビュー
  * 
  * @var View 
  */
 	var $View = null;
+/**
+ * slugヘルパー
+ * 
+ * @var SlugHelper
+ * @access public
+ */
+	var $Slug = null;
 /**
  * slug設定情報
  * 
@@ -36,8 +43,11 @@ class SlugHookHelper extends AppHelper {
 	function __construct() {
 		parent::__construct();
 		$SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
-		$this->slugConfigs = $SlugConfigModel->findExpanded();
+		$this->slugConfigs = array('SluConfig' => $SlugConfigModel->findExpanded());
 		$this->View = ClassRegistry::getObject('view');
+
+		App::import('Helper', 'Slug.Slug');
+		$this->Slug = new SlugHelper();
 	}
 /**
  * afterFormInput
@@ -72,68 +82,15 @@ class SlugHookHelper extends AppHelper {
 
 			$parseUrl = Router::parse($url);
 			$PluginContent = ClassRegistry::init('PluginContent');
-
-			if($parseUrl['controller'] == 'blog') {
-
-				if($PluginContent) {
-					$conditions = array(
-						'fields' => array('name', 'plugin', 'content_id'),
-						'conditions' => array(
-							'PluginContent.name' => $parseUrl['controller'],
-							'PluginContent.plugin' => 'blog'
-						)
-					);
-					$pluginContent = $PluginContent->find('first', $conditions);
-					$out = $this->convertOutputArchivesLink($out, $parseUrl['pass'], $pluginContent['PluginContent']);
-				}
-
-			} elseif($parseUrl['action'] == 'archives') {
-
-				// blogPost() ではプラグイン名が入ってこないためチェックする
-				if($PluginContent) {
-					$conditions = array(
-						'fields' => array('name', 'plugin', 'content_id'),
-						'conditions' => array(
-							'PluginContent.name' => $parseUrl['controller']
-						)
-					);
-					$pluginContents = $PluginContent->find('all', $conditions);
-					if($pluginContents) {
-						foreach ($pluginContents as $key => $value) {
-							if($value['PluginContent']['plugin'] == 'blog') {
-								$pluginContent = $value;
-								break;
-							}
-						}
-						if($pluginContent) {
-							$out = $this->convertOutputArchivesLink($out, $parseUrl['pass'], $pluginContent['PluginContent']);
-						}
-					}
-				}
-
+			$pluginContent = $PluginContent->currentPluginContent($url);
+			// beforeFind が機能しないために取得し直している
+			if($pluginContent) {
+				$pluginContent = $PluginContent->find('first', array(
+					'conditions' => array(
+						'PluginContent.name' => $pluginContent['PluginContent']['name'],
+						'PluginContent.plugin' => $pluginContent['PluginContent']['plugin'])));
+				$out = $this->convertOutputArchivesLink($out, $parseUrl, $pluginContent['PluginContent']);
 			}
-
-			/*if($this->params['plugin'] == 'blog') {
-				if($this->params['controller'] == 'blog') {
-					//if($this->params['action'] == 'archives') {
-						if($parseUrl['plugin'] == 'blog') {
-							if($parseUrl['controller'] == 'blog') {
-								if($parseUrl['action'] == 'archives') {
-									$out = $this->convertOutputArchivesLink($out, $parseUrl['pass'], $pluginContent['PluginContent']);
-								}
-							}
-						}
-					//}
-					if($this->params['action'] == 'archives') {
-						$out = $this->convertOutputArchivesLink($out, $parseUrl['pass']);
-					}
-				}
-			} else {
-				// ブログ記事へのリンクを変更する
-				if($pluginContent['PluginContent']['plugin'] == 'blog') {
-					$out = $this->convertOutputArchivesLink($out, $parseUrl['pass'], $pluginContent['PluginContent']);
-				}
-			}*/
 
 		}
 
@@ -144,82 +101,53 @@ class SlugHookHelper extends AppHelper {
  * archives除外設定が有効な場合は、archives を省いたURLリンクを生成して返す
  * 
  * @param string $out
- * @param array $pass
+ * @param array $parseUrl
  * @param array $pluginContent
  * @return string 
  */
-	function convertOutputArchivesLink($out = '', $pass = array(), $pluginContent = array()) {
+	function convertOutputArchivesLink($out = '', $parseUrl = array(), $pluginContent = array()) {
 
-		if($this->slugConfigs['ignore_archives'] === '1') {
+		$countPass = count($parseUrl['pass']);
 
-			$countPass = count($pass);
-			$pattern = '/href\=\"(.+)\/archives\/(.+)\"/';
-
-			if($countPass === 1 || $countPass === 2) {
-				if($countPass === 1) {
-					$no = $pass['0'];
-				} elseif($countPass === 2) {
-					$no = $pass['1'];
-				}
-				$SlugModel = ClassRegistry::init('Slug.Slug');
-				if($pluginContent) {
-					$blogContentId = $pluginContent['content_id'];
-				} else {
-					$blogContentId = $this->View->viewVars['blogContent']['BlogContent']['id'];
-				}
-				$conditions = array(
-					'Slug.blog_content_id'	=> $blogContentId,
-					'Slug.blog_post_no'		=> $no
-				);
-				$data = $SlugModel->find('first', array('conditions' => $conditions));
-				// ブログ記事 No が入ってきてスラッグが取得できた場合
-				// ※ ブログ記事前後移動
-				if($data) {
-					$no = $data['Slug']['name'];
-				}
-				$out = preg_replace($pattern, 'href="$1' . '/$2' . '"', $out);
-				//$out = preg_replace($pattern, 'href="$1' . '/' . $no . '"', $out);
-			} else {
-				$out = preg_replace($pattern, 'href="$1' . '/$2' . '"', $out);
-			}
-
-		} else {
-			/*
-			$countPass = count($pass);
-			$pattern = '/href\=\"(.+)\/archives\/(.+)\"/';
-
+		if($countPass === 1 || $countPass === 2) {
 			if($countPass === 1) {
-				$no = $pass['0'];
-				$SlugModel = ClassRegistry::init('Slug.Slug');
-				if($pluginContent) {
-					$blogContentId = $pluginContent['content_id'];
-				} else {
-					$blogContentId = $this->View->viewVars['blogContent']['BlogContent']['id'];
-				}
-				$conditions = array(
-					'Slug.blog_content_id'	=> $blogContentId,
-					'Slug.blog_post_no'		=> $no
-				);
-				$data = $SlugModel->find('first', array('conditions' => $conditions));
-				// ブログ記事 No が入ってきてスラッグが取得できた場合
-				// ※ ブログ記事前後移動
-				if($data) {
-					$no = $data['Slug']['name'];
-				}
-				$out = preg_replace($pattern, 'href="$1' . '/archives/' . $no . '"', $out);
-			} else {
-				$out = preg_replace($pattern, 'href="$1' . '/archives/$2' . '"', $out);
+				$no = $parseUrl['pass']['0'];
+			} elseif($countPass === 2) {
+				$no = $parseUrl['pass']['1'];
 			}
-			*/
+			$SlugModel = ClassRegistry::init('Slug.Slug');
+			if($pluginContent) {
+				$blogContentId = $pluginContent['content_id'];
+			} else {
+				$blogContentId = $this->View->viewVars['blogContent']['BlogContent']['id'];
+			}
+			$conditions = array(
+				'Slug.blog_content_id'	=> $blogContentId,
+				'Slug.blog_post_no'		=> $no
+			);
+			$data = $SlugModel->find('first', array('conditions' => $conditions));
+			// ブログ記事 No が入ってきてスラッグが取得できた場合
+			// ※ ブログ記事前後移動
+			if($data) {
+				$no = $this->Slug->getSlugName($data['Slug'], $data['BlogPost']);
+			}
+		}
+
+		$pattern = '/href\=\"(.+)\/archives\/(.+)\"/';
+		if(!empty($no)) {
+			if($this->slugConfigs['SluConfig']['ignore_archives'] === '1') {
+				$out = preg_replace($pattern, 'href="$1' . '/' . $no . '"', $out);
+			} else {
+				$out = preg_replace($pattern, 'href="$1' . '/archives/' . $no . '"', $out);
+			}
+		} else {
+			if($this->slugConfigs['SluConfig']['ignore_archives'] === '1') {
+				$out = preg_replace($pattern, 'href="$1' . '/' . '$2' . '"', $out);
+			}
 		}
 
 		return $out;
 
-	}
-
-	public function beforeRender() {
-
-		$hoge = 0;
 	}
 
 }

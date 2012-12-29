@@ -49,7 +49,6 @@ class SlugHookBehavior extends ModelBehavior {
 	function beforeFind(&$model, $query) {
 
 		if($model->alias == 'BlogPost') {
-
 			// ブログ記事取得の際にスラッグ情報も併せて取得する
 			$association = array(
 				'Slug' => array(
@@ -69,6 +68,7 @@ class SlugHookBehavior extends ModelBehavior {
 				}
 			}
 		}
+
 		return $query;
 
 	}
