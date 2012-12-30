@@ -64,6 +64,7 @@ class SlugHookBehavior extends ModelBehavior {
 				if(($query['fields']['0'] == 'no') && ($query['fields']['1'] == 'name')) {
 					$query['fields'][] = 'id';
 					$query['fields'][] = 'posts_date';
+					$query['fields'][] = 'blog_category_id';
 					$query['recursive'] = 2;
 				}
 			}
