@@ -15,7 +15,7 @@ class SlugHookHelper extends AppHelper {
  * @var array
  * @access public
  */
-	var $registerHooks = array('afterFormInput', 'afterBaserGetLink');
+	var $registerHooks = array('afterFormInput', 'afterBaserGetLink', 'afterElement');
 /**
  * ビュー
  * 
@@ -43,7 +43,7 @@ class SlugHookHelper extends AppHelper {
 	function __construct() {
 		parent::__construct();
 		$SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
-		$this->slugConfigs = array('SluConfig' => $SlugConfigModel->findExpanded());
+		$this->slugConfigs = array('SlugConfig' => $SlugConfigModel->findExpanded());
 		$this->View = ClassRegistry::getObject('view');
 
 		App::import('Helper', 'Slug.Slug');
@@ -145,18 +145,71 @@ class SlugHookHelper extends AppHelper {
 			if($judgeArchiveTag) {
 				$no = 'tag' . DS . $no;
 			}
-			if($this->slugConfigs['SluConfig']['ignore_archives'] === '1') {
+			if($this->slugConfigs['SlugConfig']['ignore_archives'] === '1') {
 				$out = preg_replace($pattern, 'href="$1' . DS . $no . '"', $out);
 			} else {
 				$out = preg_replace($pattern, 'href="$1' . '/archives/' . $no . '"', $out);
 			}
 		} else {
-			if($this->slugConfigs['SluConfig']['ignore_archives'] === '1') {
+			if($this->slugConfigs['SlugConfig']['ignore_archives'] === '1') {
 				$out = preg_replace($pattern, 'href="$1' . DS . '$2' . '"', $out);
 			}
 		}
 
 		return $out;
+
+	}
+/**
+ * afterElement
+ * 
+ * @param string $name
+ * @param string $out
+ * @return string 
+ */
+	function afterElement($name, $out) {
+
+		if(empty($this->params['admin'])) {
+			if($this->params['plugin'] == 'blog') {
+
+				if(preg_match('/^paginations\/.*/', $name)) {
+					if($this->slugConfigs['SlugConfig']['ignore_archives']) {
+						if($this->params['action'] == 'archives') {
+							$pattern = '/href\=\"(.+?)\/archives\/(.+?)\"/';
+							$out = preg_replace($pattern, 'href="$1' . '/$2' . '"', $out);
+						}
+					}
+				}
+
+			}
+		}
+
+		return $out;
+
+	}
+/**
+ * beforeElement：未使用：コード内コメント参照
+ * 
+ * @param type $name
+ * @param type $params
+ * @param type $loadHelpers
+ * @param type $subDir
+ * @return array $params
+ */
+	function beforeElement($name, $params, $loadHelpers, $subDir) {
+
+		if(empty($this->params['admin'])) {
+			// if($name == 'paginations/simple' || $name == 'paginations/default') {
+			if(preg_match('/^paginations\/.*/', $name)) {
+				if($this->params['action'] == 'archives') {
+					// ここで action を省略しても、最終的に Router:LINE:800 で index が付けられてしまう
+					// unset($this->View->passedArgs['action']);
+					// $this->View->passedArgs['action'] = '';
+				}
+			}
+
+		}
+
+		return $params;
 
 	}
 
