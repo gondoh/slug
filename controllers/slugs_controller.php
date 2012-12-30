@@ -145,7 +145,7 @@ class SlugsController extends BaserPluginAppController {
 		Configure::write('debug', 0);
 		$this->layout = null;
 
-		$result = false;
+		$result = true;
 		if($this->data) {
 			$datas = $this->Slug->find('all', array(
 				'conditions' => array(
@@ -155,11 +155,11 @@ class SlugsController extends BaserPluginAppController {
 				'recursive' => -1
 			));
 			if($datas) {
-				$result = true;
+				$result = false;
 				// 編集対応のため、重複スラッグが存在する場合でも、同じ id のものはOKとみなす
 				foreach ($datas as $key => $data) {
 					if($this->data['Slug']['id'] == $data['Slug']['id']) {
-						$result = false;
+						$result = true;
 						break;
 					}
 				}

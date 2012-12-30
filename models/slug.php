@@ -46,22 +46,45 @@ class Slug extends BaserPluginAppModel {
 			'maxLength' => array(
 				'rule'		=> array('maxLength', 255),
 				'message'	=> 'スラッグは255文字以内で入力してください。'
+			),
+			'checkDuplicateSlug' => array(
+				'rule'		=>	array('checkDuplicateSlug'),
+				'message'	=> '同一ブログに登録のあるスラッグです。'
 			)
 		)
 	);
 /**
- * 初期値取得
- *
+ * カスタムバリデーション
+ * 同一ブログ内でスラッグが重複する場合はエラーとする
+ * 
+ * @return boolean 
  * @access public
- * @return array
  */
-	function getDefaultValue() {
-		$array = array(
-			'Slug' => array(
-				'status' => 1
-			)
-		);
-		return $array;
+	function checkDuplicateSlug() {
+
+		$result = true;
+		if($this->data) {
+			$datas = $this->find('all', array(
+				'conditions' => array(
+					'Slug.name' => $this->data['Slug']['name'],
+					'Slug.blog_content_id' => $this->data['Slug']['blog_content_id']
+				),
+				'recursive' => -1
+			));
+			if($datas) {
+				$result = false;
+				// 編集対応のため、重複スラッグが存在する場合でも、同じ id のものはOKとみなす
+				foreach ($datas as $key => $data) {
+					if($this->data['Slug']['id'] == $data['Slug']['id']) {
+						$result = true;
+						break;
+					}
+				}
+			}
+		}
+
+		return $result;
+
 	}
 
 }

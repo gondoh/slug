@@ -20,6 +20,7 @@ $(window).load(function() {
 <?php else: ?>
 	<?php echo $bcForm->create('Slug', array('url' => array('action' => 'edit'))) ?>
 	<?php echo $bcForm->input('Slug.id', array('type' => 'hidden')) ?>
+	<?php echo $bcForm->input('Slug.blog_content_id', array('type' => 'hidden')) ?>
 <?php endif ?>
 <table cellpadding="0" cellspacing="0" class="list-table" id="ListTable">
 	<tr>
@@ -43,12 +44,10 @@ $(window).load(function() {
 		</td>
 	</tr>
 	<tr>
-		<th class="col-head">ブログ記事情報</th>
+		<th class="col-head">ブログ名</th>
 		<td class="col-input">
-			<ul><?php $blogContentData = $slug->getBlogContentData($bcForm->value('BlogPost.blog_content_id')) ?>
-				<li>ブログ名：<?php echo $blogContentData['BlogContent']['title'] ?></li>
-				<li>タイトル：<?php echo $bcForm->value('BlogPost.name') ?></li>
-				<li>作成日：<?php echo $bcForm->value('BlogPost.posts_date') ?></li>
+			<ul><?php $blogContentData = $slug->getBlogContentData($bcForm->value('Slug.blog_content_id')) ?>
+				<li><?php echo $blogContentData['BlogContent']['title'] ?></li>
 			</ul>
 		</td>
 	</tr>

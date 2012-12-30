@@ -30,10 +30,12 @@ function slugNameValueChengeHandler() {
 		dataType: "html",
 		cache: false,
 		success: function(result, status, xhr) {
-			if(result) {
+			if(!result) {
 				result = '<div class="error-message">同じスラッグがあります。変更してください。</div>';
-			}
-			$("#SlugCheckNameResult").html(result);
+				$("#SlugCheckNameResult").html(result);
+			} else {
+				$("#SlugCheckNameResult").html('');
+			}			
 		}
 	});
 }
