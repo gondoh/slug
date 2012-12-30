@@ -36,6 +36,8 @@ class SlugConfig extends BaserPluginAppModel {
 		'3' => 'ブログ記事ID（6桁表記）',
 		'4'	=> '日付とスラッグ',
 		'5'	=> '年月とスラッグ'
+		// TODO カテゴリ名＋スラッグ機能の作成
+		//'6' => 'カテゴリとスラッグ'
 	);
 	var $ignore_archives = array(
 		'0' => '省略しない',
