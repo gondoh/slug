@@ -57,7 +57,7 @@ class SlugHookComponent extends Object {
 		parent::__construct();
 
 		$SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
-		$this->slugConfigs = array('SluConfig' => $SlugConfigModel->findExpanded());
+		$this->slugConfigs = array('SlugConfig' => $SlugConfigModel->findExpanded());
 		$this->SlugModel = ClassRegistry::init('Slug.Slug');
 
 		App::import('Helper', 'Slug.Slug');
@@ -106,39 +106,21 @@ class SlugHookComponent extends Object {
 						$postDayBegin = $controller->params['pass']['0'] . '/' . $controller->params['pass']['1'] . '/' . '01';
 						$postDayEnd = date($controller->params['pass']['0'] . '-' . $controller->params['pass']['1'] . '-t') . ' 23:59:59';
 						$slug = $controller->params['pass']['2'];
+					} elseif($paramsCount == 2) {
+						// TODO カテゴリ名を含む場合のブログ記事詳細
+						$slug = $controller->params['pass']['1'];
 					} else {
 						$slug = $controller->params['pass']['0'];
 					}
 
-					if($this->slugConfigs['SluConfig']['permalink_structure'] === '1') {
-						// スラッグ
-						$conditions = array(
-							'Slug.name' => $slug,
-							'Slug.blog_content_id' => $controller->blogContent['BlogContent']['id'],
-						);
-					} elseif($this->slugConfigs['SluConfig']['permalink_structure'] === '2' || $this->slugConfigs['SluConfig']['permalink_structure'] === '3') {
+					if($this->slugConfigs['SlugConfig']['permalink_structure'] === '2' || $this->slugConfigs['SlugConfig']['permalink_structure'] === '3') {
 						// 記事ID or 記事ID（6桁）
 						$conditions = array(
 							'Slug.blog_post_id' => intval($slug),
 							'Slug.blog_content_id' => $controller->blogContent['BlogContent']['id'],
 						);
-					} elseif($this->slugConfigs['SluConfig']['permalink_structure'] === '4') {
-						if($paramsCount >= 2) {
-							// /2012/12/01/sample-post/
-							$conditions = array(
-								'Slug.name' => $slug,
-								'Slug.blog_content_id' => $controller->blogContent['BlogContent']['id']
-							);
-						}
-					} elseif($this->slugConfigs['SluConfig']['permalink_structure'] === '5') {
-						if($paramsCount >= 2) {
-							// /2012/12/sample-post/
-							$conditions = array(
-								'Slug.name' => $slug,
-								'Slug.blog_content_id' => $controller->blogContent['BlogContent']['id']
-							);
-						}
 					} else {
+						// スラッグ、/2012/12/01/sample-post/、/2012/12/sample-post/
 						$conditions = array(
 							'Slug.name' => $slug,
 							'Slug.blog_content_id' => $controller->blogContent['BlogContent']['id'],
@@ -172,7 +154,7 @@ class SlugHookComponent extends Object {
 			// ブログ記事編集・追加画面で実行
 			// TODO startup で処理したかったが、$controller->data に入れるとそれを全て上書きしてしまうのでダメだった
 			if($controller->action == 'admin_edit' || $controller->action == 'admin_add') {
-				$controller->data['SlugConfig'] = $this->slugConfigs['SluConfig'];
+				$controller->data['SlugConfig'] = $this->slugConfigs['SlugConfig'];
 			}
 		}
 
@@ -182,8 +164,7 @@ class SlugHookComponent extends Object {
 			if($controller->params['plugin'] == 'blog') {
 				if($controller->action == 'posts' || $controller->action == 'index' || $controller->action == 'archives') {
 					foreach ($controller->viewVars['posts'] as $key => $post) {
-						$slugName = $this->Slug->getSlugName($post['Slug'], $post['BlogPost']);
-						$controller->viewVars['posts'][$key]['BlogPost']['no'] = $slugName;
+						$controller->viewVars['posts'][$key]['BlogPost']['no'] = $this->Slug->getSlugName($post['Slug'], $post['BlogPost']);
 					}
 				}
 			}
@@ -204,8 +185,7 @@ class SlugHookComponent extends Object {
 		if($controller->action == 'get_recent_entries') {
 			if(!empty($controller->output['recentEntries'])) {
 				foreach ($controller->output['recentEntries'] as $key => $post) {
-					$slugName = $this->Slug->getSlugName($post['Slug'], $post['BlogPost']);
-					$controller->output['recentEntries'][$key]['BlogPost']['no'] = $slugName;
+					$controller->output['recentEntries'][$key]['BlogPost']['no'] = $this->Slug->getSlugName($post['Slug'], $post['BlogPost']);
 				}
 			}
 		}
@@ -264,8 +244,8 @@ class SlugHookComponent extends Object {
 			$controller->data['Slug']['blog_post_id'] = $controller->BlogPost->id;
 		}
 
-		// 重複スラッグを探索して、重複していれば重複個数＋１をつける
-		$data = $this->SlugModel->find('all', array(
+		// TODO 重複スラッグを探索して、重複していれば重複個数＋１をつける
+		/*$data = $this->SlugModel->find('all', array(
 			'conditions' => array(
 				'Slug.name' => $controller->data['Slug']['name']
 			))
@@ -275,7 +255,7 @@ class SlugHookComponent extends Object {
 			$countData = $countData + 1;
 			$controller->data['Slug']['name'] = $controller->data['Slug']['name'] . '-' . $countData;
 		}
-		unset($data);
+		unset($data);*/
 
 		if(empty($controller->data['Slug']['id'])) {
 			$this->SlugModel->create($controller->data['Slug']);

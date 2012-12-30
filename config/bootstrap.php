@@ -13,8 +13,8 @@ loadPluginConfig('slug.slug');
 // TODO アクション名「archives」を省略する処理
 // HINT /baser/config/routes.php
 $SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
-$SlugConfigs = array('SluConfig' => $SlugConfigModel->findExpanded());
-if($SlugConfigs['SluConfig']['ignore_archives'] === '1') {
+$SlugConfigs = array('SlugConfig' => $SlugConfigModel->findExpanded());
+if($SlugConfigs['SlugConfig']['ignore_archives'] === '1') {
 
 	$PluginContent = ClassRegistry::init('PluginContent');
 	if($PluginContent) {
