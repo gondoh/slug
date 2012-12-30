@@ -9,7 +9,40 @@
  * @license			MIT
  */
 ?>
+<script type="text/javascript">
+$(function () {
+	$("#SlugName").change(function() {
+		slugNameValueChengeHandler();
+	});
+});
+
+function slugNameValueChengeHandler() {
+	var options = {};
+	options = {
+		"data[Slug][id]": $("#SlugId").val(),
+		"data[Slug][name]": $("#SlugName").val(),
+		"data[Slug][blog_content_id]": $("#BlogPostBlogContentId").val()
+	};
+	$.ajax({
+		type: "POST",
+		data: options,
+		url: $("#AjaxSlugCheckNameUrl").html(),
+		dataType: "html",
+		cache: false,
+		success: function(result, status, xhr) {
+			if(result) {
+				result = '<div class="error-message">同じスラッグがあります。変更してください。</div>';
+			}
+			$("#SlugCheckNameResult").html(result);
+		}
+	});
+}
+</script>
 <br />
+<div id="AjaxSlugCheckNameUrl" class="display-none">
+	<?php $bcBaser->url(array('plugin' => 'slug', 'controller' => 'slugs', 'action' => 'ajax_check_name')) ?>
+</div>
+
 <?php echo $bcForm->hidden('Slug.id') ?>
 <?php echo $bcForm->label('Slug.name', 'スラッグ') ?>
 <?php if($slug->jedgeAppearInputSlug($this->data['SlugConfig']['permalink_structure'])): ?>
@@ -28,6 +61,7 @@
 	</ul>
 </div>
 <?php echo $bcForm->error('Slug.name') ?>
+<div id="SlugCheckNameResult"></div>
 
 <?php if($this->action == 'admin_edit'): ?>
 <div class="box-tolink align-left">

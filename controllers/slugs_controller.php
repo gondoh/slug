@@ -134,6 +134,43 @@ class SlugsController extends BaserPluginAppController {
 
 	}
 /**
+ * [ADMIN][AJAX] 重複スラッグをチェックする
+ * blog_content_id が異なるものは重複とみなさない
+ * 
+ * @return void
+ * @access public
+ */
+	function admin_ajax_check_name() {
+
+		Configure::write('debug', 0);
+		$this->layout = null;
+
+		$result = false;
+		if($this->data) {
+			$datas = $this->Slug->find('all', array(
+				'conditions' => array(
+					'Slug.name' => $this->data['Slug']['name'],
+					'Slug.blog_content_id' => $this->data['Slug']['blog_content_id']
+				),
+				'recursive' => -1
+			));
+			if($datas) {
+				$result = true;
+				// 編集対応のため、重複スラッグが存在する場合でも、同じ id のものはOKとみなす
+				foreach ($datas as $key => $data) {
+					if($this->data['Slug']['id'] == $data['Slug']['id']) {
+						$result = false;
+						break;
+					}
+				}
+			}
+		}
+
+		$this->set('result', $result);
+		$this->render('ajax_result');
+
+	}
+/**
  * [ADMIN] 無効状態にする
  * 
  * @param int $id
