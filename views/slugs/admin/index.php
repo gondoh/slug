@@ -61,7 +61,7 @@
 				array('width' => 24, 'height' => 24, 'alt' => '削除', 'class' => 'btn')),
 				array('action' => 'delete', $data['Slug']['id'], $bcForm->value('Slug.id')), 
 				array('title' => '削除', 'class' => 'btn-delete'),
-				sprintf('ID：' . $data['Slug']['id'] . 'のデータを本当に削除してもいいですか？'), false) ?>
+				sprintf('ID：%s のデータを削除して良いですか？', $data['Slug']['id']), false) ?>
 		</td>
 		<td style="width: 45px;"><?php echo $data['Slug']['id']; ?></td>
 		<td>

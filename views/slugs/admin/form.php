@@ -61,7 +61,7 @@ $(window).load(function() {
 	<?php $bcBaser->link('削除',
 		array('action' => 'delete', $bcForm->value('Slug.id')),
 		array('class' => 'btn-gray button'),
-		sprintf('NO.%s のデータを削除して良いですか？', $bcForm->value('Slug.id')),
+		sprintf('ID：%s のデータを削除して良いですか？', $bcForm->value('Slug.id')),
 		false); ?>
 <?php endif ?>
 </div>

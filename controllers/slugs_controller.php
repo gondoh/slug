@@ -77,7 +77,7 @@ class SlugsController extends BaserPluginAppController {
 			$this->set('datas',$datas);
 		}
 
-		$this->pageTitle = '設定済スラッグ一覧';
+		$this->pageTitle = 'スラッグ一覧';
 		$this->search = 'slugs_index';
 		$this->help = 'slugs_index';
 
