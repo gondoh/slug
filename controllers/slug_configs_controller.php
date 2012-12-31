@@ -57,8 +57,7 @@ class SlugConfigsController extends BaserPluginAppController {
 
 		if(!$this->data) {
 
-			$data = $this->SlugConfig->findExpanded();
-			$this->data = array('SlugConfig' => $data);
+			$this->data = array('SlugConfig' => $this->SlugConfig->findExpanded());
 
 		} else {
 
@@ -84,7 +83,6 @@ class SlugConfigsController extends BaserPluginAppController {
 		$this->set('permalink_structure', $this->addSampleShow($this->SlugConfig->permalink_structure));
 		$this->set('ignore_archives', $this->SlugConfig->ignore_archives);
 		$this->pageTitle = 'スラッグプラグイン設定';
-		$this->help = 'slugs_index';
 
 	}
 /**
@@ -92,6 +90,7 @@ class SlugConfigsController extends BaserPluginAppController {
  * 
  * @param array $array
  * @return array
+ * @access public
  */
 	function addSampleShow($array = array()) {
 

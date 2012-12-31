@@ -22,7 +22,7 @@ $(window).load(function() {
 	<?php echo $bcForm->input('Slug.id', array('type' => 'hidden')) ?>
 	<?php echo $bcForm->input('Slug.blog_content_id', array('type' => 'hidden')) ?>
 <?php endif ?>
-<table cellpadding="0" cellspacing="0" class="list-table" id="ListTable">
+<table cellpadding="0" cellspacing="0" class="form-table section" id="ListTable">
 	<tr>
 		<th class="col-head"><?php echo $bcForm->label('Slug.id', 'NO') ?></th>
 		<td class="col-input">
