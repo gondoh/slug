@@ -134,6 +134,122 @@ class SlugsController extends BaserPluginAppController {
 
 	}
 /**
+ * ブログ記事のスラッグを、ブログ別に一括で登録する
+ *   ・スラッグの登録がないブログ記事に登録する
+ *   ・登録するスラッグはブログ記事タイトルを元に行う
+ *   ・登録するスラッグが重複する場合、スラッグには「-重複個数＋１」をつける
+ * 
+ * @return void
+ * @access public
+ */
+	function admin_batch() {
+		
+		if($this->data) {
+			// 既にスラッグ登録のあるブログ記事は除外する
+			// 登録済のスラッグを取得する
+			$slugs = $this->Slug->find('list', array(
+				'conditions' => array('Slug.blog_content_id' => $this->data['Slug']['blog_content_id']),
+				'fields' => 'blog_post_id',
+				'recursive' => -1));
+			// スラッグの登録がないブログ記事を取得する
+			$BlogPostModel = ClassRegistry::init('Blog.BlogPost');
+			if($slugs) {
+				$datas = $BlogPostModel->find('all', array(
+					'conditions' => array(
+						'NOT' => array('BlogPost.id' => $slugs),
+						'BlogPost.blog_content_id' => $this->data['Slug']['blog_content_id']),
+					'fields' => array('id', 'no', 'name'),
+					'recursive' => -1));
+			} else {
+				$datas = $BlogPostModel->find('all', array(
+					'conditions' => array(
+						'BlogPost.blog_content_id' => $this->data['Slug']['blog_content_id']),
+					'fields' => array('id', 'no', 'name'),
+					'recursive' => -1));
+			}
+
+			if($datas) {
+				// スラッグを保存した数を初期化
+				$count = 0;
+				foreach ($datas as $data) {
+					$this->data['Slug']['blog_post_id'] = $data['BlogPost']['id'];
+					$this->data['Slug']['blog_post_no'] = $data['BlogPost']['no'];
+					$this->data['Slug']['name'] = $data['BlogPost']['name'];
+					$this->Slug->create($this->data);
+					if($this->Slug->save($this->data, false)) {
+						$count++;
+					} else {
+						$this->log('ID:' . $data['BlogPost']['id'] . 'のブログ記事のスラッグ登録に失敗');
+					}
+
+					// 重複スラッグを探索して、重複していれば重複個数＋１をつける
+					$duplicateDatas = $this->Slug->find('all', array(
+						'conditions' => array(
+							'NOT' => array('Slug.id' => $this->Slug->getLastInsertId()),
+							'Slug.name' => $this->data['Slug']['name'],
+							'Slug.blog_content_id' => $this->data['Slug']['blog_content_id']
+						),
+						'recursive' => -1
+					));
+					if($duplicateDatas) {
+						$saveData = $this->Slug->read(null, $this->Slug->getLastInsertId());
+						$countData = count($duplicateDatas);
+						$countData = $countData + 1;
+						$saveData['Slug']['name'] = $saveData['Slug']['name'] . '-' . $countData;
+						$this->Slug->set($saveData);
+						$this->Slug->save($saveData, false);
+					}
+				}
+			}
+
+			$this->Session->setFlash($count . '件のスラッグを登録しました。');
+		}
+		unset($slugs);
+		unset($datas);
+		unset($data);
+
+		// ブログ情報を取得
+		$BlogContentModel = ClassRegistry::init('Blog.BlogContent');
+		$blogContentDatas = $BlogContentModel->find('list', array('recursive' => -1));
+
+		$registerd = array();
+		foreach ($blogContentDatas as $key => $blog) {
+			// $key : blog_content_id
+			// 登録済のスラッグを取得する
+			$slugs = $this->Slug->find('list', array(
+				'conditions' => array('Slug.blog_content_id' => $key),
+				'fields' => 'blog_post_id',
+				'recursive' => -1));
+			// スラッグの登録がないブログ記事を取得する
+			$BlogPostModel = ClassRegistry::init('Blog.BlogPost');
+			if($slugs) {
+				$datas = $BlogPostModel->find('all', array(
+					'conditions' => array(
+						'NOT' => array('BlogPost.id' => $slugs),
+						'BlogPost.blog_content_id' => $key),
+					'fields' => array('id', 'no', 'name'),
+					'recursive' => -1));
+			} else {
+				$datas = $BlogPostModel->find('all', array(
+					'conditions' => array(
+						'BlogPost.blog_content_id' => $key),
+					'fields' => array('id', 'no', 'name'),
+					'recursive' => -1));
+			}
+
+			$registerd[] = array(
+				'name' => $blog,
+				'slug' => count($datas)
+			);
+		}
+
+		$this->set('registerd', $registerd);
+		$this->set('blogContentDatas', $blogContentDatas);
+
+		$this->pageTitle = 'スラッグ一括設定';
+
+	}
+/**
  * [ADMIN][AJAX] 重複スラッグをチェックする
  * blog_content_id が異なるものは重複とみなさない
  * 
