@@ -151,11 +151,45 @@ class SlugHookComponent extends Object {
 	function beforeRender($controller) {
 
 		if($controller->name == 'BlogPosts') {
+
 			// ブログ記事編集・追加画面で実行
 			// TODO startup で処理したかったが、$controller->data に入れるとそれを全て上書きしてしまうのでダメだった
 			if($controller->action == 'admin_edit' || $controller->action == 'admin_add') {
 				$controller->data['SlugConfig'] = $this->slugConfigs['SlugConfig'];
 			}
+
+			// Ajaxコピー処理時に実行
+			//   ・Ajax削除時は、内部的に Model->delete が呼ばれているため afterDelete で処理可能
+			if($controller->action == 'admin_ajax_copy') {
+				// ブログ記事コピー保存時にエラーがなければ保存処理を実行
+				if(empty($controller->BlogPost->validationErrors)) {
+					$slugDate = array();
+					$slugDate['Slug']['blog_content_id'] = $controller->viewVars['data']['BlogPost']['blog_content_id'];
+					$slugDate['Slug']['blog_post_no'] = $controller->viewVars['data']['BlogPost']['no'];
+					$slugDate['Slug']['name'] = $controller->viewVars['data']['BlogPost']['name'];
+					$slugDate['Slug']['blog_post_id'] = $controller->viewVars['data']['BlogPost']['id'];
+
+					// 重複スラッグを探索して、重複していれば重複個数＋１をつける
+					$duplicateDatas = $this->SlugModel->find('all', array(
+						'conditions' => array(
+							'Slug.name' => $slugDate['Slug']['name'],
+							'Slug.blog_content_id' => $slugDate['Slug']['blog_post_id']
+						),
+						'recursive' => -1
+					));
+					if($duplicateDatas) {
+						$countData = count($duplicateDatas);
+						$countData = $countData + 1;
+						$slugDate['Slug']['name'] = $slugDate['Slug']['name'] . '-' . $countData;
+					}
+
+					$this->SlugModel->create($slugDate);
+					$this->SlugModel->save($slugDate, false);
+					// キャッシュの削除を行わないと、登録したスラッグがブログ記事編集画面に反映されない
+					clearAllCache();
+				}
+			}
+
 		}
 
 		// blogPosts、ブログのindex、ブログのarchives で実行
