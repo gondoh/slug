@@ -116,34 +116,56 @@ class SlugHookHelper extends AppHelper {
 				$no = $parseUrl['pass']['1'];
 			}
 
-			$judgeArchiveTag = false;
-			if($parseUrl['pass']['0'] != 'tag') {
-				$SlugModel = ClassRegistry::init('Slug.Slug');
+			$judgeArchives = false;
+			if($parseUrl['pass']['0'] == 'tag' || $parseUrl['pass']['0'] == 'date') {
+				$judgeArchives = true;
+			}
+
+			if(!$judgeArchives) {
 				if($pluginContent) {
 					$blogContentId = $pluginContent['content_id'];
 				} else {
 					$blogContentId = $this->View->viewVars['blogContent']['BlogContent']['id'];
 				}
-				$conditions = array(
+
+				/*$conditions = array(
 					'Slug.blog_content_id'	=> $blogContentId,
 					'Slug.blog_post_no'		=> $no
 				);
+				$SlugModel = ClassRegistry::init('Slug.Slug');
 				$data = $SlugModel->find('first', array('conditions' => $conditions));
-				// ブログ記事 No が入ってきてスラッグが取得できた場合
-				// ※ ブログ記事前後移動
+				if($data) {
+					$no = $this->Slug->getSlugName($data['Slug'], $data['BlogPost']);
+				}*/
+
+				$conditions = array(
+					'BlogPost.blog_content_id'	=> $blogContentId,
+					'BlogPost.no'		=> $no
+				);
+				$BlogPostModel = ClassRegistry::init('Blog.BlogPost');
+				$data = $BlogPostModel->find('first', array(
+					'conditions' => $conditions,
+					'recursive' => 1));
 				if($data) {
 					$no = $this->Slug->getSlugName($data['Slug'], $data['BlogPost']);
 				}
-			} else {
-				$judgeArchiveTag = true;
+				unset($BlogPostModel);
+				unset($data);
 			}
+
 		}
 
 		$pattern = '/href\=\"(.+)\/archives\/(.+)\"/';
 		if(!empty($no)) {
-			// タグへのリンクの際は tag/ を付加する
-			if($judgeArchiveTag) {
-				$no = 'tag' . DS . $no;
+			if($judgeArchives) {
+				// タグへのリンクの際は tag/ を付加する
+				if($parseUrl['pass']['0'] == 'tag') {
+					$no = 'tag' . DS . $no;
+				}
+				// 年別へのリンクの際は date/ を付加する
+				if($parseUrl['pass']['0'] == 'date') {
+					$no = 'date' . DS . $no;
+				}
 			}
 			if($this->slugConfigs['SlugConfig']['ignore_archives'] === '1') {
 				$out = preg_replace($pattern, 'href="$1' . DS . $no . '"', $out);

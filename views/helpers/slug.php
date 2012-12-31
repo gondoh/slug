@@ -42,6 +42,10 @@ class SlugHelper extends AppHelper {
  */
 	function getSlugName($data, $post) {
 
+		if(empty($data['name'])) {
+			$data['name'] = $post['no'];
+		}
+
 		switch ($this->slugConfigs['SlugConfig']['permalink_structure']) {
 			case 1:	// スラッグ
 				$this->slugName = $data['name'];
@@ -155,7 +159,6 @@ class SlugHelper extends AppHelper {
  */
 	function getBlogContentData($blogContentId = null) {
 
-		$data = array();
 		$BlogContent = ClassRegistry::init('Blog.BlogContent');
 		$data = $BlogContent->find('first', array(
 				'conditions' => array('BlogContent.id' => $blogContentId),
