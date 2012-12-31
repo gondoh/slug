@@ -30,7 +30,10 @@ class SlugHookBehavior extends ModelBehavior {
 		// ブログ記事削除時、そのブログ記事が持つスラッグを削除する
 		if($model->alias == 'BlogPost') {
 			$SlugModel = ClassRegistry::init('Slug.Slug');
-			$data = $SlugModel->find('first', array('conditions' => array('Slug.blog_post_id' => $model->id)));
+			$data = $SlugModel->find('first', array(
+				'conditions' => array('Slug.blog_post_id' => $model->id),
+				'recursive' => -1
+			));
 			if($data) {
 				if(!$SlugModel->delete($data['Slug']['id'])) {
 					$this->log('ID:' . $data['Slug']['id'] . 'のスラッグの削除に失敗しました。');
