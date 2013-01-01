@@ -68,7 +68,7 @@ class Slug extends BaserPluginAppModel {
 			if($datas) {
 				$result = false;
 				// 編集対応のため、重複スラッグが存在する場合でも、同じ id のものはOKとみなす
-				foreach ($datas as $key => $data) {
+				foreach ($datas as $data) {
 					if($this->data['Slug']['id'] == $data['Slug']['id']) {
 						$result = true;
 						break;

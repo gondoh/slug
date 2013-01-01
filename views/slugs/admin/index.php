@@ -48,7 +48,7 @@
 		</thead>
 	<tbody>
 <?php if(!empty($datas)): ?>
-	<?php foreach($datas as $key => $data): ?>
+	<?php foreach($datas as $data): ?>
 	<tr>
 		<td class="row-tools">
 		<?php // ブログ記事編集画面へ移動 ?>
