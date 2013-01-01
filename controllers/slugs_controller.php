@@ -183,19 +183,10 @@ class SlugsController extends BaserPluginAppController {
 					}
 
 					// 重複スラッグを探索して、重複していれば重複個数＋１をつける
-					$duplicateDatas = $this->Slug->find('all', array(
-						'conditions' => array(
-							'NOT' => array('Slug.id' => $this->Slug->getLastInsertId()),
-							'Slug.name' => $this->data['Slug']['name'],
-							'Slug.blog_content_id' => $this->data['Slug']['blog_content_id']
-						),
-						'recursive' => -1
-					));
+					$duplicateDatas = $this->Slug->searchDuplicateSlug($this->data, $this->Slug->getLastInsertId());
 					if($duplicateDatas) {
 						$saveData = $this->Slug->read(null, $this->Slug->getLastInsertId());
-						$countData = count($duplicateDatas);
-						$countData = $countData + 1;
-						$saveData['Slug']['name'] = $saveData['Slug']['name'] . '-' . $countData;
+						$saveData['Slug']['name'] = $this->SlugModel->makeSlugName($duplicateDatas, $saveData);
 						$this->Slug->set($saveData);
 						$this->Slug->save($saveData, false);
 					}
@@ -273,7 +264,7 @@ class SlugsController extends BaserPluginAppController {
 			if($datas) {
 				$result = false;
 				// 編集対応のため、重複スラッグが存在する場合でも、同じ id のものはOKとみなす
-				foreach ($datas as $key => $data) {
+				foreach ($datas as $data) {
 					if($this->data['Slug']['id'] == $data['Slug']['id']) {
 						$result = true;
 						break;

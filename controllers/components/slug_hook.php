@@ -170,17 +170,9 @@ class SlugHookComponent extends Object {
 					$slugDate['Slug']['blog_post_id'] = $controller->viewVars['data']['BlogPost']['id'];
 
 					// 重複スラッグを探索して、重複していれば重複個数＋１をつける
-					$duplicateDatas = $this->SlugModel->find('all', array(
-						'conditions' => array(
-							'Slug.name' => $slugDate['Slug']['name'],
-							'Slug.blog_content_id' => $slugDate['Slug']['blog_post_id']
-						),
-						'recursive' => -1
-					));
+					$duplicateDatas = $this->SlugModel->searchDuplicateSlug($slugDate);
 					if($duplicateDatas) {
-						$countData = count($duplicateDatas);
-						$countData = $countData + 1;
-						$slugDate['Slug']['name'] = $slugDate['Slug']['name'] . '-' . $countData;
+						$slugDate['Slug']['name'] = $this->SlugModel->makeSlugName($duplicateDatas, $slugDate);
 					}
 
 					$this->SlugModel->create($slugDate);
@@ -274,31 +266,28 @@ class SlugHookComponent extends Object {
 
 		if($controller->action == 'admin_add') {
 			$controller->data['Slug']['blog_post_id'] = $controller->BlogPost->getLastInsertId();
+			// 重複スラッグを探索して、重複していれば重複個数＋１をつける
+			$duplicateDatas = $this->SlugModel->searchDuplicateSlug($controller->data);
+			if($duplicateDatas) {
+				$controller->data['Slug']['name'] = $this->SlugModel->makeSlugName($duplicateDatas, $controller->data);
+			}
 		} else {
 			$controller->data['Slug']['blog_post_id'] = $controller->BlogPost->id;
+			// 重複スラッグを探索して、重複していれば重複個数＋１をつける
+			$duplicateDatas = $this->SlugModel->searchDuplicateSlug($controller->data, $controller->data['Slug']['id']);
+			if($duplicateDatas) {
+				$controller->data['Slug']['name'] = $this->SlugModel->makeSlugName($duplicateDatas, $controller->data);
+			}
 		}
-
-		// TODO 重複スラッグを探索して、重複していれば重複個数＋１をつける
-		/*$data = $this->SlugModel->find('all', array(
-			'conditions' => array(
-				'Slug.name' => $controller->data['Slug']['name']
-			))
-		);
-		if($data) {
-			$countData = count($data);
-			$countData = $countData + 1;
-			$controller->data['Slug']['name'] = $controller->data['Slug']['name'] . '-' . $countData;
-		}
-		unset($data);*/
 
 		if(empty($controller->data['Slug']['id'])) {
 			$this->SlugModel->create($controller->data['Slug']);
 		} else {
 			$this->SlugModel->set($controller->data['Slug']);
 		}
-		// TODO バリデーションエラー時の処理を考える
-		if(!$this->SlugModel->save()) {
-			// $SlugModel->validationErrors;
+
+		if(!$this->SlugModel->save($controller->data['Slug'], false)) {
+			$this->log('ブログ記事ID：' . $controller->data['Slug']['blog_post_id'] . 'のスラッグ情報保存に失敗しました。');
 		}
 
 	}
