@@ -20,6 +20,7 @@ $(window).load(function() {
 <?php else: ?>
 	<?php echo $bcForm->create('Slug', array('url' => array('action' => 'edit'))) ?>
 	<?php echo $bcForm->input('Slug.id', array('type' => 'hidden')) ?>
+	<?php echo $bcForm->input('Slug.blog_post_id', array('type' => 'hidden')) ?>
 	<?php echo $bcForm->input('Slug.blog_content_id', array('type' => 'hidden')) ?>
 <?php endif ?>
 <table cellpadding="0" cellspacing="0" class="form-table section" id="ListTable">
@@ -34,13 +35,6 @@ $(window).load(function() {
 		<td class="col-input">
 			<?php echo $bcForm->input('Slug.name', array('type' => 'text', 'size' => 40, 'maxlength' => 255, 'counter' => true)) ?>
 			<?php echo $bcForm->error('Slug.name') ?>
-		</td>
-	</tr>
-	<tr>
-		<th class="col-head"><?php echo $bcForm->label('Slug.created', '登録日') ?></th>
-		<td class="col-input">
-			<?php echo $bcForm->value('Slug.created') ?>
-			<?php echo $bcForm->input('Slug.created', array('type' => 'hidden')) ?>
 		</td>
 	</tr>
 	<tr>
