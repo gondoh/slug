@@ -175,9 +175,9 @@ class SlugsController extends BaserPluginAppController {
 					'recursive' => -1));
 			}
 
+			// スラッグを保存した数を初期化
+			$count = 0;
 			if($datas) {
-				// スラッグを保存した数を初期化
-				$count = 0;
 				foreach ($datas as $data) {
 					$this->data['Slug']['blog_post_id'] = $data['BlogPost']['id'];
 					$this->data['Slug']['blog_post_no'] = $data['BlogPost']['no'];
@@ -193,7 +193,7 @@ class SlugsController extends BaserPluginAppController {
 					$duplicateDatas = $this->Slug->searchDuplicateSlug($this->data, $this->Slug->getLastInsertId());
 					if($duplicateDatas) {
 						$saveData = $this->Slug->read(null, $this->Slug->getLastInsertId());
-						$saveData['Slug']['name'] = $this->SlugModel->makeSlugName($duplicateDatas, $saveData);
+						$saveData['Slug']['name'] = $this->Slug->makeSlugName($duplicateDatas, $saveData);
 						$this->Slug->set($saveData);
 						$this->Slug->save($saveData, false);
 					}
