@@ -47,7 +47,11 @@
 
 <div class="submit">
 	<?php if($blogContentDatas): ?>
-		<?php echo $bcForm->submit('一括設定する', array('div' => false, 'class' => 'btn-red button', 'id' => 'BtnSubmit')) ?>
+		<?php echo $bcForm->submit('一括設定する', array(
+			'div' => false,
+			'class' => 'btn-red button',
+			'id' => 'BtnSubmit',
+			'onClick'=>"return confirm('スラッグの一括設定を行いますが良いですか？')")) ?>
 	<?php else: ?>
 		ブログがないために設定できません。
 	<?php endif ?>
