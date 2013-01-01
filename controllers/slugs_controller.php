@@ -62,10 +62,12 @@ class SlugsController extends BaserPluginAppController {
  */
 	function admin_index() {
 
-		$default = array('named' => array(
-			'num' => $this->siteConfigs['admin_list_num'])
-		);
+		$default = array(
+			'named' => array(
+				'num' => $this->siteConfigs['admin_list_num'],
+				'sortmode' => 0));
 		$this->setViewConditions('Slug', array('default' => $default));
+
 		$conditions = $this->_createAdminIndexConditions($this->data);
 		$this->paginate = array(
 			'conditions'	=> $conditions,
@@ -76,6 +78,11 @@ class SlugsController extends BaserPluginAppController {
 		if($datas) {
 			$this->set('datas',$datas);
 		}
+
+		// ブログ情報を取得
+		$BlogContentModel = ClassRegistry::init('Blog.BlogContent');
+		$blogContentDatas = $BlogContentModel->find('list', array('recursive' => -1));
+		$this->set('blogContentDatas', array('0' => '指定しない') + $blogContentDatas);
 
 		$this->pageTitle = 'スラッグ一覧';
 		$this->search = 'slugs_index';
@@ -242,7 +249,7 @@ class SlugsController extends BaserPluginAppController {
 	}
 /**
  * [ADMIN][AJAX] 重複スラッグをチェックする
- * blog_content_id が異なるものは重複とみなさない
+ *   ・blog_content_id が異なるものは重複とみなさない
  * 
  * @return void
  * @access public
@@ -354,12 +361,18 @@ class SlugsController extends BaserPluginAppController {
 
 		$conditions = array();
 		$name = '';
+		$blogContentId = '';
+
 		if(isset($data['Slug']['name'])) {
 			$name = $data['Slug']['name'];
 		}
-		
+		if(isset($data['Slug']['blog_content_id'])) {
+			$blogContentId = $data['Slug']['blog_content_id'];
+		}
+
 		unset($data['_Token']);
 		unset($data['Slug']['name']);
+		unset($data['Slug']['blog_content_id']);
 
 		// 条件指定のないフィールドを解除
 		foreach($data['Slug'] as $key => $value) {
@@ -375,6 +388,11 @@ class SlugsController extends BaserPluginAppController {
 		if($name) {
 			$conditions[] = array(
 				'Slug.name LIKE' => '%'.$name.'%'
+			);
+		}
+		if($blogContentId) {
+			$conditions['and'] = array(
+				'Slug.blog_content_id' => $blogContentId
 			);
 		}
 
