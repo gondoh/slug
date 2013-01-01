@@ -21,7 +21,10 @@
 						'id', array('escape' => false, 'class' => 'btn-direction')) ?>
 				</th>
 				<th>
-					ブログ名
+					<?php echo $paginator->sort(array(
+						'asc' => $bcBaser->getImg('admin/blt_list_down.png', array('alt' => '昇順', 'title' => '昇順')).' ブログ名',
+						'desc' => $bcBaser->getImg('admin/blt_list_up.png', array('alt' => '降順', 'title' => '降順')).' ブログ名'),
+						'blog_content_id', array('escape' => false, 'class' => 'btn-direction')) ?>
 				</th>
 				<th>
 					<?php echo $paginator->sort(array(
