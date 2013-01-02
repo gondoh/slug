@@ -16,15 +16,8 @@
 	<?php echo $bcForm->input('SlugConfig.id', array('type' => 'hidden')) ?>
 <?php endif ?>
 
+<h2><?php echo $blogContentDatas[$this->data['SlugConfig']['blog_content_id']] ?></h2>
 <table cellpadding="0" cellspacing="0" class="form-table section" id="ListTable">
-	<tr>
-		<th class="col-head">
-			ブログ
-		</th>
-		<td class="col-input">
-			<?php echo $blogContentDatas[$this->data['SlugConfig']['blog_content_id']] ?>
-		</td>
-	</tr>
 	<tr>
 		<th class="col-head">
 			<?php echo $bcForm->label('SlugConfig.permalink_structure', 'スラッグ構造') ?>
@@ -51,7 +44,7 @@
 			</div>
 		</th>
 		<td class="col-input">
-			<?php echo $bcForm->input('SlugConfig.ignore_archives', array('type' => 'radio', 'options' => $ignore_archives)) ?>
+			<?php echo $bcForm->input('SlugConfig.ignore_archives', array('type' => 'radio', 'options' => $bcText->booleanDoList('省略'))) ?>
 			<?php echo $bcForm->error('SlugConfig.ignore_archives') ?>
 		</td>
 	</tr>

@@ -65,7 +65,7 @@
 			<?php echo $permalink_structure[$data['SlugConfig']['permalink_structure']] ?>
 		</td>
 		<td>
-			<?php echo $ignore_archives[$data['SlugConfig']['ignore_archives']] ?>
+			<?php echo $bcText->booleanDo($data['SlugConfig']['ignore_archives'], '省略') ?>
 		</td>
 		<td style="white-space: nowrap">
 			<?php echo $bcTime->format('Y-m-d', $data['SlugConfig']['created']) ?>
