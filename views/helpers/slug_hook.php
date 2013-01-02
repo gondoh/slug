@@ -43,7 +43,7 @@ class SlugHookHelper extends AppHelper {
 	function __construct() {
 		parent::__construct();
 		$SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
-		$this->slugConfigs = array('SlugConfig' => $SlugConfigModel->findExpanded());
+		$this->slugConfigs = $SlugConfigModel->read();
 		$this->View = ClassRegistry::getObject('view');
 
 		App::import('Helper', 'Slug.Slug');
@@ -167,13 +167,13 @@ class SlugHookHelper extends AppHelper {
 					$no = 'date' . DS . $no;
 				}
 			}
-			if($this->slugConfigs['SlugConfig']['ignore_archives'] === '1') {
+			if($this->slugConfigs['SlugConfig']['ignore_archives']) {
 				$out = preg_replace($pattern, 'href="$1' . DS . $no . '"', $out);
 			} else {
 				$out = preg_replace($pattern, 'href="$1' . '/archives/' . $no . '"', $out);
 			}
 		} else {
-			if($this->slugConfigs['SlugConfig']['ignore_archives'] === '1') {
+			if($this->slugConfigs['SlugConfig']['ignore_archives']) {
 				$out = preg_replace($pattern, 'href="$1' . DS . '$2' . '"', $out);
 			}
 		}

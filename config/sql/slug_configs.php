@@ -1,13 +1,6 @@
-<?php
-/**
- * [ADMIN] slug
- *
- * @copyright		Copyright 2012, materializing.
- * @link			http://www.materializing.net/
- * @author			arata
- * @package			slug.config
- * @license			MIT
- */
+<?php 
+/* SVN FILE: $Id$ */
+/* SlugConfigs schema generated on: 2013-01-03 08:01:03 : 1357167843*/
 class SlugConfigsSchema extends CakeSchema {
 	var $name = 'SlugConfigs';
 
@@ -24,10 +17,12 @@ class SlugConfigsSchema extends CakeSchema {
 
 	var $slug_configs = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
-		'name' => array('type' => 'string', 'null' => true, 'default' => NULL),
-		'value' => array('type' => 'text', 'null' => true, 'default' => NULL),
+		'blog_content_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 1),
+		'permalink_structure' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 1),
+		'ignore_archives' => array('type' => 'boolean', 'null' => true, 'default' => NULL),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1))
 	);
 }
+?>

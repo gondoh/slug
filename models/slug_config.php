@@ -39,9 +39,5 @@ class SlugConfig extends BaserPluginAppModel {
 		// TODO カテゴリ名＋スラッグ機能の作成
 		//'6' => 'カテゴリとスラッグ'
 	);
-	var $ignore_archives = array(
-		'0' => '省略しない',
-		'1' => '省略する'
-	);
 
 }

@@ -57,7 +57,7 @@ class SlugHookComponent extends Object {
 		parent::__construct();
 
 		$SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
-		$this->slugConfigs = array('SlugConfig' => $SlugConfigModel->findExpanded());
+		$this->slugConfigs = $SlugConfigModel->read();
 		$this->SlugModel = ClassRegistry::init('Slug.Slug');
 
 		App::import('Helper', 'Slug.Slug');

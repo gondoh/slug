@@ -46,7 +46,6 @@ class SlugConfigsController extends SlugAppController {
 	function admin_index() {
 
 		$this->set('permalink_structure', $this->addSampleShow($this->SlugConfig->permalink_structure));
-		$this->set('ignore_archives', $this->SlugConfig->ignore_archives);
 
 		$this->pageTitle = 'スラッグ設定一覧';
 		$this->search = 'slug_configs_index';
@@ -65,7 +64,6 @@ class SlugConfigsController extends SlugAppController {
 	function admin_edit($id = null) {
 
 		$this->set('permalink_structure', $this->addSampleShow($this->SlugConfig->permalink_structure));
-		$this->set('ignore_archives', $this->SlugConfig->ignore_archives);
 
 		$this->pageTitle = 'スラッグ設定編集';
 
@@ -106,7 +104,7 @@ class SlugConfigsController extends SlugAppController {
 				if(!$slugConfigData) {
 					$this->data['SlugConfig']['blog_content_id'] = $blog['BlogContent']['id'];
 					$this->data['SlugConfig']['permalink_structure'] = 0;
-					$this->data['SlugConfig']['ignore_archives'] = 0;
+					$this->data['SlugConfig']['ignore_archives'] = false;
 					$this->SlugConfig->create($this->data);
 					if(!$this->SlugConfif->save($this->data, false)) {
 						$this->log(sprintf('ブログID：%s の登録に失敗しました。', $blog['BlogContent']['id']));

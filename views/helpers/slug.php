@@ -30,7 +30,7 @@ class SlugHelper extends AppHelper {
 	function __construct() {
 		parent::__construct();
 		$SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
-		$this->slugConfigs = array('SlugConfig' => $SlugConfigModel->findExpanded());
+		$this->slugConfigs = $SlugConfigModel->read();
 	}
 /**
  * スラッグを定義する
@@ -103,7 +103,7 @@ class SlugHelper extends AppHelper {
 	function getSlugUrl($slug, $data){
 
 		$actionName = '/archives';
-		if($this->slugConfigs['SlugConfig']['ignore_archives'] === '1') {
+		if($this->slugConfigs['SlugConfig']['ignore_archives']) {
 			$actionName = '';
 		}
 
@@ -182,7 +182,7 @@ class SlugHelper extends AppHelper {
 	function category($post = array(), $options = array()) {
 
 		$out = $this->Blog->getCategory($post, $options);
-		if($this->slugConfigs['SlugConfig']['ignore_archives'] === '1') {
+		if($this->slugConfigs['SlugConfig']['ignore_archives']) {
 			$pattern = '/href\=\"(.+)\/archives\/(.+)\"/';
 			$out = preg_replace($pattern, 'href="$1' . '/$2' . '"', $out);
 		}
@@ -215,7 +215,7 @@ class SlugHelper extends AppHelper {
 		}
 		if($moreLink && trim($post['BlogPost']['detail']) && trim($post['BlogPost']['detail']) != "<br>") {
 			$moreLinkHtml = '<p class="more">'.$this->Html->link($moreLink, array('admin'=>false,'plugin'=>'', 'controller'=>$this->Blog->blogContent['name'],'action'=>'archives', $post['BlogPost']['no'],'#'=>'post-detail'), null,null,false).'</p>';
-			if($this->slugConfigs['SlugConfig']['ignore_archives'] === '1') {
+			if($this->slugConfigs['SlugConfig']['ignore_archives']) {
 				$pattern = '/href\=\"(.+)\/archives\/(.+)\"/';
 				$moreLinkHtml = preg_replace($pattern, 'href="$1' . '/$2' . '"', $moreLinkHtml);
 			}
@@ -239,7 +239,7 @@ class SlugHelper extends AppHelper {
 	function getCategoryList($categories, $depth=3, $count = false, $options = array()) {
 
 		$out = $this->Blog->_getCategoryList($categories,$depth, 1, $count, $options);
-		if($this->slugConfigs['SlugConfig']['ignore_archives'] === '1') {
+		if($this->slugConfigs['SlugConfig']['ignore_archives']) {
 			$pattern = '/href\=\"(.+?)\/archives\/(.+?)\"/';
 			$out = preg_replace($pattern, 'href="$1' . '/$2' . '"', $out);
 		}
