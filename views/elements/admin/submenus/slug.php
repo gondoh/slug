@@ -14,8 +14,16 @@
 	<td>
 		<ul>
 			<li><?php $bcBaser->link('スラッグ一覧', array('plugin' => 'slug', 'admin' => true, 'controller' => 'slugs', 'action'=>'index')) ?></li>
-			<li><?php $bcBaser->link('スラッグ設定', array('plugin' => 'slug', 'admin' => true, 'controller' => 'slug_configs', 'action'=>'index')) ?></li>
 			<li><?php $bcBaser->link('スラッグ一括設定', array('plugin' => 'slug', 'admin' => true, 'controller' => 'slugs', 'action'=>'batch')) ?></li>
+		</ul>
+	</td>
+</tr>
+<tr>
+	<th>スラッグ設定管理メニュー</th>
+	<td>
+		<ul>
+			<li><?php $bcBaser->link('スラッグ設定', array('plugin' => 'slug', 'admin' => true, 'controller' => 'slug_configs', 'action'=>'index')) ?></li>
+			<li><?php $bcBaser->link('スラッグ設定データ作成', array('plugin' => 'slug', 'admin' => true, 'controller' => 'slug_configs', 'action'=>'first')) ?></li>
 		</ul>
 	</td>
 </tr>
