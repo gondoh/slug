@@ -8,7 +8,11 @@
  * @package			slug.controllers
  * @license			MIT
  */
-class SlugsController extends BaserPluginAppController {
+/**
+ * Include files
+ */
+App::import('Controller', 'Slug.SlugApp');
+class SlugsController extends SlugAppController {
 /**
  * コントローラー名
  * 
@@ -24,27 +28,6 @@ class SlugsController extends BaserPluginAppController {
  */
 	var $uses = array('Slug.Slug');
 /**
- * ヘルパー
- *
- * @var array
- * @access public
- */
-	var $helpers = array('Blog.Blog');
-/**
- * コンポーネント
- * 
- * @var     array
- * @access  public
- */
-	var $components = array('BcAuth', 'Cookie', 'BcAuthConfigure');
-/**
- * サブメニューエレメント
- *
- * @var array
- * @access public
- */
-	var $subMenuElements = array('slug');
-/**
  * ぱんくずナビ
  *
  * @var string
@@ -55,38 +38,18 @@ class SlugsController extends BaserPluginAppController {
 		array('name' => 'スラッグ管理', 'url' => array('plugin' => 'slug', 'controller' => 'slugs', 'action' => 'index'))
 	);
 /**
- * [ADMIN] スラッグ一覧表示
+ * [ADMIN] スラッグ一覧
  * 
  * @return void
  * @access public
  */
 	function admin_index() {
 
-		$default = array(
-			'named' => array(
-				'num' => $this->siteConfigs['admin_list_num'],
-				'sortmode' => 0));
-		$this->setViewConditions('Slug', array('default' => $default));
-
-		$conditions = $this->_createAdminIndexConditions($this->data);
-		$this->paginate = array(
-			'conditions'	=> $conditions,
-			'fields'		=> array(),
-			'limit'			=> $this->passedArgs['num']
-		);
-		$datas = $this->paginate();
-		if($datas) {
-			$this->set('datas',$datas);
-		}
-
-		// ブログ情報を取得
-		$BlogContentModel = ClassRegistry::init('Blog.BlogContent');
-		$blogContentDatas = $BlogContentModel->find('list', array('recursive' => -1));
-		$this->set('blogContentDatas', array('0' => '指定しない') + $blogContentDatas);
-
 		$this->pageTitle = 'スラッグ一覧';
 		$this->search = 'slugs_index';
 		$this->help = 'slugs_index';
+
+		parent::admin_index();
 
 	}
 /**
@@ -98,24 +61,9 @@ class SlugsController extends BaserPluginAppController {
  */
 	function admin_edit($id = null) {
 
-		if(!$id) {
-			$this->Session->setFlash('無効な処理です。');
-			$this->redirect(array('action' => 'index'));			
-		}
-		if(empty($this->data)) {
-			$this->data = $this->Slug->read(null, $id);
-		} else {
-			$this->Slug->set($this->data);
-			if ($this->Slug->save()) {
-				$this->Session->setFlash('更新が完了しました。');
-				$this->redirect(array('action' => 'index'));
-			} else {
-				$this->Session->setFlash('入力エラーです。内容を修正して下さい。');
-			}
-		}
-
 		$this->pageTitle = 'スラッグ編集';
-		$this->render('form');
+
+		parent::admin_edit($id);
 
 	}
 /**
@@ -127,17 +75,7 @@ class SlugsController extends BaserPluginAppController {
  */
 	function admin_delete($id = null) {
 
-		if(!$id) {
-			$this->Session->setFlash('無効な処理です。');
-			$this->redirect(array('action' => 'index'));
-		}
-		if($this->Slug->delete($id)) {
-			$this->Session->setFlash('NO.' . $id . 'のデータを削除しました。');
-			$this->redirect(array('action' => 'index'));
-		} else {
-			$this->Session->setFlash('データベース処理中にエラーが発生しました。');
-		}
-		$this->redirect(array('action' => 'index'));
+		parent::admin_delete($id);
 
 	}
 /**

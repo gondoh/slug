@@ -59,8 +59,7 @@
 		</td>
 		<td style="width: 45px;"><?php echo $data['SlugConfig']['id']; ?></td>
 		<td>
-			<?php $blogContentData = $slug->getBlogContentData($data['SlugConfig']['blog_content_id']) ?>
-			<?php echo $bcBaser->link($blogContentData['BlogContent']['title'], array('action' => 'edit', $data['SlugConfig']['id']), array('title' => '編集')) ?>
+			<?php echo $bcBaser->link($blogContentDatas[$data['SlugConfig']['blog_content_id']], array('action' => 'edit', $data['SlugConfig']['id']), array('title' => '編集')) ?>
 		</td>
 		<td>
 			<?php echo $permalink_structure[$data['SlugConfig']['permalink_structure']] ?>

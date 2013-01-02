@@ -40,8 +40,8 @@ $(window).load(function() {
 	<tr>
 		<th class="col-head">ブログ名</th>
 		<td class="col-input">
-			<ul><?php $blogContentData = $slug->getBlogContentData($bcForm->value('Slug.blog_content_id')) ?>
-				<li><?php echo $blogContentData['BlogContent']['title'] ?></li>
+			<ul>
+				<li><?php echo $blogContentDatas[$bcForm->value('Slug.blog_content_id')] ?></li>
 			</ul>
 		</td>
 	</tr>

@@ -16,15 +16,13 @@
 	<?php echo $bcForm->input('SlugConfig.id', array('type' => 'hidden')) ?>
 <?php endif ?>
 
-<?php echo $bcForm->create('SlugConfig', array('action' => 'index')) ?>
 <table cellpadding="0" cellspacing="0" class="form-table section" id="ListTable">
 	<tr>
 		<th class="col-head">
 			ブログ
 		</th>
 		<td class="col-input">
-			<?php $blogContentData = $slug->getBlogContentData($this->data['SlugConfig']['blog_content_id']) ?>
-			<?php echo $blogContentData['BlogContent']['title'] ?>
+			<?php echo $blogContentDatas[$this->data['SlugConfig']['blog_content_id']] ?>
 		</td>
 	</tr>
 	<tr>

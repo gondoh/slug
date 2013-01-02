@@ -68,8 +68,7 @@
 		</td>
 		<td style="width: 45px;"><?php echo $data['Slug']['id']; ?></td>
 		<td>
-			<?php $blogContentData = $slug->getBlogContentData($data['BlogPost']['blog_content_id']) ?>
-			<?php echo $blogContentData['BlogContent']['title'] ?>
+			<?php echo $blogContentDatas[$data['Slug']['blog_content_id']] ?>
 		</td>
 		<td style="width: 45px;">
 			<?php echo $data['Slug']['blog_post_no']; ?>
