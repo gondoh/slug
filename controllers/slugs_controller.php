@@ -26,7 +26,7 @@ class SlugsController extends SlugAppController {
  * @var array
  * @access public
  */
-	var $uses = array('Slug.Slug');
+	var $uses = array('Slug.Slug', 'Slug.SlugConfig');
 /**
  * ぱんくずナビ
  *
@@ -37,6 +37,17 @@ class SlugsController extends SlugAppController {
 		array('name' => 'プラグイン管理', 'url' => array('plugin' => '', 'controller' => 'plugins', 'action' => 'index')),
 		array('name' => 'スラッグ管理', 'url' => array('plugin' => 'slug', 'controller' => 'slugs', 'action' => 'index'))
 	);
+/**
+ * beforeFilter
+ *
+ * @return	void
+ * @access 	public
+ */
+	function beforeFilter() {
+
+		parent::beforeFilter();
+
+	}
 /**
  * [ADMIN] スラッグ一覧
  * 
@@ -144,12 +155,8 @@ class SlugsController extends SlugAppController {
 		unset($datas);
 		unset($data);
 
-		// ブログ情報を取得
-		$BlogContentModel = ClassRegistry::init('Blog.BlogContent');
-		$blogContentDatas = $BlogContentModel->find('list', array('recursive' => -1));
-
 		$registerd = array();
-		foreach ($blogContentDatas as $key => $blog) {
+		foreach ($this->blogContentDatas as $key => $blog) {
 			// $key : blog_content_id
 			// 登録済のスラッグを取得する
 			$slugs = $this->Slug->find('list', array(
@@ -180,7 +187,7 @@ class SlugsController extends SlugAppController {
 		}
 
 		$this->set('registerd', $registerd);
-		$this->set('blogContentDatas', $blogContentDatas);
+		$this->set('blogContentDatas', $this->blogContentDatas);
 
 		$this->pageTitle = 'スラッグ一括設定';
 

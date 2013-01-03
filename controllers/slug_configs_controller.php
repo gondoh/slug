@@ -38,6 +38,17 @@ class SlugConfigsController extends SlugAppController {
 		array('name' => 'スラッグ設定管理', 'url' => array('plugin' => 'slug', 'controller' => 'slug_configs', 'action' => 'index'))
 	);
 /**
+ * beforeFilter
+ *
+ * @return	void
+ * @access 	public
+ */
+	function beforeFilter() {
+
+		parent::beforeFilter();
+
+	}
+/**
  * [ADMIN] スラッグ設定一覧
  * 
  * @return void
@@ -93,26 +104,24 @@ class SlugConfigsController extends SlugAppController {
 
 		if($this->data) {
 
-			// ブログ情報を取得
-			$BlogContentModel = ClassRegistry::init('Blog.BlogContent');
-			$blogContentDatas = $BlogContentModel->find('all', array('recursive' => -1));
-
 			$count = 0;
-			foreach ($blogContentDatas as $blog) {
+			if($this->blogContentDatas) {
+				foreach ($this->blogContentDatas as $blog) {
 
-				$slugConfigData = $this->SlugConfig->findByBlogContentId($blog['BlogContent']['id']);
-				if(!$slugConfigData) {
-					$this->data['SlugConfig']['blog_content_id'] = $blog['BlogContent']['id'];
-					$this->data['SlugConfig']['permalink_structure'] = 0;
-					$this->data['SlugConfig']['ignore_archives'] = false;
-					$this->SlugConfig->create($this->data);
-					if(!$this->SlugConfif->save($this->data, false)) {
-						$this->log(sprintf('ブログID：%s の登録に失敗しました。', $blog['BlogContent']['id']));
-					} else {
-						$count++;
+					$slugConfigData = $this->SlugConfig->findByBlogContentId($blog['BlogContent']['id']);
+					if(!$slugConfigData) {
+						$this->data['SlugConfig']['blog_content_id'] = $blog['BlogContent']['id'];
+						$this->data['SlugConfig']['permalink_structure'] = 0;
+						$this->data['SlugConfig']['ignore_archives'] = false;
+						$this->SlugConfig->create($this->data);
+						if(!$this->SlugConfif->save($this->data, false)) {
+							$this->log(sprintf('ブログID：%s の登録に失敗しました。', $blog['BlogContent']['id']));
+						} else {
+							$count++;
+						}
 					}
-				}
 
+				}
 			}
 
 			$this->Session->setFlash(sprintf('%s 件のスラッグ設定を登録しました。', $count));

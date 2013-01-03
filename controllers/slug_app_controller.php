@@ -40,6 +40,13 @@ class SlugAppController extends BaserPluginAppController {
 		array('name' => 'プラグイン管理', 'url' => array('plugin' => '', 'controller' => 'plugins', 'action' => 'index'))
 	);
 /**
+ * ブログコンテンツデータ
+ * 
+ * @var array
+ * @access public
+ */
+	var $blogContentDatas = array();
+/**
  * beforeFilter
  *
  * @return	void
@@ -48,6 +55,18 @@ class SlugAppController extends BaserPluginAppController {
 	function beforeFilter() {
 
 		parent::beforeFilter();
+		$judgeSlugConfigUse = false;
+		$datas = $this->SlugConfig->find('all', array('recursive' => -1));
+		if($datas) {
+			$judgeSlugConfigUse = true;
+		} else {
+			$this->Session->setFlash('「スラッグ設定データ」にてスラッグ設定用のデータを作成して下さい。');
+		}
+		$this->set('judgeSlugConfigUse', $judgeSlugConfigUse);
+
+		// ブログ情報を取得
+		$BlogContentModel = ClassRegistry::init('Blog.BlogContent');
+		$this->blogContentDatas = $BlogContentModel->find('list', array('recursive' => -1));
 
 	}
 /**
@@ -75,10 +94,8 @@ class SlugAppController extends BaserPluginAppController {
 			$this->set('datas',$datas);
 		}
 
-		// ブログ情報を取得
-		$BlogContentModel = ClassRegistry::init('Blog.BlogContent');
-		$blogContentDatas = $BlogContentModel->find('list', array('recursive' => -1));
-		$this->set('blogContentDatas', array('0' => '指定しない') + $blogContentDatas);
+
+		$this->set('blogContentDatas', array('0' => '指定しない') + $this->blogContentDatas);
 
 	}
 /**
@@ -107,10 +124,7 @@ class SlugAppController extends BaserPluginAppController {
 			}
 		}
 
-		// ブログ情報を取得
-		$BlogContentModel = ClassRegistry::init('Blog.BlogContent');
-		$blogContentDatas = $BlogContentModel->find('list', array('recursive' => -1));
-		$this->set('blogContentDatas', array('0' => '指定しない') + $blogContentDatas);
+		$this->set('blogContentDatas', array('0' => '指定しない') + $this->blogContentDatas);
 
 		$this->render('form');
 

@@ -21,8 +21,9 @@
 <tr>
 	<th>スラッグ設定管理メニュー</th>
 	<td>
-		<ul>
+		<ul><?php if($judgeSlugConfigUse): ?>
 			<li><?php $bcBaser->link('スラッグ設定', array('plugin' => 'slug', 'admin' => true, 'controller' => 'slug_configs', 'action'=>'index')) ?></li>
+			<?php endif ?>
 			<li><?php $bcBaser->link('スラッグ設定データ作成', array('plugin' => 'slug', 'admin' => true, 'controller' => 'slug_configs', 'action'=>'first')) ?></li>
 		</ul>
 	</td>
