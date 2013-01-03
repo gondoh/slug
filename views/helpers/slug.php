@@ -29,8 +29,15 @@ class SlugHelper extends AppHelper {
  */
 	function __construct() {
 		parent::__construct();
-		$SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
-		$this->slugConfigs = $SlugConfigModel->read();
+
+		if (ClassRegistry::isKeySet('Slug.SlugConfig')) {
+			$SlugConfigModel = ClassRegistry::getObject('Slug.SlugConfig');
+			$this->slugConfigs = $SlugConfigModel->read();
+		}else {
+			$SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
+			$this->slugConfigs = $SlugConfigModel->read();
+		}
+
 	}
 /**
  * スラッグを定義する
@@ -40,15 +47,18 @@ class SlugHelper extends AppHelper {
  * @return string
  * @access public 
  */
-	function getSlugName($data, $post) {
+	function getSlugName($slug, $post) {
 
-		if(empty($data['name'])) {
-			$data['name'] = $post['no'];
+		$SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
+		$this->slugConfigs = $SlugConfigModel->findByBlogContentId($slug['blog_content_id']);
+
+		if(empty($slug['name'])) {
+			$slug['name'] = $post['no'];
 		}
 
 		switch ($this->slugConfigs['SlugConfig']['permalink_structure']) {
 			case 1:	// スラッグ
-				$this->slugName = $data['name'];
+				$this->slugName = $slug['name'];
 				break;
 
 			case 2:	// 記事ID
@@ -60,11 +70,11 @@ class SlugHelper extends AppHelper {
 				break;
 
 			case 4:	// /2012/12/01/sample-post/
-				$this->slugName = date('Y/m/d', strtotime($post['posts_date'])) . '/' . $data['name'];
+				$this->slugName = date('Y/m/d', strtotime($post['posts_date'])) . '/' . $slug['name'];
 				break;
 
 			case 5:	// /2012/12/sample-post/
-				$this->slugName = date('Y/m', strtotime($post['posts_date'])) . '/' . $data['name'];
+				$this->slugName = date('Y/m', strtotime($post['posts_date'])) . '/' . $slug['name'];
 				break;
 
 			case 6:	// カテゴリ/スラッグ
@@ -80,9 +90,9 @@ class SlugHelper extends AppHelper {
 					'recursive' => -1
 				));
 				if($categoryDate) {
-					$data['name'] = $categoryDate['BlogCategory']['name'] . DS . $data['name'];
+					$slug['name'] = $categoryDate['BlogCategory']['name'] . DS . $slug['name'];
 				}
-				$this->slugName = $data['name'];
+				$this->slugName = $slug['name'];
 				break;
 
 			default:
@@ -100,7 +110,10 @@ class SlugHelper extends AppHelper {
  * @return string
  * @access public
  */
-	function getSlugUrl($slug, $data){
+	function getSlugUrl($slug, $post){
+
+		$SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
+		$this->slugConfigs = $SlugConfigModel->findByBlogContentId($post['blog_content_id']);
 
 		$actionName = '/archives';
 		if($this->slugConfigs['SlugConfig']['ignore_archives']) {
@@ -113,24 +126,42 @@ class SlugHelper extends AppHelper {
 
 		} elseif($this->slugConfigs['SlugConfig']['permalink_structure'] === '2') {
 			// 記事ID
-			return $actionName . '/' . $data['id'];
+			return $actionName . '/' . $post['id'];
 
 		} elseif($this->slugConfigs['SlugConfig']['permalink_structure'] === '3') {
 			// 記事ID（6桁）
-			return $actionName . '/' . sprintf('%06d', $data['id']);
+			return $actionName . '/' . sprintf('%06d', $post['id']);
 
 		} elseif($this->slugConfigs['SlugConfig']['permalink_structure'] === '4') {
 			// /2012/12/01/sample-post/
-			return $actionName . '/' . date('Y/m/d', strtotime($data['posts_date'])) . '/' . $slug['name'];
+			return $actionName . '/' . date('Y/m/d', strtotime($post['posts_date'])) . '/' . $slug['name'];
 
 		} elseif($this->slugConfigs['SlugConfig']['permalink_structure'] === '5') {
 			// /2012/12/sample-post/
-			return $actionName . '/' . date('Y/m', strtotime($data['posts_date'])) . '/' . $slug['name'];
+			return $actionName . '/' . date('Y/m', strtotime($post['posts_date'])) . '/' . $slug['name'];
 
 		} else {
-			return $actionName . '/' . $data['no'];
+			return $actionName . '/' . $post['no'];
 
 		}
+
+	}
+/**
+ * archives除外設定が有効な場合は、archives を省いたURLリンクを生成して返す
+ * 
+ * @param string $out
+ * @return string
+ * @access public
+ */
+	function convertOutputArchivesLink($out = '') {
+
+		$pattern = '/href\=\"(.+)\/archives\/(.+)\"/';
+		if($out) {
+			if($this->slugConfigs['SlugConfig']['ignore_archives']) {
+				$out = preg_replace($pattern, 'href="$1' . DS . '$2' . '"', $out);
+			}
+		}
+		return $out;
 
 	}
 /**
@@ -149,24 +180,6 @@ class SlugHelper extends AppHelper {
 		}
 
 		return false;
-
-	}
-/**
- * ブログ記事が属するブログデータを取得する
- * 
- * @param int $blogContentId
- * @return array
- */
-	function getBlogContentData($blogContentId = null) {
-
-		$BlogContent = ClassRegistry::init('Blog.BlogContent');
-		$data = $BlogContent->find('first', array(
-				'conditions' => array('BlogContent.id' => $blogContentId),
-				'fields' => array('id', 'name', 'title'),
-				'recursive' => -1
-			));
-
-		return $data;
 
 	}
 /**

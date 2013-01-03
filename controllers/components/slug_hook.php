@@ -45,8 +45,6 @@ class SlugHookComponent extends Object {
  * @access public
  */
 	var $SlugModel = null;
-
-	var $slugName = '';
 /**
  * constructer
  * 
@@ -206,13 +204,11 @@ class SlugHookComponent extends Object {
  */
 	function shutdown($controller) {
 
-		// 最近の投稿を表示する際に実行
-		// ※get_recent_entries では no と name しか取得してないため、beforeFind で id等 を取得している
-		if($controller->action == 'get_recent_entries') {
-			if(!empty($controller->output['recentEntries'])) {
-				foreach ($controller->output['recentEntries'] as $key => $post) {
-					$controller->output['recentEntries'][$key]['BlogPost']['no'] = $this->Slug->getSlugName($post['Slug'], $post['BlogPost']);
-				}
+		// blogPosts で実行
+		//  ・requestAction で実行と bcBaser->link 未使用のため、出力内容を直接書き換えている
+		if($controller->plugin == 'blog') {
+			if($controller->action == 'posts') {
+				$controller->output = $this->Slug->convertOutputArchivesLink($controller->output);
 			}
 		}
 
