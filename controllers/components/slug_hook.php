@@ -46,6 +46,13 @@ class SlugHookComponent extends Object {
  */
 	var $SlugModel = null;
 /**
+ * slug設定情報
+ * 
+ * @var Object
+ * @access public
+ */
+	var $SlugConfigModel = null;
+/**
  * constructer
  * 
  * @return void
@@ -54,8 +61,12 @@ class SlugHookComponent extends Object {
 	function __construct() {
 		parent::__construct();
 
-		$SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
-		$this->slugConfigs = $SlugConfigModel->read();
+		if (ClassRegistry::isKeySet('Slug.SlugConfig')) {
+			$this->SlugConfigModel = ClassRegistry::getObject('Slug.SlugConfig');
+		}else {
+			$this->SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
+		}
+		$this->slugConfigs = $this->SlugConfigModel->read();
 		$this->SlugModel = ClassRegistry::init('Slug.Slug');
 
 		App::import('Helper', 'Slug.Slug');
@@ -176,6 +187,35 @@ class SlugHookComponent extends Object {
 					$this->SlugModel->create($slugDate);
 					$this->SlugModel->save($slugDate, false);
 					// キャッシュの削除を行わないと、登録したスラッグがブログ記事編集画面に反映されない
+					clearAllCache();
+				}
+			}
+
+		}
+
+		if($controller->name == 'BlogContents') {
+
+			// Ajaxコピー処理時に実行
+			//   ・Ajax削除時は、内部的に Model->delete が呼ばれているため afterDelete で処理可能
+			if($controller->action == 'admin_ajax_copy') {
+				// ブログコピー保存時にエラーがなければ保存処理を実行
+				if(empty($controller->BlogContent->validationErrors)) {
+					$slugConfigDate = $this->SlugConfigModel->findByBlogContentId($controller->params['pass']['0']);
+					// もしスラッグ設定の初期データ作成を行ってない事を考慮して判定している
+					$saveData = array();
+					if($slugConfigDate) {
+						$saveData['SlugConfig']['blog_content_id'] = $controller->viewVars['data']['BlogContent']['id'];
+						$saveData['SlugConfig']['permalink_structure'] = $slugConfigDate['SlugConfig']['permalink_structure'];
+						$saveData['SlugConfig']['ignore_archives'] = $slugConfigDate['SlugConfig']['ignore_archives'];
+					} else {
+						$saveData['SlugConfig']['blog_content_id'] = $controller->viewVars['data']['BlogContent']['id'];
+						$saveData['SlugConfig']['permalink_structure'] = 0;
+						$saveData['SlugConfig']['ignore_archives'] = false;
+					}
+
+					$this->SlugConfigModel->create($saveData);
+					$this->SlugConfigModel->save($saveData, false);
+					// キャッシュの削除を行わないと、登録したスラッグ設定がスラッグ編集画面に反映されない
 					clearAllCache();
 				}
 			}
