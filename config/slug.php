@@ -14,7 +14,7 @@
 $config['BcApp.adminNavi.slug'] = array(
 		'name'		=> 'slug プラグイン',
 		'contents'	=> array(
-			array('name' => '一覧表示',
+			array('name' => 'スラッグ一覧',
 				'url' => array(
 					'admin' => true,
 					'plugin' => 'slug',
@@ -28,7 +28,7 @@ $config['BcApp.adminNavi.slug'] = array(
 					'controller' => 'slugs',
 					'action' => 'batch')
 			),
-			array('name' => 'スラッグ設定',
+			array('name' => 'スラッグ設定一覧',
 				'url' => array(
 					'admin' => true,
 					'plugin' => 'slug',
