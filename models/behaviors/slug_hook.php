@@ -16,7 +16,8 @@ class SlugHookBehavior extends ModelBehavior {
  * @access public
  */
 	var $registerHooks = array(
-			'BlogPost'	=> array('afterDelete', 'beforeFind')
+			'BlogPost'	=> array('afterDelete', 'beforeFind'),
+			'BlogContent'	=> array('afterDelete')
 	);
 /**
  * afterDelete
@@ -40,7 +41,21 @@ class SlugHookBehavior extends ModelBehavior {
 				}
 			}
 		}
-		
+
+		// ブログ削除時、そのブログが持つスラッグ設定を削除する
+		if($model->alias == 'BlogContent') {
+			$SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
+			$data = $SlugConfigModel->find('first', array(
+				'conditions' => array('SlugConfig.blog_content_id' => $model->id),
+				'recursive' => -1
+			));
+			if($data) {
+				if(!$SlugConfigModel->delete($data['SlugConfig']['id'])) {
+					$this->log('ID:' . $data['SlugConfig']['id'] . 'のスラッグ設定の削除に失敗しました。');
+				}
+			}
+		}
+
 	}
 /**
  * beforeFind
