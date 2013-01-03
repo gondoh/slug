@@ -191,17 +191,20 @@ class SlugHookHelper extends AppHelper {
 	function afterElement($name, $out) {
 
 		if(empty($this->params['admin'])) {
-			if($this->params['plugin'] == 'blog') {
+			// プレビュー時に Undefined index が出るため判定
+			if(!empty($this->params['plugin'])) {
+				if($this->params['plugin'] == 'blog') {
 
-				if(preg_match('/^paginations\/.*/', $name)) {
-					if($this->slugConfigs['SlugConfig']['ignore_archives']) {
-						if($this->params['action'] == 'archives') {
-							$pattern = '/href\=\"(.+?)\/archives\/(.+?)\"/';
-							$out = preg_replace($pattern, 'href="$1' . '/$2' . '"', $out);
+					if(preg_match('/^paginations\/.*/', $name)) {
+						if($this->slugConfigs['SlugConfig']['ignore_archives']) {
+							if($this->params['action'] == 'archives') {
+								$pattern = '/href\=\"(.+?)\/archives\/(.+?)\"/';
+								$out = preg_replace($pattern, 'href="$1' . '/$2' . '"', $out);
+							}
 						}
 					}
-				}
 
+				}
 			}
 		}
 
