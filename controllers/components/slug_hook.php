@@ -195,6 +195,19 @@ class SlugHookComponent extends Object {
 
 		if($controller->name == 'BlogContents') {
 
+			if($controller->action == 'admin_add') {
+				// ブログ保存時にエラーがなければ保存処理を実行
+				if(empty($controller->BlogContent->validationErrors)) {
+					$saveData = array();
+					$saveData['SlugConfig']['blog_content_id'] = $controller->BlogContent->getLastInsertId();
+					$saveData['SlugConfig']['permalink_structure'] = 0;
+					$saveData['SlugConfig']['ignore_archives'] = false;
+
+					$this->SlugConfigModel->create($saveData);
+					$this->SlugConfigModel->save($saveData, false);
+				}
+			}
+
 			// Ajaxコピー処理時に実行
 			//   ・Ajax削除時は、内部的に Model->delete が呼ばれているため afterDelete で処理可能
 			if($controller->action == 'admin_ajax_copy') {
