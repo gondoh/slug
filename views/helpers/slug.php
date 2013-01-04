@@ -2,7 +2,7 @@
 /**
  * [Helper] slug
  *
- * @copyright		Copyright 2012, materializing.
+ * @copyright		Copyright 2012 - 2013, materializing.
  * @link			http://www.materializing.net/
  * @author			arata
  * @package			slug.views
