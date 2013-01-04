@@ -106,16 +106,16 @@ class SlugConfigsController extends SlugAppController {
 
 			$count = 0;
 			if($this->blogContentDatas) {
-				foreach ($this->blogContentDatas as $blog) {
+				foreach ($this->blogContentDatas as $key => $blog) {
 
-					$slugConfigData = $this->SlugConfig->findByBlogContentId($blog['BlogContent']['id']);
+					$slugConfigData = $this->SlugConfig->findByBlogContentId($key);
 					if(!$slugConfigData) {
-						$this->data['SlugConfig']['blog_content_id'] = $blog['BlogContent']['id'];
+						$this->data['SlugConfig']['blog_content_id'] = $key;
 						$this->data['SlugConfig']['permalink_structure'] = 0;
 						$this->data['SlugConfig']['ignore_archives'] = false;
 						$this->SlugConfig->create($this->data);
-						if(!$this->SlugConfif->save($this->data, false)) {
-							$this->log(sprintf('ブログID：%s の登録に失敗しました。', $blog['BlogContent']['id']));
+						if(!$this->SlugConfig->save($this->data, false)) {
+							$this->log(sprintf('ブログID：%s の登録に失敗しました。', $key));
 						} else {
 							$count++;
 						}

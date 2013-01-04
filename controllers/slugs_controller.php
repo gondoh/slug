@@ -149,7 +149,11 @@ class SlugsController extends SlugAppController {
 				}
 			}
 
-			$this->Session->setFlash($count . '件のスラッグを登録しました。');
+			if($count) {
+				$this->Session->setFlash(sprintf('%s 件のスラッグを登録しました。', $count));
+			} else {
+				$this->Session->setFlash('登録されたスラッグはありません。');
+			}
 		}
 		unset($slugs);
 		unset($datas);
