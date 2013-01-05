@@ -183,6 +183,29 @@ class SlugHelper extends AppHelper {
 
 	}
 /**
+ * スラッグ構造の表示例を調整する
+ * 
+ * @param array $array
+ * @return array
+ * @access public
+ */
+	function addSampleShow($array = array()) {
+
+		foreach ($array as $key => $value) {
+			if($key == 0) {
+				$array[$key] = $value . '（標準のブログ記事NO）';
+			}
+			if($key == 4) {
+				$array[$key] = $value . '（/' . date('Y/m/d') . '/sample-post' . '）';
+			}
+			if($key == 5) {
+				$array[$key] = $value . '（/' . date('Y/m') . '/sample-post' . '）';
+			}
+		}
+		return $array;
+
+	}
+/**
  * $blog->category() で取得したURLを書き換える
  * echo $slug->category($post) で利用する
  * TODO $blog->category($post) ではフック箇所がないための暫定処置

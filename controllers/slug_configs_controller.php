@@ -56,7 +56,7 @@ class SlugConfigsController extends SlugAppController {
  */
 	function admin_index() {
 
-		$this->set('permalink_structure', $this->addSampleShow($this->SlugConfig->permalink_structure));
+		$this->set('permalink_structure', $this->SlugHelper->addSampleShow($this->SlugConfig->permalink_structure));
 
 		$this->pageTitle = 'スラッグ設定一覧';
 		$this->search = 'slug_configs_index';
@@ -74,7 +74,7 @@ class SlugConfigsController extends SlugAppController {
  */
 	function admin_edit($id = null) {
 
-		$this->set('permalink_structure', $this->addSampleShow($this->SlugConfig->permalink_structure));
+		$this->set('permalink_structure', $this->SlugHelper->addSampleShow($this->SlugConfig->permalink_structure));
 
 		$this->pageTitle = 'スラッグ設定編集';
 		$this->controlName = 'スラッグ設定';

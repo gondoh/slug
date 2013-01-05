@@ -75,6 +75,9 @@ class SlugAppController extends BaserPluginAppController {
 		$BlogContentModel = ClassRegistry::init('Blog.BlogContent');
 		$this->blogContentDatas = $BlogContentModel->find('list', array('recursive' => -1));
 
+		App::import('Helper', 'Slug.Slug');
+		$this->SlugHelper = new SlugHelper();
+
 	}
 /**
  * [ADMIN] 一覧表示
@@ -159,29 +162,6 @@ class SlugAppController extends BaserPluginAppController {
 			$this->Session->setFlash('データベース処理中にエラーが発生しました。');
 		}
 		$this->redirect(array('action' => 'index'));
-
-	}
-/**
- * スラッグ構造の表示例を調整する
- * 
- * @param array $array
- * @return array
- * @access public
- */
-	function addSampleShow($array = array()) {
-
-		foreach ($array as $key => $value) {
-			if($key == 0) {
-				$array[$key] = $value . '（標準のブログ記事NO）';
-			}
-			if($key == 4) {
-				$array[$key] = $value . '（/' . date('Y/m/d') . '/sample-post' . '）';
-			}
-			if($key == 5) {
-				$array[$key] = $value . '（/' . date('Y/m') . '/sample-post' . '）';
-			}
-		}
-		return $array;
 
 	}
 
