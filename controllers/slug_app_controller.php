@@ -47,6 +47,13 @@ class SlugAppController extends BaserPluginAppController {
  */
 	var $blogContentDatas = array();
 /**
+ * メッセージ用機能名
+ * 
+ * @var string
+ * @access public
+ */
+	var $controlName = 'スラッグ';
+/**
  * beforeFilter
  *
  * @return	void
@@ -94,7 +101,6 @@ class SlugAppController extends BaserPluginAppController {
 			$this->set('datas',$datas);
 		}
 
-
 		$this->set('blogContentDatas', array('0' => '指定しない') + $this->blogContentDatas);
 
 	}
@@ -117,7 +123,9 @@ class SlugAppController extends BaserPluginAppController {
 		} else {
 			$this->{$this->modelClass}->set($this->data);
 			if ($this->{$this->modelClass}->save($this->data)) {
-				$this->Session->setFlash('更新が完了しました。');
+				$message = $this->controlName . ' NO.' . $id . ' を更新しました。';
+				$this->Session->setFlash($message);
+				$this->{$this->modelClass}->saveDbLog($message);
 				$this->redirect(array('action' => 'index'));
 			} else {
 				$this->Session->setFlash('入力エラーです。内容を修正して下さい。');
@@ -143,7 +151,9 @@ class SlugAppController extends BaserPluginAppController {
 			$this->redirect(array('action' => 'index'));
 		}
 		if($this->{$this->modelClass}->delete($id)) {
-			$this->Session->setFlash('NO.' . $id . 'のデータを削除しました。');
+			$message = $this->controlName . ' NO.' . $id . ' を削除しました。';
+			$this->Session->setFlash($message);
+			$this->{$this->modelClass}->saveDbLog($message);
 			$this->redirect(array('action' => 'index'));
 		} else {
 			$this->Session->setFlash('データベース処理中にエラーが発生しました。');

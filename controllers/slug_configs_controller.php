@@ -77,6 +77,7 @@ class SlugConfigsController extends SlugAppController {
 		$this->set('permalink_structure', $this->addSampleShow($this->SlugConfig->permalink_structure));
 
 		$this->pageTitle = 'スラッグ設定編集';
+		$this->controlName = 'スラッグ設定';
 
 		parent::admin_edit($id);
 
@@ -89,6 +90,8 @@ class SlugConfigsController extends SlugAppController {
  * @access public
  */
 	function admin_delete($id = null) {
+
+		$this->controlName = 'スラッグ設定';
 
 		parent::admin_delete($id);
 
@@ -124,10 +127,31 @@ class SlugConfigsController extends SlugAppController {
 				}
 			}
 
-			$this->Session->setFlash(sprintf('%s 件のスラッグ設定を登録しました。', $count));
+			$message = sprintf('%s 件のスラッグ設定を登録しました。', $count);
+			$this->Session->setFlash($message);
+			if($count) {
+				$this->SlugConfig->saveDbLog($message);
+			}
 			$this->redirect(array('controller' => 'slug_configs', 'action' => 'index'));
 
 		}
+
+		$registerd = array();
+		foreach ($this->blogContentDatas as $key => $blog) {
+			// $key : blog_content_id
+			$config = false;
+			$data = $this->SlugConfig->findByBlogContentId($key);
+			if($data) {
+				$config = true;
+			}
+
+			$registerd[] = array(
+				'name' => $blog,
+				'config' => $config
+			);
+		}
+
+		$this->set('registerd', $registerd);
 
 		$this->pageTitle = 'スラッグ設定データ作成';
 

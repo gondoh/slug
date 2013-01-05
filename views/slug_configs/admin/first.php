@@ -23,6 +23,17 @@
 			</ul>
 		</td>
 	</tr>
+	<tr>
+		<th class="col-head">スラッグ設定の未登録状況</th>
+		<td class="col-input">
+			<ul>
+			<?php foreach ($registerd as $value): ?>
+				<li><?php echo $value['name'] ?>：
+					<span class="large"><strong><?php echo $bcText->booleanExists($value['config']) ?></strong></span></li>
+			<?php endforeach ?>
+			</ul>
+		</td>
+	</tr>
 </table>
 
 <div class="submit">
