@@ -78,7 +78,7 @@ class SlugHookHelper extends AppHelper {
  */
 	function afterBaserGetLink(&$html, $url, $out) {
 
-		if(empty($this->params['admin'])) {
+		if(empty($this->params['prefix']) || ($this->params['prefix'] != 'admin')) {
 
 			$parseUrl = Router::parse($url);
 			$PluginContent = ClassRegistry::init('PluginContent');
@@ -127,16 +127,6 @@ class SlugHookHelper extends AppHelper {
 				} else {
 					$blogContentId = $this->View->viewVars['blogContent']['BlogContent']['id'];
 				}
-
-				/*$conditions = array(
-					'Slug.blog_content_id'	=> $blogContentId,
-					'Slug.blog_post_no'		=> $no
-				);
-				$SlugModel = ClassRegistry::init('Slug.Slug');
-				$data = $SlugModel->find('first', array('conditions' => $conditions));
-				if($data) {
-					$no = $this->Slug->getSlugName($data['Slug'], $data['BlogPost']);
-				}*/
 
 				$conditions = array(
 					'BlogPost.blog_content_id'	=> $blogContentId,
@@ -190,7 +180,7 @@ class SlugHookHelper extends AppHelper {
  */
 	function afterElement($name, $out) {
 
-		if(empty($this->params['admin'])) {
+		if(empty($this->params['prefix']) || ($this->params['prefix'] != 'admin')) {
 			// プレビュー時に Undefined index が出るため判定
 			if(!empty($this->params['plugin'])) {
 				if($this->params['plugin'] == 'blog') {
@@ -222,7 +212,7 @@ class SlugHookHelper extends AppHelper {
  */
 	function beforeElement($name, $params, $loadHelpers, $subDir) {
 
-		if(empty($this->params['admin'])) {
+		if(empty($this->params['prefix']) || ($this->params['prefix'] != 'admin')) {
 			// if($name == 'paginations/simple' || $name == 'paginations/default') {
 			if(preg_match('/^paginations\/.*/', $name)) {
 				if($this->params['action'] == 'archives') {
