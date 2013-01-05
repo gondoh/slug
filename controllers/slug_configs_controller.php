@@ -115,7 +115,7 @@ class SlugConfigsController extends SlugAppController {
 						$this->data['SlugConfig']['ignore_archives'] = false;
 						$this->SlugConfig->create($this->data);
 						if(!$this->SlugConfig->save($this->data, false)) {
-							$this->log(sprintf('ブログID：%s の登録に失敗しました。', $key));
+							$this->log(sprintf('ブログID：%s 用のスラッグ設定登録に失敗しました。', $key));
 						} else {
 							$count++;
 						}
