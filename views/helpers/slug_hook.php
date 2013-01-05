@@ -15,7 +15,7 @@ class SlugHookHelper extends AppHelper {
  * @var array
  * @access public
  */
-	var $registerHooks = array('afterFormInput', 'afterBaserGetLink', 'afterElement');
+	var $registerHooks = array('afterFormInput', 'afterFormCreate', 'afterBaserGetLink', 'afterElement');
 /**
  * ビュー
  * 
@@ -51,14 +51,15 @@ class SlugHookHelper extends AppHelper {
 	}
 /**
  * afterFormInput
- * タイトル入力欄の下にスラッグ入力欄を表示する
  * 
- * @param string $form
+ * @param Object $form
  * @param string $fieldName
  * @param string $out
  * @return string 
  */
 	function afterFormInput($form, $fieldName, $out) {
+
+		// ブログ記事編集画面のタイトル入力欄の下にスラッグ入力欄を表示する
 		if($form->params['controller'] == 'blog_posts'){
 			if($this->action == 'admin_add' || $this->action == 'admin_edit'){
 				if($fieldName == 'BlogPost.name') {
@@ -67,6 +68,28 @@ class SlugHookHelper extends AppHelper {
 			}
 		}
 		return $out;
+
+	}
+/**
+ * afterFormCreate
+ * 
+ * @param Object $form
+ * @param string $id
+ * @param string $out
+ * @return string
+ */
+	function afterFormCreate($form, $id, $out) {
+
+		// ブログ設定編集画面にスラッグ設定欄を表示する
+		if($form->params['controller'] == 'blog_contents'){
+			if($this->action == 'admin_edit'){
+				if($id == 'BlogContentEditForm') {
+					$out = $out . $this->View->element('admin/slug_config_form', array('plugin' => 'slug'));
+				}
+			}
+		}
+		return $out;
+
 	}
 /**
  * afterBaserGetLink

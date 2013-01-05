@@ -13,12 +13,11 @@
 	<?php echo $bcForm->create('SlugConfig', array('url' => array('action' => 'add'))) ?>
 <?php else: ?>
 	<?php echo $bcForm->create('SlugConfig', array('url' => array('action' => 'edit'))) ?>
-	<?php echo $bcForm->input('SlugConfig.id', array('type' => 'hidden')) ?>
 <?php endif ?>
 
 <h2><?php echo $blogContentDatas[$this->data['SlugConfig']['blog_content_id']] ?></h2>
-<?php $bcBaser->element('slug_config_form') ?>
 
+<?php $bcBaser->element('slug_config_form') ?>
 
 <div class="submit">
 	<?php echo $bcForm->submit('保　存', array('div' => false, 'class' => 'btn-red button')) ?>
