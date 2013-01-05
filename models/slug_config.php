@@ -24,6 +24,13 @@ class SlugConfig extends BaserPluginAppModel {
  */
 	var $plugin = 'Slug';
 /**
+ * 現在の archives 除外設定
+ * 
+ * @var string
+ * @access public
+ */
+	var $ignore_archives = false;
+/**
  * 表示設定値
  *
  * @var array
@@ -39,5 +46,21 @@ class SlugConfig extends BaserPluginAppModel {
 		// TODO カテゴリ名＋スラッグ機能の作成
 		//'6' => 'カテゴリとスラッグ'
 	);
+/**
+ * ブログコンテンツIDを元に、archives 除外設定をセットする
+ * 
+ * @param int $blogContentId
+ * @return void
+ * @access public
+ */
+	function setIgnoreArchives($blogContentId = null) {
+
+		if($blogContentId) {
+			$slugConfigData = $this->findByBlogContentId($blogContentId);
+			$this->id = $slugConfigData['SlugConfig']['id'];
+			$this->ignore_archives = $slugConfigData['SlugConfig']['ignore_archives'];
+		}
+
+	}
 
 }

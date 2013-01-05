@@ -22,15 +22,10 @@ if(!empty($pluginName) && $pluginName == 'blog') {
 	));
 
 	$SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
-	$slugConfigData = $SlugConfigModel->findByBlogContentId($pluginData['PluginContent']['content_id']);
-	// TODO slug 内のヘルパーやフックなど、以降の処理で使えるようにオブジェクトにIDを入れている
-	//   ・こうする事で以下で呼び出せる
-	//		$SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
-	//		$this->slugConfigs = $SlugConfigModel->read();
-	$SlugConfigModel->id = $slugConfigData['SlugConfig']['id'];
-	if($slugConfigData['SlugConfig']['ignore_archives']) {
+	$SlugConfigModel->setIgnoreArchives($pluginData['PluginContent']['content_id']);
+	if($SlugConfigModel->ignore_archives) {
+		$parseUrl = Router::parse('/' . Configure::read('BcRequest.pureUrl'));
 		if(!$agent) {
-			$parseUrl = Router::parse($url);
 			if($parseUrl['action'] != 'index') {
 				Router::connect("/{$pluginContentName}/*", array('plugin' => $pluginName, 'controller'=> $pluginName, 'action' => 'archives'));
 			} else {
@@ -38,7 +33,6 @@ if(!empty($pluginName) && $pluginName == 'blog') {
 			}
 		} else {
 			// SP、FP用ルーティング
-			//Router::connect("/{$agentAlias}/{$pluginContentName}/*", array('prefix'	=> $agentPrefix, 'plugin' => $pluginName, 'controller'=> $pluginName, 'action' => 'archives'));
 			//Router::connect("/{$agentAlias}/{$pluginContentName}/:action/*", array('prefix'	=> $agentPrefix, 'plugin' => $pluginName, 'controller'=> $pluginName));
 		}
 		// ここでルーティングの優先順位を上げている
