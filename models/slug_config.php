@@ -47,6 +47,23 @@ class SlugConfig extends BaserPluginAppModel {
 		//'6' => 'カテゴリとスラッグ'
 	);
 /**
+ * 初期値を取得する
+ *
+ * @return array
+ * @access public
+ */
+	function getDefaultValue() {
+
+		$data = array(
+			'SlugConfig' => array(
+				'permalink_structure' => 0,
+				'ignore_archives' => false
+			)
+		);
+		return $data;
+
+	}
+/**
  * ブログコンテンツIDを元に、archives 除外設定をセットする
  * 
  * @param int $blogContentId

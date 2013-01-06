@@ -197,24 +197,17 @@ class SlugHookComponent extends Object {
 
 		if($controller->name == 'BlogContents') {
 
+			// ブログ設定編集画面にスラッグ設定情報を送る
 			if($controller->action == 'admin_edit') {
-				// ブログ設定編集画面にスラッグ設定情報を送る
 				$this->slugConfigs = $this->SlugConfigModel->findByBlogContentId($controller->BlogContent->id);
 				$controller->data['SlugConfig'] = $this->slugConfigs['SlugConfig'];
 				$controller->set('permalink_structure', $this->Slug->addSampleShow($this->SlugConfigModel->permalink_structure));
 			}
-
+			// ブログ追加画面にスラッグ設定情報を送る
 			if($controller->action == 'admin_add') {
-				// ブログ保存時にエラーがなければ保存処理を実行
-				if(empty($controller->BlogContent->validationErrors)) {
-					$saveData = array();
-					$saveData['SlugConfig']['blog_content_id'] = $controller->BlogContent->getLastInsertId();
-					$saveData['SlugConfig']['permalink_structure'] = 0;
-					$saveData['SlugConfig']['ignore_archives'] = false;
-
-					$this->SlugConfigModel->create($saveData);
-					$this->SlugConfigModel->save($saveData, false);
-				}
+				$defalut = $this->SlugConfigModel->getDefaultValue();
+				$controller->data['SlugConfig'] = $defalut['SlugConfig'];
+				$controller->set('permalink_structure', $this->Slug->addSampleShow($this->SlugConfigModel->permalink_structure));
 			}
 
 			// Ajaxコピー処理時に実行
@@ -287,14 +280,18 @@ class SlugHookComponent extends Object {
  */
 	function beforeRedirect($controller, $url, $status, $exit) {
 
-		// ブログ設定編集保存時に、スラッグ設定情報を保存する
 		if($controller->name == 'BlogContents') {
 			if($controller->action == 'admin_edit') {
-				if(empty($controller->BlogContent->validationErrors)) {
-					$this->SlugConfigModel->set($controller->data['SlugConfig']);
-					if(!$this->SlugConfigModel->save($controller->data['SlugConfig'], false)) {
-						$this->log(sprintf('ID：%s のスラッグ情報保存に失敗しました。', $controller->data['SlugConfig']['id']));
-					}
+				// ブログ設定編集保存時に、スラッグ設定情報を保存する
+				$this->SlugConfigModel->set($controller->data['SlugConfig']);
+			} elseif($controller->action == 'admin_add') {
+				// ブログ追加時に、スラッグ設定情報を保存する
+				$controller->data['SlugConfig']['blog_content_id'] = $controller->BlogContent->id;
+				$this->SlugConfigModel->create($controller->data['SlugConfig']);
+			}
+			if(empty($controller->BlogContent->validationErrors)) {
+				if(!$this->SlugConfigModel->save(null, false)) {
+					$this->log(sprintf('ID：%s のスラッグ設定の保存に失敗しました。', $controller->data['SlugConfig']['id']));
 				}
 			}
 		}

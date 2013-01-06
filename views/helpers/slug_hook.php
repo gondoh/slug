@@ -80,10 +80,16 @@ class SlugHookHelper extends AppHelper {
  */
 	function afterFormCreate($form, $id, $out) {
 
-		// ブログ設定編集画面にスラッグ設定欄を表示する
 		if($form->params['controller'] == 'blog_contents'){
+			// ブログ設定編集画面にスラッグ設定欄を表示する
 			if($this->action == 'admin_edit'){
 				if($id == 'BlogContentEditForm') {
+					$out = $out . $this->View->element('admin/slug_config_form', array('plugin' => 'slug'));
+				}
+			}
+			// ブログ追加画面にスラッグ設定欄を表示する
+			if($this->action == 'admin_add'){
+				if($id == 'BlogContentAddForm') {
 					$out = $out . $this->View->element('admin/slug_config_form', array('plugin' => 'slug'));
 				}
 			}
