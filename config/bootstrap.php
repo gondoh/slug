@@ -33,6 +33,11 @@ if(!empty($pluginName) && $pluginName == 'blog') {
 			}
 		} else {
 			// SP、FP用ルーティング
+			if($parseUrl['action'] != 'index') {
+				Router::connect("/{$agentAlias}/{$pluginContentName}/*", array('prefix'	=> $agentPrefix, 'plugin' => $pluginName, 'controller'=> $pluginName, 'action' => 'archives'));
+			} else {
+				Router::connect("/{$agentAlias}/{$pluginContentName}/index", array('prefix'	=> $agentPrefix, 'plugin' => $pluginName, 'controller'=> $pluginName, 'action' => 'index'));
+			}
 			//Router::connect("/{$agentAlias}/{$pluginContentName}/:action/*", array('prefix'	=> $agentPrefix, 'plugin' => $pluginName, 'controller'=> $pluginName));
 		}
 		// ここでルーティングの優先順位を上げている

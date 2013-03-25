@@ -78,7 +78,7 @@ class SlugHookComponent extends Object {
  * 
  * @param Controller $controller 
  */
-	function initialize(&$controller) {
+	function initialize($controller) {
 		// BlogHelper の不在エラーが出るため読込
 		$controller->helpers[] = 'Blog.Blog';
 		// Slugヘルパーの追加
@@ -91,7 +91,7 @@ class SlugHookComponent extends Object {
  * @return void
  * @access public
  */
-	function startup(&$controller) {
+	function startup($controller) {
 
 		// ブログ記事へのリンクをクリックした際に実行
 		// ブログ記事ページ表示の際に、記事NOをスラッグに置き換える

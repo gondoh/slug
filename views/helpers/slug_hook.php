@@ -105,7 +105,7 @@ class SlugHookHelper extends AppHelper {
  * @param string $out
  * @return string 
  */
-	function afterBaserGetLink(&$html, $url, $out) {
+	function afterBaserGetLink($html, $url, $out) {
 
 		if(empty($this->params['prefix']) || ($this->params['prefix'] != 'admin')) {
 
