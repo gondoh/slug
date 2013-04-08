@@ -173,6 +173,7 @@ class SlugHookComponent extends Object {
 						'conditions' => array('SlugConfig.blog_content_id' => $controller->BlogContent->id))
 				);
 				$controller->data['SlugConfig'] = $this->slugConfigs['SlugConfig'];
+
 			}
 
 			// Ajaxコピー処理時に実行

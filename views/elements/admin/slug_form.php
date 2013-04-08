@@ -66,6 +66,7 @@ function slugNameValueChengeHandler() {
 <div id="SlugCheckNameResult"></div>
 
 <?php if($this->action == 'admin_edit'): ?>
+<div id="SlugPublishUrl" class="display-none"><?php echo $bcBaser->getUri('/' . $blogContent['BlogContent']['name'] . $slug->getSlugUrl($this->data['Slug'], $this->data['BlogPost'])) ?></div>
 <div class="box-tolink align-left">
 	<?php if($bcForm->value('BlogPost.status')): ?>
 		<?php if($bcForm->value('Slug.name')): ?>
