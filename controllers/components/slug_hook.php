@@ -166,6 +166,12 @@ class SlugHookComponent extends Object {
 			// ブログ記事編集・追加画面で実行
 			// TODO startup で処理したかったが、$controller->data に入れるとそれを全て上書きしてしまうのでダメだった
 			if($controller->action == 'admin_edit' || $controller->action == 'admin_add') {
+				
+				// スラッグ設定データを記事編集画面に追加
+				$this->slugConfigs = $this->SlugConfigModel->find('first',
+					array(
+						'conditions' => array('SlugConfig.blog_content_id' => $controller->BlogContent->id))
+				);
 				$controller->data['SlugConfig'] = $this->slugConfigs['SlugConfig'];
 			}
 
