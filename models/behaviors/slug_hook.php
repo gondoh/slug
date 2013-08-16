@@ -64,7 +64,7 @@ class SlugHookBehavior extends ModelBehavior {
  * @param array $query
  * @return array
  */
-	function beforeFind(&$model, $query) {
+	function beforeFind($model, $query) {
 
 		if($model->alias == 'BlogPost') {
 			// ブログ記事取得の際にスラッグ情報も併せて取得する
