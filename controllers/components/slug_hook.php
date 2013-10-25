@@ -33,26 +33,28 @@ class SlugHookComponent extends Object {
  * @access public
  */
 	function startup($controller) {
-
-		if($controller->params['plugin'] == 'blog') {
-
-			// ブログ記事ページ表示の際に、記事NOをスラッグに置き換える
-			if($controller->action == 'archives') {
-				$SlugModel = ClassRegistry::init('Slug.Slug');
-				$slug = urldecode($controller->params['pass']['0']);
-
-				$conditions = array(
-					'Slug.name' => $slug,
-					'Slug.blog_content_id' => $controller->blogContent['BlogContent']['id'],
-				);
-				$data = $SlugModel->find('first', array('conditions' => $conditions));
-				if($data && $data['Slug']['status']) {
-					$controller->params['pass'][0] = $data['Slug']['blog_post_no'];
+		
+		if(!empty($controller->params['plugin'])) {
+			if($controller->params['plugin'] == 'blog') {
+				
+				// ブログ記事ページ表示の際に、記事NOをスラッグに置き換える
+				if($controller->action == 'archives') {
+					$SlugModel = ClassRegistry::init('Slug.Slug');
+					$slug = urldecode($controller->params['pass']['0']);
+					
+					$conditions = array(
+						'Slug.name' => $slug,
+						'Slug.blog_content_id' => $controller->blogContent['BlogContent']['id'],
+					);
+					$data = $SlugModel->find('first', array('conditions' => $conditions));
+					if($data && $data['Slug']['status']) {
+						$controller->params['pass'][0] = $data['Slug']['blog_post_no'];
+					}
 				}
+				
 			}
-
 		}
-
+		
 	}
 /**
  * shutdown
@@ -110,24 +112,26 @@ class SlugHookComponent extends Object {
 		}
 
 		// blogPosts、ブログのindex、ブログのarchives で実行
-		if($controller->params['plugin'] == 'blog') {
-			if($controller->action == 'posts' || $controller->action == 'index' || $controller->action == 'archives') {
-
-				$SlugModel = ClassRegistry::init('Slug.Slug');
-				foreach ($controller->viewVars['posts'] as $key => $post) {
-					$conditions = array(
-						'Slug.blog_post_id' => $post['BlogPost']['id'],
-						'Slug.blog_content_id' => $post['BlogPost']['blog_content_id'],
-					);
-					$data = $SlugModel->find('first', array('conditions' => $conditions));
-					if($data && $data['Slug']['status']) {
-						$controller->viewVars['posts'][$key]['BlogPost']['no'] = $data['Slug']['name'];
+		if(!empty($controller->params['plugin'])) {
+			if($controller->params['plugin'] == 'blog') {
+				if($controller->action == 'posts' || $controller->action == 'index' || $controller->action == 'archives') {
+					
+					$SlugModel = ClassRegistry::init('Slug.Slug');
+					foreach ($controller->viewVars['posts'] as $key => $post) {
+						$conditions = array(
+							'Slug.blog_post_id' => $post['BlogPost']['id'],
+							'Slug.blog_content_id' => $post['BlogPost']['blog_content_id'],
+						);
+						$data = $SlugModel->find('first', array('conditions' => $conditions));
+						if($data && $data['Slug']['status']) {
+							$controller->viewVars['posts'][$key]['BlogPost']['no'] = $data['Slug']['name'];
+						}
 					}
+					
 				}
-
 			}
 		}
-
+		
 	}
 /**
  * afterBlogPostAdd
