@@ -2,7 +2,6 @@
 /**
  * slug 基底コントローラ
  *
- * @copyright		Copyright 2012 - 2013, materializing.
  * @link			http://www.materializing.net/
  * @author			arata
  * @package			slug

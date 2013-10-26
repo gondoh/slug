@@ -2,10 +2,9 @@
 /**
  * [HookBehavior] slug
  *
- * @copyright		Copyright 2012 - 2013, materializing.
  * @link			http://www.materializing.net/
  * @author			arata
- * @package			slug.models
+ * @package			slug
  * @license			MIT
  */
 class SlugHookBehavior extends ModelBehavior {
