@@ -145,7 +145,7 @@ class SlugHookHelper extends AppHelper {
 			}
 
 			$judgeArchives = false;
-			if($parseUrl['pass']['0'] == 'tag' || $parseUrl['pass']['0'] == 'date') {
+			if($parseUrl['pass']['0'] == 'category' || $parseUrl['pass']['0'] == 'tag' || $parseUrl['pass']['0'] == 'date') {
 				$judgeArchives = true;
 			}
 
@@ -176,6 +176,10 @@ class SlugHookHelper extends AppHelper {
 		$pattern = '/href\=\"(.+)\/archives\/(.+)\"/';
 		if(!empty($no)) {
 			if($judgeArchives) {
+				// カテゴリへのリンクの際は category/ を付加する
+				if($parseUrl['pass']['0'] == 'category') {
+					$no = 'category' . DS . $no;
+				}
 				// タグへのリンクの際は tag/ を付加する
 				if($parseUrl['pass']['0'] == 'tag') {
 					$no = 'tag' . DS . $no;
