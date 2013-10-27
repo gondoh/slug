@@ -252,6 +252,21 @@ class SlugHookComponent extends Object {
 						$controller->viewVars['posts'][$key]['BlogPost']['no'] = $this->Slug->getSlugName($post['Slug'], $post['BlogPost']);
 					}
 				}
+				
+				// 公開側ブログ記事詳細表示時、archives除外設定を行っている場合、
+				// /BLOG/archives/detail にアクセスされた場合は notFound にする
+				// TODO この仕様で良いのかどうかはのちのちの意見で再考していく必要あり
+				if ($controller->action == 'archives') {
+					$paramsCount = count($controller->params['pass']);
+					if ($paramsCount <= 2) {
+						if ($this->slugConfigs['SlugConfig']['ignore_archives']) {
+							$regex = '/\/archives\//';
+							if(preg_match($regex, $controller->params['url']['url'])) {
+								$controller->notFound();
+							}
+						}
+					}
+				}
 			}
 		}
 
