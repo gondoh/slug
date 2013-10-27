@@ -23,6 +23,13 @@ class SlugHelper extends AppHelper {
  */
 	var $slugConfigs = array();
 /**
+ * ブログ記事データ
+ * 
+ * @var array
+ * @access public
+ */
+	var $blogPostData = array();
+/**
  * Construct 
  * 
  */
@@ -169,7 +176,7 @@ class SlugHelper extends AppHelper {
  * @param string $data
  * @return boolean
  */
-	function jedgeAppearInputSlug($data) {
+	function judgeAppearInputSlug($data) {
 
 		if(!$data) {
 			return true;
@@ -281,5 +288,42 @@ class SlugHelper extends AppHelper {
 		return $out;
 
 	}
-
+/**
+ * ブログ記事がスラッグデータを持っているか判定する
+ * 
+ * @param array $data
+ * @return boolean
+ */
+	function judgeContentsSearchUrl($data = array()) {
+		
+		if($data['Content']['model'] == 'BlogPost') {
+			$BlogPostModel = ClassRegistry::init('BlogPost');
+			$this->blogPostData = $BlogPostModel->find('first', array('conditions' => array(
+				'BlogPost.id' => $data['Content']['model_id']
+			)));
+			if($this->blogPostData['Slug']) {
+				return true;
+			}
+		}
+		
+		return false;
+		
+	}
+/**
+ * 検索結果ページ用のURLを生成する
+ * 
+ * @param array $data
+ * @return string
+ */
+	function getContentsSearchUrl($data = array()) {
+		
+		$blogLink = '';
+		if($data['Content']['model'] == 'BlogPost') {
+			$bcBaser = new BcBaserHelper();
+			$blogLink = $bcBaser->getUri('/' . $this->blogPostData['BlogContent']['name'] . $this->getSlugUrl($this->blogPostData['Slug'], $this->blogPostData['BlogPost']));
+		}
+		return $blogLink;
+		
+	}
+	
 }

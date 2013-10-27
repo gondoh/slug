@@ -46,7 +46,7 @@ function slugNameValueChengeHandler() {
 
 <?php echo $bcForm->hidden('Slug.id') ?>
 <?php echo $bcForm->label('Slug.name', 'スラッグ') ?>
-<?php if($slug->jedgeAppearInputSlug($this->data['SlugConfig']['permalink_structure'])): ?>
+<?php if($slug->judgeAppearInputSlug($this->data['SlugConfig']['permalink_structure'])): ?>
 	<?php echo $bcForm->input('Slug.name', array('type' => 'text', 'size' => 40, 'maxlength' => 255, 'counter' => true)) ?>
 <?php else: ?>
 	<?php echo $bcForm->hidden('Slug.name') ?>
