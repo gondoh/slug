@@ -52,7 +52,7 @@ class SlugHelperEventListener extends BcHelperEventListener {
 		$this->View = ClassRegistry::getObject('view');
 		
 		App::import('Helper', 'Slug.Slug');
-		$this->Slug = new SlugHelper();
+		$this->Slug = new SlugHelper(new View());
 	}
 	
 /**
@@ -85,13 +85,13 @@ class SlugHelperEventListener extends BcHelperEventListener {
 		if ($Form->request->params['controller'] == 'blog_contents'){
 			// ブログ設定編集画面にスラッグ設定欄を表示する
 			if ($Form->request->params['action'] == 'admin_edit'){
-				if ($event->data['id'] == 'BlogContentEditForm') {
+				if ($event->data['id'] == 'BlogContentAdminEditForm') {
 					$event->data['out'] = $event->data['out'] . $Form->element('Slug.slug_config_form');
 				}
 			}
 			// ブログ追加画面にスラッグ設定欄を表示する
 			if ($Form->request->params['action'] == 'admin_add'){
-				if ($event->data['id'] == 'BlogContentAddForm') {
+				if ($event->data['id'] == 'BlogContentAdminAddForm') {
 					$event->data['out'] = $event->data['out'] . $Form->element('Slug.slug_config_form');
 				}
 			}

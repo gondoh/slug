@@ -73,7 +73,7 @@ class SlugAppController extends BcPluginAppController {
 		$this->blogContentDatas = $BlogContentModel->find('list', array('recursive' => -1));
 		
 		App::import('Helper', 'Slug.Slug');
-		$this->SlugHelper = new SlugHelper();
+		$this->SlugHelper = new SlugHelper(new View());
 	}
 	
 /**
