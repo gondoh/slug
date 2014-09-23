@@ -66,15 +66,16 @@ class SlugModelEventListener extends BcModelEventListener {
 		
 		// 最近の投稿、ブログ記事前後移動を find する際に実行
 		// TODO get_recent_entries に呼ばれる find 判定に、より良い方法があったら改修する
-		if(count($event->data['query']['fields']) === 2) {
-			if(($event->data['query']['fields']['0'] == 'no') && ($event->data['query']['fields']['1'] == 'name')) {
-				$event->data['query']['fields'][] = 'id';
-				$event->data['query']['fields'][] = 'posts_date';
-				$event->data['query']['fields'][] = 'blog_category_id';
-				$event->data['query']['recursive'] = 2;
+		if (!empty($event->data[0]['fields'])) {
+			if (count($event->data[0]['fields']) === 2) {
+				if(($event->data[0]['fields']['0'] == 'no') && ($event->data[0]['fields']['1'] == 'name')) {
+					$event->data[0]['fields'][] = 'id';
+					$event->data[0]['fields'][] = 'posts_date';
+					$event->data[0]['fields'][] = 'blog_category_id';
+					$event->data[0]['recursive'] = 2;
+				}
 			}
 		}
-		return $event->data['query'];
 	}
 	
 /**
@@ -266,21 +267,14 @@ class SlugModelEventListener extends BcModelEventListener {
 						$data['Slug']['blog_post_id'] = $modelId;
 						$data['Slug']['blog_content_id'] = $params['pass'][0];
 					}
-					
-					// TODO
-					// 重複スラッグを探索して、重複していれば重複個数＋１をつける
-					$duplicateDatas = $this->SlugModel->searchDuplicateSlug($slugDate);
-					if ($duplicateDatas) {
-						$slugDate['Slug']['name'] = $this->SlugModel->makeSlugName($duplicateDatas, $slugDate);
-					}
-					
 				}
 				break;
 				
 			default:
 				break;
 		}
-		
+		// スラッグ名を調整する
+		$data = $this->adjustSlugName($Model, $data);
 		return $data;
 	}
 	
@@ -351,46 +345,28 @@ class SlugModelEventListener extends BcModelEventListener {
 	}
 	
 /**
- * スラッグ情報を保存する
+ * スラッグが未設定の場合、重複している場合はスラッグ名を調整する
  * 
- * @param Controller $controller 
- * @return void
+ * @param Model $Model
+ * @param array $data
+ * @return array
  */
-	public function slugSaving($Controller) {
-		$Controller->data['Slug']['blog_content_id'] = $Controller->data['BlogPost']['blog_content_id'];
-		$Controller->data['Slug']['blog_post_no'] = $Controller->data['BlogPost']['no'];
-		
+	public function adjustSlugName(Model $Model, $data = array()) {
+		$data['Slug']['blog_post_no'] = $Model->data['BlogPost']['no'];
 		// スラッグが未入力の場合は、ブログ記事タイトルを設定する
-		if (!$Controller->data['Slug']['name']) {
-			$Controller->data['Slug']['name'] = $Controller->data['BlogPost']['name'];
+		if (!$data['Slug']['name']) {
+			$data['Slug']['name'] = $Model->data['BlogPost']['name'];
 		}
-		
-		if ($Controller->action == 'admin_add') {
-			$Controller->data['Slug']['blog_post_id'] = $Controller->BlogPost->getLastInsertId();
-			// 重複スラッグを探索して、重複していれば重複個数＋１をつける
-			$duplicateDatas = $this->SlugModel->searchDuplicateSlug($Controller->data);
-			if ($duplicateDatas) {
-				$Controller->data['Slug']['name'] = $this->SlugModel->makeSlugName($duplicateDatas, $Controller->data);
-			}
+		// 重複スラッグを探索して、重複していれば重複個数＋１をつける
+		if (!empty($data['Slug']['id'])) {
+			$duplicateDatas = $this->Slug->searchDuplicateSlug($Model->data, $data['Slug']['id']);
 		} else {
-			$Controller->data['Slug']['blog_post_id'] = $Controller->BlogPost->id;
-			// 重複スラッグを探索して、重複していれば重複個数＋１をつける
-			$duplicateDatas = $this->SlugModel->searchDuplicateSlug($Controller->data, $Controller->data['Slug']['id']);
-			if ($duplicateDatas) {
-				$Controller->data['Slug']['name'] = $this->SlugModel->makeSlugName($duplicateDatas, $Controller->data);
-			}
+			$duplicateDatas = $this->Slug->searchDuplicateSlug($Model->data);
 		}
-		
-		if (empty($Controller->data['Slug']['id'])) {
-			$this->SlugModel->create($Controller->data['Slug']);
-		} else {
-			$this->SlugModel->set($Controller->data['Slug']);
+		if ($duplicateDatas) {
+			$data['Slug']['name'] = $this->Slug->makeSlugName($duplicateDatas, $Model->data);
 		}
-		
-		if (!$this->SlugModel->save($Controller->data['Slug'], false)) {
-			$this->log('ブログ記事ID：' . $Controller->data['Slug']['blog_post_id'] . 'のスラッグ情報保存に失敗しました。');
-		}
-		
+		return $data;
 	}
 	
 }
