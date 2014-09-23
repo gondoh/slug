@@ -1,13 +1,13 @@
 <?php
 /**
- * slug 基底コントローラ
+ * Slug 基底コントローラ
  *
  * @link			http://www.materializing.net/
  * @author			arata
- * @package			slug
+ * @package			Slug
  * @license			MIT
  */
-class SlugAppController extends BaserPluginAppController {
+class SlugAppController extends BcPluginAppController {
 /**
  * ヘルパー
  *
