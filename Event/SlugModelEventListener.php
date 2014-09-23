@@ -1,13 +1,13 @@
 <?php
 /**
- * [HookBehavior] slug
+ * [ModelEventListener] Slug
  *
  * @link			http://www.materializing.net/
  * @author			arata
- * @package			slug
+ * @package			Slug
  * @license			MIT
  */
-class SlugHookBehavior extends ModelBehavior {
+class SlugModelEventListener extends BcModelEventListener {
 /**
  * 登録フック
  *

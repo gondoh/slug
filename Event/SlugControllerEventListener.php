@@ -1,13 +1,13 @@
 <?php
 /**
- * [Component] slug
+ * [ControllerEventListener] Slug
  *
  * @link			http://www.materializing.net/
  * @author			arata
- * @package			slug
+ * @package			Slug
  * @license			MIT
  */
-class SlugHookComponent extends Object {
+class SlugControllerEventListener extends BcControllerEventListener {
 /**
  * 登録フック
  *

@@ -1,13 +1,13 @@
 <?php
 /**
- * [HookHelper] slug
+ * [HelperEventListener] Slug
  *
  * @link			http://www.materializing.net/
  * @author			arata
- * @package			slug
+ * @package			Slug
  * @license			MIT
  */
-class SlugHookHelper extends AppHelper {
+class SlugHelperEventListener extends BcHelperEventListener {
 /**
  * 登録フック
  *
