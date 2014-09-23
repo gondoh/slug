@@ -1,14 +1,12 @@
 <?php
 /**
- * [ADMIN] slug
+ * [Config] Slug
  *
  * @link			http://www.materializing.net/
  * @author			arata
- * @package			slug
+ * @package			Slug
  * @license			MIT
  */
-loadPluginConfig('slug.slug');
-
 // TODO アクション名「archives」を省略する処理
 // HINT /baser/config/routes.php
 if(!empty($pluginName) && $pluginName == 'blog') {
