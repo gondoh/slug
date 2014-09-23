@@ -14,7 +14,7 @@ $(window).load(function() {
 });
 </script>
 
-<?php if($this->action == 'admin_add'): ?>
+<?php if($this->request->action == 'admin_add'): ?>
 	<?php echo $this->BcForm->create('Slug', array('url' => array('action' => 'add'))) ?>
 <?php else: ?>
 	<?php echo $this->BcForm->create('Slug', array('url' => array('action' => 'edit'))) ?>
@@ -47,7 +47,7 @@ $(window).load(function() {
 </table>
 
 <div class="submit">
-<?php if($this->action == 'admin_add'): ?>
+<?php if($this->request->action == 'admin_add'): ?>
 	<?php echo $this->BcForm->submit('登録', array('div' => false, 'class' => 'btn-red button')) ?>
 <?php else: ?>
 	<?php echo $this->BcForm->submit('更新', array('div' => false, 'class' => 'btn-red button')) ?>

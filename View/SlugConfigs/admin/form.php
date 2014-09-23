@@ -8,7 +8,7 @@
  * @license			MIT
  */
 ?>
-<?php if($this->action == 'admin_add'): ?>
+<?php if($this->request->action == 'admin_add'): ?>
 	<?php echo $this->BcForm->create('SlugConfig', array('url' => array('action' => 'add'))) ?>
 <?php else: ?>
 	<?php echo $this->BcForm->create('SlugConfig', array('url' => array('action' => 'edit'))) ?>

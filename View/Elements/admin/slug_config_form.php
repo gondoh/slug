@@ -29,8 +29,7 @@ $(function () {
 <h3 id="textSlugConfigTable">スラッグ設定</h3>
 <?php endif ?>
 
-<?php if($this->action == 'admin_add'): ?>
-<?php else: ?>
+<?php if($this->request->action != 'admin_add'): ?>
 	<?php echo $this->BcForm->input('SlugConfig.id', array('type' => 'hidden')) ?>
 <?php endif ?>
 
