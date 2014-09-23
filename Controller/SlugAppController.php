@@ -61,7 +61,7 @@ class SlugAppController extends BcPluginAppController {
 		parent::beforeFilter();
 		$judgeSlugConfigUse = false;
 		$datas = $this->SlugConfig->find('all', array('recursive' => -1));
-		if($datas) {
+		if ($datas) {
 			$judgeSlugConfigUse = true;
 		} else {
 			$this->setMessage('「スラッグ設定データ」にてスラッグ設定用のデータを作成して下さい。', true);
@@ -74,7 +74,6 @@ class SlugAppController extends BcPluginAppController {
 		
 		App::import('Helper', 'Slug.Slug');
 		$this->SlugHelper = new SlugHelper();
-		
 	}
 	
 /**
@@ -82,7 +81,7 @@ class SlugAppController extends BcPluginAppController {
  * 
  * @return void
  */
-	function admin_index() {
+	public function admin_index() {
 		$default = array(
 			'named' => array(
 				'num' => $this->siteConfigs['admin_list_num'],
@@ -96,7 +95,7 @@ class SlugAppController extends BcPluginAppController {
 			'limit'			=> $this->passedArgs['num']
 		);
 		$datas = $this->paginate();
-		if($datas) {
+		if ($datas) {
 			$this->set('datas',$datas);
 		}
 		
@@ -110,11 +109,11 @@ class SlugAppController extends BcPluginAppController {
  * @return void
  */
 	public function admin_edit($id = null) {
-		if(!$id) {
+		if (!$id) {
 			$this->setMessage('無効な処理です。', true);
 			$this->redirect(array('action' => 'index'));			
 		}
-		if(empty($this->data)) {
+		if (empty($this->data)) {
 			$this->{$this->modelClass}->id = $id;
 			$this->data = $this->{$this->modelClass}->read();
 		} else {
@@ -139,12 +138,12 @@ class SlugAppController extends BcPluginAppController {
  * @param int $id
  * @return void
  */
-	function admin_delete($id = null) {
-		if(!$id) {
+	public function admin_delete($id = null) {
+		if (!$id) {
 			$this->setMessage('無効な処理です。', true);
 			$this->redirect(array('action' => 'index'));
 		}
-		if($this->{$this->modelClass}->delete($id)) {
+		if ($this->{$this->modelClass}->delete($id)) {
 			$message = $this->controlName . ' NO.' . $id . ' を削除しました。';
 			$this->setMessage($message, false, true);
 			$this->redirect(array('action' => 'index'));

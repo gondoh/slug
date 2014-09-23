@@ -1,10 +1,10 @@
 <?php
 /**
- * slugConfig モデル
+ * [Model] SlugConfig モデル
  *
  * @link			http://www.materializing.net/
  * @author			arata
- * @package			slug
+ * @package			Slug
  * @license			MIT
  */
 class SlugConfig extends BaserPluginAppModel {
@@ -12,30 +12,29 @@ class SlugConfig extends BaserPluginAppModel {
  * モデル名
  * 
  * @var string
- * @access public
  */
-	var $name = 'SlugConfig';
+	public $name = 'SlugConfig';
+	
 /**
  * プラグイン名
  * 
  * @var string
- * @access public
  */
-	var $plugin = 'Slug';
+	public $plugin = 'Slug';
+	
 /**
  * 現在の archives 除外設定
  * 
  * @var string
- * @access public
  */
-	var $ignore_archives = false;
+	public $ignore_archives = false;
+	
 /**
  * 表示設定値
  *
  * @var array
- * @access public
  */
-	var $permalink_structure = array(
+	public $permalink_structure = array(
 		'0' => 'デフォルト',
 		'1'	=> 'スラッグ',
 		'2' => 'ブログ記事ID',
@@ -45,14 +44,13 @@ class SlugConfig extends BaserPluginAppModel {
 		// TODO カテゴリ名＋スラッグ機能の作成
 		//'6' => 'カテゴリとスラッグ'
 	);
+	
 /**
  * 初期値を取得する
  *
  * @return array
- * @access public
  */
-	function getDefaultValue() {
-
+	public function getDefaultValue() {
 		$data = array(
 			'SlugConfig' => array(
 				'permalink_structure' => 0,
@@ -60,23 +58,20 @@ class SlugConfig extends BaserPluginAppModel {
 			)
 		);
 		return $data;
-
 	}
+	
 /**
  * ブログコンテンツIDを元に、archives 除外設定をセットする
  * 
  * @param int $blogContentId
  * @return void
- * @access public
  */
-	function setIgnoreArchives($blogContentId = null) {
-
+	public function setIgnoreArchives($blogContentId = null) {
 		if($blogContentId) {
 			$slugConfigData = $this->findByBlogContentId($blogContentId);
 			$this->id = $slugConfigData['SlugConfig']['id'];
 			$this->ignore_archives = $slugConfigData['SlugConfig']['ignore_archives'];
 		}
-
 	}
-
+	
 }
