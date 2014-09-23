@@ -17,6 +17,8 @@ class SlugControllerEventListener extends BcControllerEventListener {
 		'initialize',
 		'startup',
 		'beforeRender',
+		'Blog.BlogPosts.beforeRender',
+		'Blog.BlogContents.beforeRender',
 		'shutdown'
 	);
 	
@@ -60,7 +62,7 @@ class SlugControllerEventListener extends BcControllerEventListener {
  * 
  * @return void
  */
-	private function __construct() {
+	public function __construct() {
 		parent::__construct();
 		
 		if (ClassRegistry::isKeySet('Slug.SlugConfig')) {
@@ -72,7 +74,7 @@ class SlugControllerEventListener extends BcControllerEventListener {
 		$this->SlugModel = ClassRegistry::init('Slug.Slug');
 		
 		App::import('Helper', 'Slug.Slug');
-		$this->Slug = new SlugHelper();
+		$this->Slug = new SlugHelper(new View());
 	}
 	
 /**
@@ -156,6 +158,49 @@ class SlugControllerEventListener extends BcControllerEventListener {
 	}
 	
 /**
+ * blogBlogPostsBeforeRender
+ * 
+ * @param CakeEvent $event
+ */
+	public function blogBlogPostsBeforeRender(CakeEvent $event) {
+		if (BcUtil::isAdminSystem()) {
+			$Controller = $event->subject();
+			// ブログ記事編集・追加画面で実行
+			// TODO startup で処理したかったが、$Controller->request->data に入れるとそれを全て上書きしてしまうのでダメだった
+			if ($Controller->request->params['action'] == 'admin_edit' || $Controller->request->params['action'] == 'admin_add') {
+				// スラッグ設定データを記事編集画面に追加
+				$this->slugConfigs = $this->SlugConfigModel->find('first', array(
+					'conditions' => array('SlugConfig.blog_content_id' => $Controller->BlogContent->id),
+					'recursive' => -1
+				));
+				$Controller->request->data['SlugConfig'] = $this->slugConfigs['SlugConfig'];
+			}
+		}
+	}
+	
+/**
+ * blogBlogContentsBeforeRender
+ * 
+ * @param CakeEvent $event
+ */
+	public function blogBlogContentsBeforeRender(CakeEvent $event) {
+		if (BcUtil::isAdminSystem()) {
+			$Controller = $event->subject();
+			// ブログ設定編集画面にスラッグ設定情報を送る
+			if ($Controller->request->params['action'] == 'admin_edit') {
+				$this->slugConfigs['SlugConfig'] = $Controller->request->data['SlugConfig'];
+				$Controller->set('permalink_structure', $this->Slug->addSampleShow($this->SlugConfigModel->permalink_structure));
+			}
+			// ブログ追加画面にスラッグ設定情報を送る
+			if ($Controller->request->params['action'] == 'admin_add') {
+				$defalut = $this->SlugConfigModel->getDefaultValue();
+				$Controller->request->data['SlugConfig'] = $defalut['SlugConfig'];
+				$Controller->set('permalink_structure', $this->Slug->addSampleShow($this->SlugConfigModel->permalink_structure));
+			}
+		}
+	}
+	
+/**
  * beforeRender
  * 
  * @param CakeEvent $event
@@ -163,34 +208,6 @@ class SlugControllerEventListener extends BcControllerEventListener {
  */
 	public function beforeRender(CakeEvent $event) {
 		$Controller = $event->subject();
-		if ($Controller->name == 'BlogPosts') {
-			// ブログ記事編集・追加画面で実行
-			// TODO startup で処理したかったが、$Controller->data に入れるとそれを全て上書きしてしまうのでダメだった
-			if ($Controller->request->params['action'] == 'admin_edit' || $Controller->request->params['action'] == 'admin_add') {
-				// スラッグ設定データを記事編集画面に追加
-				$this->slugConfigs = $this->SlugConfigModel->find('first',
-					array(
-						'conditions' => array('SlugConfig.blog_content_id' => $Controller->BlogContent->id))
-				);
-				$Controller->data['SlugConfig'] = $this->slugConfigs['SlugConfig'];
-			}
-		}
-		
-		if ($Controller->name == 'BlogContents') {
-			// ブログ設定編集画面にスラッグ設定情報を送る
-			if ($Controller->request->params['action'] == 'admin_edit') {
-				$this->slugConfigs = $this->SlugConfigModel->findByBlogContentId($Controller->BlogContent->id);
-				$Controller->data['SlugConfig'] = $this->slugConfigs['SlugConfig'];
-				$Controller->set('permalink_structure', $this->Slug->addSampleShow($this->SlugConfigModel->permalink_structure));
-			}
-			// ブログ追加画面にスラッグ設定情報を送る
-			if ($Controller->request->params['action'] == 'admin_add') {
-				$defalut = $this->SlugConfigModel->getDefaultValue();
-				$Controller->data['SlugConfig'] = $defalut['SlugConfig'];
-				$Controller->set('permalink_structure', $this->Slug->addSampleShow($this->SlugConfigModel->permalink_structure));
-			}
-		}
-		
 		// blogPosts、ブログのindex、ブログのarchives で実行
 		// プレビュー時に未定義エラーが出るため判定
 		if (!empty($Controller->params['plugin'])) {
