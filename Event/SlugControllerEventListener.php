@@ -102,15 +102,15 @@ class SlugControllerEventListener extends BcControllerEventListener {
 		// ブログ記事ページ表示の際に、記事NOをスラッグに置き換える
 		if (!empty($Controller->request->params['plugin'])) {
 			if ($Controller->request->params['plugin'] == 'blog') {
-
+				
 				// TODO prefix付だとエラーになるから書き換える
 				if ($Controller->request->params['action'] == 'archives') {
-
+					
 					// $slug = urldecode($Controller->request->params['pass']['0']);
 					foreach ($Controller->request->params['pass'] as $key => $param) {
 						$Controller->request->params['pass'][$key] = urldecode($param);
 					}
-
+					
 					$slug = '';
 					$paramsCount = count($Controller->request->params['pass']);
 					if ($paramsCount == 4) {
