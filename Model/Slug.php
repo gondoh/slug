@@ -7,16 +7,16 @@
  * @package			Slug
  * @license			MIT
  */
-class Slug extends BaserPluginAppModel {
+class Slug extends BcPluginAppModel {
 /**
- * モデル名
+ * ModelName
  * 
  * @var string
  */
 	public $name = 'Slug';
 	
 /**
- * プラグイン名
+ * PluginName
  * 
  * @var string
  */
@@ -31,8 +31,8 @@ class Slug extends BaserPluginAppModel {
 		'BlogPost' => array(
 			'className'	=> 'Blog.BlogPost',
 			'foreignKey' => 'blog_post_id'
-			)
-		);
+		)
+	);
 	
 /**
  * バリデーション
@@ -89,7 +89,7 @@ class Slug extends BaserPluginAppModel {
 			$duplicateDatas = $this->find('all', array(
 				'conditions' => array(
 					'Slug.name' => $data['Slug']['name'],
-					'Slug.blog_content_id' => $data['Slug']['blog_post_id']
+					'Slug.blog_content_id' => $data['Slug']['blog_content_id']
 				),
 				'recursive' => -1
 			));

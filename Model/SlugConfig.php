@@ -7,20 +7,32 @@
  * @package			Slug
  * @license			MIT
  */
-class SlugConfig extends BaserPluginAppModel {
+class SlugConfig extends BcPluginAppModel {
 /**
- * モデル名
+ * ModelName
  * 
  * @var string
  */
 	public $name = 'SlugConfig';
 	
 /**
- * プラグイン名
+ * PluginName
  * 
  * @var string
  */
 	public $plugin = 'Slug';
+	
+/**
+ * belongsTo
+ * 
+ * @var array
+ */
+	public $belongsTo = array(
+		'BlogContent' => array(
+			'className'	=> 'Blog.BlogContent',
+			'foreignKey' => 'blog_content_id'
+		)
+	);
 	
 /**
  * 現在の archives 除外設定
