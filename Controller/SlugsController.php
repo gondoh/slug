@@ -150,10 +150,9 @@ class SlugsController extends SlugAppController {
 
 			if($count) {
 				$message = sprintf('%s 件のスラッグを登録しました。', $count);
-				$this->Session->setFlash($message);
-				$this->Slug->saveDbLog($message);
+				$this->setMessage($message, false, true);
 			} else {
-				$this->Session->setFlash('登録されたスラッグはありません。');
+				$this->setMessage('登録されたスラッグはありません。', true);
 			}
 		}
 		unset($slugs);
@@ -244,14 +243,14 @@ class SlugsController extends SlugAppController {
 	function admin_unpublish($id) {
 
 		if(!$id) {
-			$this->Session->setFlash('この処理は無効です。');
+			$this->setMessage('この処理は無効です。', true);
 			$this->redirect(array('action' => 'index'));
 		}
 		if($this->_changeStatus($id, false)) {
-			$this->Session->setFlash('「無効」状態に変更しました。');
+			$this->setMessage('「無効」状態に変更しました。');
 			$this->redirect(array('action' => 'index'));
 		}
-		$this->Session->setFlash('処理に失敗しました。');
+		$this->setMessage('処理に失敗しました。', true);
 		$this->redirect(array('action' => 'index'));
 
 	}
@@ -265,14 +264,14 @@ class SlugsController extends SlugAppController {
 	function admin_publish($id) {
 
 		if(!$id) {
-			$this->Session->setFlash('この処理は無効です。');
+			$this->setMessage('この処理は無効です。', true);
 			$this->redirect(array('action' => 'index'));
 		}
 		if($this->_changeStatus($id, true)) {
-			$this->Session->setFlash('「有効」状態に変更しました。');
+			$this->setMessage('「有効」状態に変更しました。');
 			$this->redirect(array('action' => 'index'));
 		}
-		$this->Session->setFlash('処理に失敗しました。');
+		$this->setMessage('処理に失敗しました。', true);
 		$this->redirect(array('action' => 'index'));
 
 	}

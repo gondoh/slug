@@ -127,10 +127,7 @@ class SlugConfigsController extends SlugAppController {
 			}
 
 			$message = sprintf('%s 件のスラッグ設定を登録しました。', $count);
-			$this->Session->setFlash($message);
-			if($count) {
-				$this->SlugConfig->saveDbLog($message);
-			}
+			$this->setMessage($message, false, true);
 			$this->redirect(array('controller' => 'slug_configs', 'action' => 'index'));
 
 		}
