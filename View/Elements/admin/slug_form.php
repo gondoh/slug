@@ -1,10 +1,10 @@
 <?php
 /**
- * [ADMIN] slug
+ * [ADMIN] Slug
  *
  * @link			http://www.materializing.net/
  * @author			arata
- * @package			slug
+ * @package			Slug
  * @license			MIT
  */
 ?>
@@ -41,43 +41,43 @@ function slugNameValueChengeHandler() {
 </script>
 <br />
 <div id="AjaxSlugCheckNameUrl" class="display-none">
-	<?php $bcBaser->url(array('plugin' => 'slug', 'controller' => 'slugs', 'action' => 'ajax_check_name')) ?>
+	<?php $this->BcBaser->url(array('plugin' => 'slug', 'controller' => 'slugs', 'action' => 'ajax_check_name')) ?>
 </div>
 
-<?php echo $bcForm->hidden('Slug.id') ?>
-<?php echo $bcForm->label('Slug.name', 'スラッグ') ?>
-<?php if($slug->judgeAppearInputSlug($this->data['SlugConfig']['permalink_structure'])): ?>
-	<?php echo $bcForm->input('Slug.name', array('type' => 'text', 'size' => 40, 'maxlength' => 255, 'counter' => true)) ?>
+<?php echo $this->BcForm->hidden('Slug.id') ?>
+<?php echo $this->BcForm->label('Slug.name', 'スラッグ') ?>
+<?php if($this->Slug->judgeAppearInputSlug($this->data['SlugConfig']['permalink_structure'])): ?>
+	<?php echo $this->BcForm->input('Slug.name', array('type' => 'text', 'size' => 40, 'maxlength' => 255, 'counter' => true)) ?>
 <?php else: ?>
-	<?php echo $bcForm->hidden('Slug.name') ?>
+	<?php echo $this->BcForm->hidden('Slug.name') ?>
 <?php endif ?>
 
-<?php echo $html->image('admin/icn_help.png',array('id' => 'helpSlugName', 'class' => 'btn help', 'alt' => 'ヘルプ')) ?>
+<?php echo $this->BcBaser->img('admin/icn_help.png',array('id' => 'helpSlugName', 'class' => 'btn help', 'alt' => 'ヘルプ')) ?>
 <div id="helptextSlugName" class="helptext">
 	<ul>
 		<li>ブログ記事URLを任意の文字列として設定します。</li>
 		<li>表示形式は <small>http://〜/BLOG/
-			<?php if(!$slug->slugConfigs['SlugConfig']['ignore_archives']): ?>archives/<?php endif ?>
+			<?php if(!$this->Slug->slugConfigs['SlugConfig']['ignore_archives']): ?>archives/<?php endif ?>
 			設定スラッグ</small> となります。</li>
 	</ul>
 </div>
-<?php echo $bcForm->error('Slug.name') ?>
+<?php echo $this->BcForm->error('Slug.name') ?>
 <div id="SlugCheckNameResult"></div>
 
 <?php if($this->action == 'admin_edit'): ?>
-<div id="SlugPublishUrl" class="display-none"><?php echo $bcBaser->getUri('/' . $blogContent['BlogContent']['name'] . $slug->getSlugUrl($this->data['Slug'], $this->data['BlogPost'])) ?></div>
+<div id="SlugPublishUrl" class="display-none"><?php echo $this->BcBaser->getUri('/' . $blogContent['BlogContent']['name'] . $this->Slug->getSlugUrl($this->data['Slug'], $this->data['BlogPost'])) ?></div>
 <div class="box-tolink align-left">
-	<?php if($bcForm->value('BlogPost.status')): ?>
-		<?php if($bcForm->value('Slug.name')): ?>
-	URL：<?php $bcBaser->link(
-			$bcBaser->getUri('/' . $blogContent['BlogContent']['name'] . $slug->getSlugUrl($this->data['Slug'], $this->data['BlogPost'])),
-			'/' . $blogContent['BlogContent']['name'] . $slug->getSlugUrl($this->data['Slug'], $this->data['BlogPost'])) ?>
-		<?php elseif($bcForm->value('Slug.name')): ?>
-	URL：<?php echo $bcBaser->getUri('/' . $blogContent['BlogContent']['name'] . $slug->getSlugUrl($this->data['Slug'], $this->data['BlogPost'])) ?>
+	<?php if($this->BcForm->value('BlogPost.status')): ?>
+		<?php if($this->BcForm->value('Slug.name')): ?>
+	URL：<?php $this->BcBaser->link(
+			$this->BcBaser->getUri('/' . $blogContent['BlogContent']['name'] . $this->Slug->getSlugUrl($this->data['Slug'], $this->data['BlogPost'])),
+			'/' . $blogContent['BlogContent']['name'] . $this->Slug->getSlugUrl($this->data['Slug'], $this->data['BlogPost'])) ?>
+		<?php elseif($this->BcForm->value('Slug.name')): ?>
+	URL：<?php echo $this->BcBaser->getUri('/' . $blogContent['BlogContent']['name'] . $this->Slug->getSlugUrl($this->data['Slug'], $this->data['BlogPost'])) ?>
 		<?php endif ?>
 	<?php else: ?>
-		<?php if($bcForm->value('Slug.name')): ?>
-	URL：<?php echo $bcBaser->getUri('/' . $blogContent['BlogContent']['name'] . $slug->getSlugUrl($this->data['Slug'], $this->data['BlogPost'])) ?>
+		<?php if($this->BcForm->value('Slug.name')): ?>
+	URL：<?php echo $this->BcBaser->getUri('/' . $blogContent['BlogContent']['name'] . $this->Slug->getSlugUrl($this->data['Slug'], $this->data['BlogPost'])) ?>
 		<?php endif ?>
 	<?php endif ?>
 </div>

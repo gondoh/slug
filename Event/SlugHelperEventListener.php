@@ -106,7 +106,7 @@ class SlugHelperEventListener extends BcHelperEventListener {
  */
 	function afterBaserGetLink($html, $url, $out) {
 
-		if(empty($this->params['prefix']) || ($this->params['prefix'] != 'admin')) {
+		if(empty($this->request->params['prefix']) || ($this->request->params['prefix'] != 'admin')) {
 
 			$parseUrl = Router::parse($url);
 			$PluginContent = ClassRegistry::init('PluginContent');
@@ -212,14 +212,14 @@ class SlugHelperEventListener extends BcHelperEventListener {
  */
 	function afterElement($name, $out) {
 
-		if(empty($this->params['prefix']) || ($this->params['prefix'] != 'admin')) {
+		if(empty($this->request->params['prefix']) || ($this->request->params['prefix'] != 'admin')) {
 			// プレビュー時に Undefined index が出るため判定
-			if(!empty($this->params['plugin'])) {
-				if($this->params['plugin'] == 'blog') {
+			if(!empty($this->request->params['plugin'])) {
+				if($this->request->params['plugin'] == 'blog') {
 
 					if(preg_match('/^paginations\/.*/', $name)) {
 						if($this->slugConfigs['SlugConfig']['ignore_archives']) {
-							if($this->params['action'] == 'archives') {
+							if($this->request->params['action'] == 'archives') {
 								$pattern = '/href\=\"(.+?)\/archives\/(.+?)\"/';
 								$out = preg_replace($pattern, 'href="$1' . '/$2' . '"', $out);
 							}
@@ -244,10 +244,10 @@ class SlugHelperEventListener extends BcHelperEventListener {
  */
 	function beforeElement($name, $params, $loadHelpers, $subDir) {
 
-		if(empty($this->params['prefix']) || ($this->params['prefix'] != 'admin')) {
+		if(empty($this->request->params['prefix']) || ($this->request->params['prefix'] != 'admin')) {
 			// if($name == 'paginations/simple' || $name == 'paginations/default') {
 			if(preg_match('/^paginations\/.*/', $name)) {
-				if($this->params['action'] == 'archives') {
+				if($this->request->params['action'] == 'archives') {
 					// ここで action を省略しても、最終的に Router:LINE:800 で index が付けられてしまう
 					// unset($this->View->passedArgs['action']);
 					// $this->View->passedArgs['action'] = '';

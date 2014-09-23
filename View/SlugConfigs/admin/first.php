@@ -1,15 +1,15 @@
 <?php
 /**
- * [ADMIN] slug
+ * [ADMIN] Slug
  *
  * @link			http://www.materializing.net/
  * @author			arata
- * @package			slug
+ * @package			Slug
  * @license			MIT
  */
 ?>
-<?php echo $bcForm->create('SlugConfig', array('action' => 'first')) ?>
-<?php echo $bcForm->input('SlugConfig.active', array('type' => 'hidden', 'value' => '1')) ?>
+<?php echo $this->BcForm->create('SlugConfig', array('action' => 'first')) ?>
+<?php echo $this->BcForm->input('SlugConfig.active', array('type' => 'hidden', 'value' => '1')) ?>
 <table cellpadding="0" cellspacing="0" class="form-table section" id="ListTable">
 	<tr>
 		<th class="col-head">
@@ -28,7 +28,7 @@
 			<ul>
 			<?php foreach ($registerd as $value): ?>
 				<li><?php echo $value['name'] ?>：
-					<span class="large"><strong><?php echo $bcText->booleanExists($value['config']) ?></strong></span></li>
+					<span class="large"><strong><?php echo $this->BcText->booleanExists($value['config']) ?></strong></span></li>
 			<?php endforeach ?>
 			</ul>
 		</td>
@@ -36,10 +36,10 @@
 </table>
 
 <div class="submit">
-	<?php echo $bcForm->submit('作成する', array(
+	<?php echo $this->BcForm->submit('作成する', array(
 		'div' => false,
 		'class' => 'btn-red button',
 		'id' => 'BtnSubmit',
 		'onClick'=>"return confirm('スラッグ設定データの作成を行いますが良いですか？')")) ?>
 </div>
-<?php echo $bcForm->end() ?>
+<?php echo $this->BcForm->end() ?>

@@ -1,10 +1,10 @@
 <?php
 /**
- * [ADMIN] slug
+ * [ADMIN] Slug
  *
  * @link			http://www.materializing.net/
  * @author			arata
- * @package			slug
+ * @package			Slug
  * @license			MIT
  */
 ?>

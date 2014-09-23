@@ -1,14 +1,14 @@
 <?php
 /**
- * [ADMIN] slug
+ * [ADMIN] Slug
  *
  * @link			http://www.materializing.net/
  * @author			arata
- * @package			slug
+ * @package			Slug
  * @license			MIT
  */
 ?>
-<?php echo $bcForm->create('Slug', array('url' => array('action' => 'batch'))) ?>
+<?php echo $this->BcForm->create('Slug', array('url' => array('action' => 'batch'))) ?>
 <table cellpadding="0" cellspacing="0" class="list-table" id="ListTable">
 	<tr>
 		<th class="col-head" style="width:20%;">はじめに<br />お読み下さい。</th>
@@ -25,7 +25,7 @@
 		<th class="col-head">ブログの指定</th>
 		<td class="col-input">
 			<?php if($blogContentDatas): ?>
-				<?php echo $bcForm->input('Slug.blog_content_id', array('type' => 'select', 'options' => $blogContentDatas)) ?>
+				<?php echo $this->BcForm->input('Slug.blog_content_id', array('type' => 'select', 'options' => $blogContentDatas)) ?>
 			<?php else: ?>
 				ブログがないために設定できません。
 			<?php endif ?>
@@ -46,7 +46,7 @@
 
 <div class="submit">
 	<?php if($blogContentDatas): ?>
-		<?php echo $bcForm->submit('一括設定する', array(
+		<?php echo $this->BcForm->submit('一括設定する', array(
 			'div' => false,
 			'class' => 'btn-red button',
 			'id' => 'BtnSubmit',
@@ -55,4 +55,4 @@
 		ブログがないために設定できません。
 	<?php endif ?>
 </div>
-<?php echo $bcForm->end() ?>
+<?php echo $this->BcForm->end() ?>
