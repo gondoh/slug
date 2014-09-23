@@ -1,13 +1,13 @@
 <?php
 /**
- * [ADMIN] slug
+ * [ADMIN] Slug
  *
  * @link			http://www.materializing.net/
  * @author			arata
- * @package			slug
+ * @package			Slug
  * @license			MIT
  */
-$title = 'slugプラグイン';
+$title = 'Slugプラグイン';
 $description = 'ブログ記事のURLにスラッグを設定できます。';
 $author = 'arata';
 $url = 'http://www.materializing.net/';

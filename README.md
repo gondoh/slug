@@ -1,28 +1,28 @@
-# slug プラグイン #
-slugプラグインは、ブログ記事のURLにスラッグを設定できるbaserCMS専用のプラグインです。
+# Slug プラグイン #
+Slugプラグインは、ブログ記事のURLにスラッグを設定できるbaserCMS専用のプラグインです。
 
 
 ## Installation ##
 
-1. 圧縮ファイルを解凍後、BASERCMS/app/plugins/slug に配置します。
-2. 管理システムのプラグイン管理に入って、表示されている slugプラグイン を有効化して下さい。
+1. 圧縮ファイルを解凍後、BASERCMS/app/plugins/Slug に配置します。
+2. 管理システムのプラグイン管理に入って、表示されている Slugプラグイン を有効化して下さい。
 3. プラグインの有効化後、ブログ記事の投稿画面にアクセスすると、入力項目にスラッグ設定欄が追加されてます。
 4. インストール直後、「スラッグ設定管理メニュー」の「スラッグ設定データ作成」よりスラッグ設定用の初期データを作成して下さい。
 
 
 ## Uses ##
 
-* ブログのテンプレート内の `$blog->category($post)` を以下に書き換えます。  
+* ブログのテンプレート内の `$this->Blog->category($post)` を以下に書き換えます。  
 
-	`echo $slug->category($post)`
+	`echo $this->Slug->category($post)`
 
 * ブログのテンプレート内の `$blog->postContent($post)` を以下に書き換えます。  
 
-	`echo $slug->postContent($post)`
+	`echo $this->Slug->postContent($post)`
 
-* ウィジェット（/elements/widgets/blog_category_archives.php）内の `$blog->getCategoryList($category)` を以下に書き換えます。  
+* ウィジェット（/Elements/widgets/blog_category_archives.php）内の `$this->Blog->getCategoryList($category)` を以下に書き換えます。
 
-	`$slub->getCategoryList($category)`
+	`$this->Slub->getCategoryList($category)`
 
 
 ## Uses Config ##
