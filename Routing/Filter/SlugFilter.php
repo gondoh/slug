@@ -45,22 +45,21 @@ class SlugFilter extends DispatcherFilter {
 		
 		// archives 除外指定の対応
 		// ブログへのアクセス時のみ実行する
-		if(!empty($pluginName) && $pluginName == 'blog') {
+		if (!empty($pluginName) && $pluginName == 'blog') {
 			$pluginData = $PluginContent->find('first', array(
 				'conditions' => array(
 					'PluginContent.name' => $pluginContentName,
 					'PluginContent.plugin' => $pluginName
 				)
 			));
-
 			$SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
 			$SlugConfigModel->setIgnoreArchives($pluginData['PluginContent']['content_id']);
-			if($SlugConfigModel->ignore_archives) {
+			if ($SlugConfigModel->ignore_archives) {
 				$parseUrl = Router::parse('/' . Configure::read('BcRequest.pureUrl'));
-				if(!$agent) {
+				if (!$agent) {
 					// PC用ルーティング
 					// indexアクション以外の場合、本来ならparams['pass']に入るものが、request内のactionに入っているため置き換えている
-					if($parseUrl['action'] != 'index') {
+					if ($parseUrl['action'] != 'index') {
 						$event->data['request']->params['action'] = 'archives';
 						$event->data['request']->params['pass'][] = $parseUrl['action'];
 					}
@@ -71,7 +70,7 @@ class SlugFilter extends DispatcherFilter {
 				} else {
 					// SP、FP用ルーティング
 					// indexアクション以外の場合、本来ならparams['pass']に入るものが、request内のactionに入っているため置き換えている
-					if($parseUrl['action'] != 'index') {
+					if ($parseUrl['action'] != 'index') {
 						$event->data['request']->params['action'] = 'archives';
 						$event->data['request']->params['pass'][] = $parseUrl['action'];
 					}
