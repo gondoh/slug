@@ -16,6 +16,13 @@ class SlugHelper extends AppHelper {
 	public $helpers = array('Blog', 'Html');
 	
 /**
+ * SlugConfigモデル
+ * 
+ * @var Object
+ */
+	public $SlugConfigModel = null;
+	
+/**
  * Slug設定情報
  * 
  * @var array
@@ -37,12 +44,11 @@ class SlugHelper extends AppHelper {
 		parent::__construct($View, $settings);
 		
 		if (ClassRegistry::isKeySet('Slug.SlugConfig')) {
-			$SlugConfigModel = ClassRegistry::getObject('Slug.SlugConfig');
-			$this->slugConfigs = $SlugConfigModel->read();
+			$this->SlugConfigModel = ClassRegistry::getObject('Slug.SlugConfig');
 		} else {
-			$SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
-			$this->slugConfigs = $SlugConfigModel->read();
+			$this->SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
 		}
+		$this->slugConfigs = $this->SlugConfigModel->read();
 	}
 	
 /**
@@ -53,8 +59,7 @@ class SlugHelper extends AppHelper {
  * @return string
  */
 	public function getSlugName($slug, $post) {
-		$SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
-		$this->slugConfigs = $SlugConfigModel->findByBlogContentId($slug['blog_content_id']);
+		$this->slugConfigs = $this->SlugConfigModel->findByBlogContentId($slug['blog_content_id']);
 		
 		if (empty($slug['name'])) {
 			$slug['name'] = $post['no'];
@@ -115,38 +120,43 @@ class SlugHelper extends AppHelper {
  * @return string
  */
 	public function getSlugUrl($slug, $post){
-		$SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
-		$this->slugConfigs = $SlugConfigModel->findByBlogContentId($post['blog_content_id']);
+		$this->slugConfigs = $this->SlugConfigModel->findByBlogContentId($post['blog_content_id']);
 		
 		$actionName = '/archives';
+		// スラッグ設定情報でarchives除外設定を有効化している場合は、URLからarchivesを除外する
 		if ($this->slugConfigs['SlugConfig']['ignore_archives']) {
 			$actionName = '';
 		}
 		
-		if ($this->slugConfigs['SlugConfig']['permalink_structure'] === '1') {
-			// スラッグ
-			return $actionName . '/' . $slug['name'];
+		$slugUrl = '';
+		// スラッグ設定情報に設定しているブログ記事URLの形式に、URLを設定する
+		switch ($this->slugConfigs['SlugConfig']['permalink_structure']) {
+			case 1:
+				// スラッグ
+				$slugUrl = $actionName . '/' . $slug['name'];
+				break;
 			
-		} elseif ($this->slugConfigs['SlugConfig']['permalink_structure'] === '2') {
-			// 記事ID
-			return $actionName . '/' . $post['id'];
+			case 2:
+				// 記事ID
+				$slugUrl = $actionName . '/' . $post['id'];
 			
-		} elseif ($this->slugConfigs['SlugConfig']['permalink_structure'] === '3') {
-			// 記事ID（6桁）
-			return $actionName . '/' . sprintf('%06d', $post['id']);
+			case 3:
+				// 記事ID（6桁）
+				$slugUrl = $actionName . '/' . sprintf('%06d', $post['id']);
 			
-		} elseif ($this->slugConfigs['SlugConfig']['permalink_structure'] === '4') {
-			// /2012/12/01/sample-post/
-			return $actionName . '/' . date('Y/m/d', strtotime($post['posts_date'])) . '/' . $slug['name'];
+			case 4:
+				// /2012/12/01/sample-post/
+				$slugUrl = $actionName . '/' . date('Y/m/d', strtotime($post['posts_date'])) . '/' . $slug['name'];
 			
-		} elseif ($this->slugConfigs['SlugConfig']['permalink_structure'] === '5') {
-			// /2012/12/sample-post/
-			return $actionName . '/' . date('Y/m', strtotime($post['posts_date'])) . '/' . $slug['name'];
+			case 5:
+				// /2012/12/sample-post/
+				$slugUrl = $actionName . '/' . date('Y/m', strtotime($post['posts_date'])) . '/' . $slug['name'];
 			
-		} else {
-			return $actionName . '/' . $post['no'];
-			
+			default:
+				$slugUrl = $actionName . '/' . $post['no'];
+				break;
 		}
+		return $slugUrl;
 	}
 	
 /**
@@ -201,6 +211,40 @@ class SlugHelper extends AppHelper {
 			}
 		}
 		return $array;
+	}
+	
+/**
+ * ブログ記事がスラッグデータを持っているか判定する
+ * 
+ * @param array $data
+ * @return boolean
+ */
+	public function judgeContentsSearchUrl($data = array()) {
+		if ($data['Content']['model'] == 'BlogPost') {
+			$BlogPostModel = ClassRegistry::init('BlogPost');
+			$this->blogPostData = $BlogPostModel->find('first', array('conditions' => array(
+				'BlogPost.id' => $data['Content']['model_id']
+			)));
+			if ($this->blogPostData['Slug']) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+/**
+ * 検索結果ページ用のURLを生成する
+ * 
+ * @param array $data
+ * @return string
+ */
+	public function getContentsSearchUrl($data = array()) {
+		$blogLink = '';
+		if ($data['Content']['model'] == 'BlogPost') {
+			$bcBaser = new BcBaserHelper();
+			$blogLink = $bcBaser->getUri('/' . $this->blogPostData['BlogContent']['name'] . $this->getSlugUrl($this->blogPostData['Slug'], $this->blogPostData['BlogPost']));
+		}
+		return $blogLink;
 	}
 	
 /**
@@ -275,40 +319,6 @@ class SlugHelper extends AppHelper {
 			$out = preg_replace($pattern, 'href="$1' . '/$2' . '"', $out);
 		}
 		return $out;
-	}
-	
-/**
- * ブログ記事がスラッグデータを持っているか判定する
- * 
- * @param array $data
- * @return boolean
- */
-	public function judgeContentsSearchUrl($data = array()) {
-		if ($data['Content']['model'] == 'BlogPost') {
-			$BlogPostModel = ClassRegistry::init('BlogPost');
-			$this->blogPostData = $BlogPostModel->find('first', array('conditions' => array(
-				'BlogPost.id' => $data['Content']['model_id']
-			)));
-			if ($this->blogPostData['Slug']) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-/**
- * 検索結果ページ用のURLを生成する
- * 
- * @param array $data
- * @return string
- */
-	public function getContentsSearchUrl($data = array()) {
-		$blogLink = '';
-		if ($data['Content']['model'] == 'BlogPost') {
-			$bcBaser = new BcBaserHelper();
-			$blogLink = $bcBaser->getUri('/' . $this->blogPostData['BlogContent']['name'] . $this->getSlugUrl($this->blogPostData['Slug'], $this->blogPostData['BlogPost']));
-		}
-		return $blogLink;
 	}
 	
 }
