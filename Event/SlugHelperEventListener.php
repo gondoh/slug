@@ -16,7 +16,7 @@ class SlugHelperEventListener extends BcHelperEventListener {
 	public $events = array(
 		'Form.afterInput',
 		'Form.afterCreate',
-		'afterBaserGetLink',
+		'Html.afterGetLink',
 		'afterElement'
 	);
 	
@@ -42,14 +42,43 @@ class SlugHelperEventListener extends BcHelperEventListener {
 	public $slugConfigs = array();
 	
 /**
+ * ブログアーカイブ
+ * 
+ * @var array
+ */
+	public $blogArchives = array(
+		'category', 'tag', 'date', 'author'
+	);
+	
+/**
  * Construct 
  * 
  */
 	public function __construct() {
 		parent::__construct();
-		$SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
+		
+		if (ClassRegistry::isKeySet('Slug.SlugConfig')) {
+			$SlugConfigModel = ClassRegistry::getObject('Slug.SlugConfig');
+		} else {
+			$SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
+		}
 		$this->slugConfigs = $SlugConfigModel->read();
-		$this->View = ClassRegistry::getObject('view');
+		
+		if (ClassRegistry::isKeySet('PluginContent')) {
+			$this->PluginContent = ClassRegistry::getObject('PluginContent');
+		} else {
+			$this->PluginContent = ClassRegistry::init('PluginContent');
+		}
+		
+		if (ClassRegistry::isKeySet('Blog.BlogPost')) {
+			$this->BlogPostModel = ClassRegistry::getObject('Blog.BlogPost');
+		} else {
+			$this->BlogPostModel = ClassRegistry::init('Blog.BlogPost');
+		}
+		
+		//$this->View = ClassRegistry::getObject('view');
+		App::import('Helper', 'BcHtml');
+		$this->BcHtml = new BcHtmlHelper(new View());
 		
 		App::import('Helper', 'Slug.Slug');
 		$this->Slug = new SlugHelper(new View());
@@ -107,15 +136,20 @@ class SlugHelperEventListener extends BcHelperEventListener {
  * @param string $out
  * @return string 
  */
-	public function afterBaserGetLink(CakeEvent $event, $url) {
+	public function htmlAfterGetLink(CakeEvent $event) {
 		$View = $event->subject();
-		if (empty($View->request->params['prefix']) || ($View->request->params['prefix'] != 'admin')) {
+		$url = $event->data['url'];
+		if (!BcUtil::isAdminSystem()) {
+			if (is_array($url)) {
+				$this->linkUrl = $this->BcHtml->url($url);
+				$url = $this->linkUrl;
+			}
 			$parseUrl = Router::parse($url);
-			$PluginContent = ClassRegistry::init('PluginContent');
-			$pluginContent = $PluginContent->currentPluginContent($url);
+			
+			$pluginContent = $this->PluginContent->currentPluginContent($url);
 			// beforeFind が機能しないために取得し直している
-			if ($pluginContent) {
-				$pluginContent = $PluginContent->find('first', array(
+			if ($pluginContent && $pluginContent['PluginContent']['plugin'] == 'blog') {
+				$pluginContent = $this->PluginContent->find('first', array(
 					'conditions' => array(
 						'PluginContent.name' => $pluginContent['PluginContent']['name'],
 						'PluginContent.plugin' => $pluginContent['PluginContent']['plugin'])));
@@ -135,121 +169,94 @@ class SlugHelperEventListener extends BcHelperEventListener {
  */
 	public function convertOutputArchivesLink($out = '', $parseUrl = array(), $pluginContent = array()) {
 		$countPass = count($parseUrl['pass']);
-		
+		// URLのaction以降の引数が1つより多い場合に判定を実施する
 		if ($countPass === 1 || $countPass === 2) {
-			if ($countPass === 1) {
-				$no = $parseUrl['pass']['0'];
-			} elseif ($countPass === 2) {
-				$no = $parseUrl['pass']['1'];
+			// 判定する引数を設定する
+			switch ($countPass) {
+				case 1:
+					$no = $parseUrl['pass']['0'];
+					break;
+				
+				case 2:
+					$no = $parseUrl['pass']['1'];
+					break;
+				
+				default:
+					break;
 			}
 			
+			// single以外のarchivesへのリンク判定を行う
 			$judgeArchives = false;
-			if ($parseUrl['pass']['0'] == 'category' || $parseUrl['pass']['0'] == 'tag' || $parseUrl['pass']['0'] == 'date') {
+			if (in_array($parseUrl['pass']['0'], $this->blogArchives)) {
 				$judgeArchives = true;
 			}
 			
+			// singleへのリンクの場合に実施する
 			if (!$judgeArchives) {
 				if ($pluginContent) {
 					$blogContentId = $pluginContent['content_id'];
 				} else {
 					$blogContentId = $this->View->viewVars['blogContent']['BlogContent']['id'];
 				}
-
 				$conditions = array(
 					'BlogPost.blog_content_id'	=> $blogContentId,
 					'BlogPost.no'		=> $no
 				);
-				$BlogPostModel = ClassRegistry::init('Blog.BlogPost');
-				$data = $BlogPostModel->find('first', array(
+				// リンクURLからブログ記事情報を判定する
+				$data = $this->BlogPostModel->find('first', array(
 					'conditions' => $conditions,
 					'recursive' => 1));
 				if ($data) {
+					// リンクURLがブログ記事であればスラッグ情報を取得する
 					$no = $this->Slug->getSlugName($data['Slug'], $data['BlogPost']);
 				}
-				unset($BlogPostModel);
 				unset($data);
 			}
 		}
 		
 		$pattern = '/href\=\"(.+)\/archives\/(.+)\"/';
 		if (!empty($no)) {
+			// URLのスラッグ設定情報を設定する
+			$this->slugConfigs = $this->Slug->slugConfigs;
+			// single以外のarchivesへのリンクの場合、種類別でURLを調整する
 			if ($judgeArchives) {
-				// カテゴリへのリンクの際は category/ を付加する
-				if ($parseUrl['pass']['0'] == 'category') {
-					$no = 'category' . DS . $no;
-				}
-				// タグへのリンクの際は tag/ を付加する
-				if ($parseUrl['pass']['0'] == 'tag') {
-					$no = 'tag' . DS . $no;
-				}
-				// 年別へのリンクの際は date/ を付加する
-				if ($parseUrl['pass']['0'] == 'date') {
-					$no = 'date' . DS . $no;
+				switch ($parseUrl['pass']['0']) {
+					case 'category':
+						// カテゴリへのリンクの際は category/ を付加する
+						$no = $this->blogArchives[0] . DS . $no;
+						break;
+					
+					case 'tag':
+						// タグへのリンクの際は tag/ を付加する
+						$no = $this->blogArchives[1] . DS . $no;
+						break;
+					
+					case 'date';
+						// 年別へのリンクの際は date/ を付加する
+						$no = $this->blogArchives[2] . DS . $no;
+					
+					case 'author':
+						// ユーザーへのリンクの際は author/ を付加する
+						$no = $this->blogArchives[3] . DS . $no;
+						
+					default:
+						break;
 				}
 			}
 			if ($this->slugConfigs['SlugConfig']['ignore_archives']) {
+				// リンクURLからarchivesの文字列を除外する
 				$out = preg_replace($pattern, 'href="$1' . DS . $no . '"', $out);
 			} else {
 				$out = preg_replace($pattern, 'href="$1' . '/archives/' . $no . '"', $out);
 			}
 		} else {
 			if ($this->slugConfigs['SlugConfig']['ignore_archives']) {
+				// リンクURLからarchivesの文字列を除外する
 				$out = preg_replace($pattern, 'href="$1' . DS . '$2' . '"', $out);
 			}
 		}
 		
 		return $out;
-	}
-	
-/**
- * afterElement
- * 
- * @param CakeEvent $event
- * @return string 
- */
-	public function afterElement(CakeEvent $event) {
-		$View = $event->subject();
-		if (empty($View->request->params['prefix']) || ($View->request->params['prefix'] != 'admin')) {
-			// プレビュー時に Undefined index が出るため判定
-			if (!empty($View->request->params['plugin'])) {
-				if ($View->request->params['plugin'] == 'blog') {
-					
-					if (preg_match('/^paginations\/.*/', $event->data['name'])) {
-						if ($this->slugConfigs['SlugConfig']['ignore_archives']) {
-							if ($View->request->params['action'] == 'archives') {
-								$pattern = '/href\=\"(.+?)\/archives\/(.+?)\"/';
-								$event->data['out'] = preg_replace($pattern, 'href="$1' . '/$2' . '"', $event->data['out']);
-							}
-						}
-					}
-					
-				}
-			}
-		}
-		return $event->data['out'];
-	}
-	
-/**
- * beforeElement：未使用：コード内コメント参照
- * 
- * @param type $name
- * @param type $params
- * @param type $loadHelpers
- * @param type $subDir
- * @return array $params
- */
-	public function beforeElement($name, $params, $loadHelpers, $subDir) {
-		if (empty($this->request->params['prefix']) || ($this->request->params['prefix'] != 'admin')) {
-			// if($name == 'paginations/simple' || $name == 'paginations/default') {
-			if (preg_match('/^paginations\/.*/', $name)) {
-				if ($this->request->params['action'] == 'archives') {
-					// ここで action を省略しても、最終的に Router:LINE:800 で index が付けられてしまう
-					// unset($this->View->passedArgs['action']);
-					// $this->View->passedArgs['action'] = '';
-				}
-			}
-		}
-		return $params;
 	}
 	
 }
