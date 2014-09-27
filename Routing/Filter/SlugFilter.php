@@ -22,6 +22,7 @@ class SlugFilter extends DispatcherFilter {
 		
 		// パラメータ取得（文字列のURL）
 		$parameter = getPureUrl($request);
+		
 		$agent = Configure::read('BcRequest.agent');
 		$agentAlias = Configure::read('BcRequest.agentAlias');
 		$agentPrefix = Configure::read('BcRequest.agentPrefix');
@@ -55,13 +56,20 @@ class SlugFilter extends DispatcherFilter {
 			$SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
 			$SlugConfigModel->setIgnoreArchives($pluginData['PluginContent']['content_id']);
 			if ($SlugConfigModel->ignore_archives) {
-				$parseUrl = Router::parse('/' . Configure::read('BcRequest.pureUrl'));
+				$parseUrl = Router::parse('/' . $parameter);
 				if (!$agent) {
 					// PC用ルーティング
 					// indexアクション以外の場合、本来ならparams['pass']に入るものが、request内のactionに入っているため置き換えている
 					if ($parseUrl['action'] != 'index') {
 						$event->data['request']->params['action'] = 'archives';
-						$event->data['request']->params['pass'][] = $parseUrl['action'];
+						/**
+						 * 日付アーカイブへのアクセス時に対応
+						 * アクセスしたURLのアクション名に、アーカイブ判定文字列が入ってくるため、
+						 * 判定文字列をparams['pass']の最初に入るようにしている
+						 * 例：/news/archives/date/2014/9
+						 */
+						array_unshift($event->data['request']->params['pass'], $parseUrl['action']);
+						//$event->data['request']->params['pass'][] = $parseUrl['action'];
 					}
 					Router::connect("/{$pluginContentName}/:action/*",
 								array('plugin' => $pluginName, 'controller' => $pluginName));
@@ -72,7 +80,8 @@ class SlugFilter extends DispatcherFilter {
 					// indexアクション以外の場合、本来ならparams['pass']に入るものが、request内のactionに入っているため置き換えている
 					if ($parseUrl['action'] != 'index') {
 						$event->data['request']->params['action'] = 'archives';
-						$event->data['request']->params['pass'][] = $parseUrl['action'];
+						array_unshift($event->data['request']->params['pass'], $parseUrl['action']);
+						//$event->data['request']->params['pass'][] = $parseUrl['action'];
 					}
 					Router::connect("/{$agentAlias}/{$pluginContentName}/:action/*",
 								array('prefix' => $agentPrefix, 'plugin' => $pluginName, 'controller' => $pluginName));
