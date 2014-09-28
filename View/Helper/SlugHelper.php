@@ -37,6 +37,15 @@ class SlugHelper extends AppHelper {
 	public $blogPostData = array();
 	
 /**
+ * ブログアーカイブ
+ * 
+ * @var array
+ */
+	public $blogArchives = array(
+		'category', 'tag', 'date', 'author'
+	);
+	
+/**
  * Construct
  * 
  */
@@ -48,7 +57,6 @@ class SlugHelper extends AppHelper {
 		} else {
 			$this->SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
 		}
-		$this->slugConfigs = $this->SlugConfigModel->read();
 	}
 	
 /**

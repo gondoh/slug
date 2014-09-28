@@ -49,15 +49,6 @@ class SlugHelperEventListener extends BcHelperEventListener {
 	public $SlugConfigModel = null;
 	
 /**
- * ブログアーカイブ
- * 
- * @var array
- */
-	public $blogArchives = array(
-		'category', 'tag', 'date', 'author'
-	);
-	
-/**
  * Construct 
  * 
  */
@@ -199,7 +190,7 @@ class SlugHelperEventListener extends BcHelperEventListener {
 			
 			// single以外のarchivesへのリンク判定を行う
 			$judgeArchives = false;
-			if (in_array($parseUrl['pass']['0'], $this->blogArchives)) {
+			if (in_array($parseUrl['pass']['0'], $this->Slug->blogArchives)) {
 				$judgeArchives = true;
 			}
 			
@@ -233,22 +224,22 @@ class SlugHelperEventListener extends BcHelperEventListener {
 				switch ($parseUrl['pass']['0']) {
 					case 'category':
 						// カテゴリへのリンクの際は category/ を付加する
-						$no = $this->blogArchives[0] . DS . $no;
+						$no = $this->Slug->blogArchives[0] . DS . $no;
 						break;
 					
 					case 'tag':
 						// タグへのリンクの際は tag/ を付加する
-						$no = $this->blogArchives[1] . DS . $no;
+						$no = $this->Slug->blogArchives[1] . DS . $no;
 						break;
 					
 					case 'date';
 						// 年別へのリンクの際は date/ を付加する
-						$no = $this->blogArchives[2] . DS . $no;
+						$no = $this->Slug->blogArchives[2] . DS . $no;
 						break;
 					
 					case 'author':
 						// ユーザーへのリンクの際は author/ を付加する
-						$no = $this->blogArchives[3] . DS . $no;
+						$no = $this->Slug->blogArchives[3] . DS . $no;
 						break;
 					
 					default:
