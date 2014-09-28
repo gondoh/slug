@@ -23,3 +23,11 @@
 	text-align: left;
 	display: inline;
 }
+
+#WrapperSlugConfig {
+	margin-top: 8px;
+}
+
+#WrapperSlugConfigPermalinkStructure {
+	margin-bottom: 7px;
+}

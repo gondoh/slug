@@ -7,68 +7,21 @@
  * @package			Slug
  * @license			MIT
  */
+$this->BcBaser->css('Slug.admin/slug', array('inline' => false));
 ?>
-<?php if($this->request->params['controller'] == 'blog_contents'): ?>
-<script type="text/javascript">
-$(function () {
-	$("#textSlugConfigTable").toggle(
-		function() {
-			$('#SlugConfigTable').slideDown('slow');
-		},
-		function() {
-			$('#SlugConfigTable').slideUp('slow');
-		}
-	);
-});
-</script>
-<style type="text/css">
-	#textSlugConfigTable {
-		cursor: pointer;
-	}
-</style>
-<h3 id="textSlugConfigTable">スラッグ設定</h3>
-<?php endif ?>
-
 <?php if($this->request->action != 'admin_add'): ?>
 	<?php echo $this->BcForm->input('SlugConfig.id', array('type' => 'hidden')) ?>
 <?php endif ?>
 
-<?php if($this->request->params['controller'] == 'blog_contents'): ?>
-<div id="SlugConfigTable" style="display: none;">
-<?php else: ?>
-<div id="SlugConfigTable">
-<?php endif ?>
-
-<table cellpadding="0" cellspacing="0" class="form-table section">
-	<tr>
-		<th class="col-head">
-			<?php echo $this->BcForm->label('SlugConfig.permalink_structure', 'スラッグ構造') ?>
-			<?php echo $this->BcBaser->img('admin/icn_help.png', array('id' => 'helpPermalinkStructure', 'class' => 'btn help', 'alt' => 'ヘルプ')) ?>
-			<div id="helptextPermalinkStructure" class="helptext">
-				<ul>
-					<li>スラッグとして用いるURLを指定します。</li>
-				</ul>
-			</div>
-		</th>
-		<td class="col-input">
-			<?php echo $this->BcForm->input('SlugConfig.permalink_structure', array('type' => 'radio', 'options' => $permalink_structure, 'separator' => '<br />')) ?>
-			<?php echo $this->BcForm->error('SlugConfig.permalink_structure') ?>
-		</td>
-	</tr>
-	<tr>
-		<th class="col-head">
-			<?php echo $this->BcForm->label('SlugConfig.ignore_archives', 'archivesの省略') ?>
-			<?php echo $this->BcBaser->img('admin/icn_help.png', array('id' => 'helpIgnoreArchives', 'class' => 'btn help', 'alt' => 'ヘルプ')) ?>
-			<div id="helptextIgnoreArchives" class="helptext">
-				<ul>
-					<li>ブログのアーカイブURLに入る「archives」の省略を指定します。</li>
-				</ul>
-			</div>
-		</th>
-		<td class="col-input">
-			<?php echo $this->BcForm->input('SlugConfig.ignore_archives', array('type' => 'radio', 'options' => $this->BcText->booleanDoList('省略'))) ?>
-			<?php echo $this->BcForm->error('SlugConfig.ignore_archives') ?>
-		</td>
-	</tr>
-</table>
+<div id="WrapperSlugConfig">
+	<div id="WrapperSlugConfigPermalinkStructure">
+		<strong><?php echo $this->BcForm->label('SlugConfig.permalink_structure', 'スラッグとして用いるURLの指定') ?></strong>
+	<br />
+	<?php echo $this->BcForm->input('SlugConfig.permalink_structure', array('type' => 'radio', 'options' => $permalink_structure, 'separator' => '<br />')) ?>
+	<?php echo $this->BcForm->error('SlugConfig.permalink_structure') ?>
+	</div>
+	<div id="WrapperSlugConfigIgnoreArchives">
+	<?php echo $this->BcForm->input('SlugConfig.ignore_archives', array('type' => 'checkbox', 'label' => 'アーカイブURLの「archives」を省略する')) ?>
+	<?php echo $this->BcForm->error('SlugConfig.ignore_archives') ?>
+	</div>
 </div>

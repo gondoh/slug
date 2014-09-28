@@ -15,7 +15,6 @@ class SlugHelperEventListener extends BcHelperEventListener {
  */
 	public $events = array(
 		'Form.afterInput',
-		'Form.afterCreate',
 		'Html.afterGetLink'
 	);
 	
@@ -96,27 +95,11 @@ class SlugHelperEventListener extends BcHelperEventListener {
 				}
 			}
 		}
-		return $event->data['out'];
-	}
-	
-/**
- * afterFormCreate
- * 
- * @param CakeEvent $event
- * @return string
- */
-	public function formAfterCreate(CakeEvent $event) {
-		$Form = $event->subject();
+		
 		if ($Form->request->params['controller'] == 'blog_contents'){
 			// ブログ設定編集画面にスラッグ設定欄を表示する
-			if ($Form->request->params['action'] == 'admin_edit'){
-				if ($event->data['id'] == 'BlogContentAdminEditForm') {
-					$event->data['out'] = $event->data['out'] . $Form->element('Slug.slug_config_form');
-				}
-			}
-			// ブログ追加画面にスラッグ設定欄を表示する
-			if ($Form->request->params['action'] == 'admin_add'){
-				if ($event->data['id'] == 'BlogContentAdminAddForm') {
+			if ($Form->request->params['action'] == 'admin_edit' || $Form->request->params['action'] == 'admin_add'){
+				if($event->data['fieldName'] == 'BlogContent.exclude_search') {
 					$event->data['out'] = $event->data['out'] . $Form->element('Slug.slug_config_form');
 				}
 			}
