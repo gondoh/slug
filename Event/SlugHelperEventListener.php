@@ -234,11 +234,13 @@ class SlugHelperEventListener extends BcHelperEventListener {
 					case 'date';
 						// 年別へのリンクの際は date/ を付加する
 						$no = $this->blogArchives[2] . DS . $no;
+						break;
 					
 					case 'author':
 						// ユーザーへのリンクの際は author/ を付加する
 						$no = $this->blogArchives[3] . DS . $no;
-						
+						break;
+					
 					default:
 						break;
 				}
