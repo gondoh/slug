@@ -42,6 +42,13 @@ class SlugHelperEventListener extends BcHelperEventListener {
 	public $slugConfigs = array();
 	
 /**
+ * slug設定モデル
+ * 
+ * @var Object
+ */
+	public $SlugConfigModel = null;
+	
+/**
  * ブログアーカイブ
  * 
  * @var array
@@ -58,11 +65,10 @@ class SlugHelperEventListener extends BcHelperEventListener {
 		parent::__construct();
 		
 		if (ClassRegistry::isKeySet('Slug.SlugConfig')) {
-			$SlugConfigModel = ClassRegistry::getObject('Slug.SlugConfig');
+			$this->SlugConfigModel = ClassRegistry::getObject('Slug.SlugConfig');
 		} else {
-			$SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
+			$this->SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
 		}
-		$this->slugConfigs = $SlugConfigModel->read();
 		
 		if (ClassRegistry::isKeySet('PluginContent')) {
 			$this->PluginContent = ClassRegistry::getObject('PluginContent');
@@ -153,6 +159,12 @@ class SlugHelperEventListener extends BcHelperEventListener {
 					'conditions' => array(
 						'PluginContent.name' => $pluginContent['PluginContent']['name'],
 						'PluginContent.plugin' => $pluginContent['PluginContent']['plugin'])));
+				$this->slugConfigs = $this->SlugConfigModel->find('first', array(
+					'conditions' => array(
+						'SlugConfig.id' => $pluginContent['PluginContent']['content_id']
+					),
+					'recursive' => -1
+				));
 				$event->data['out'] = $this->convertOutputArchivesLink($event->data['out'], $parseUrl, $pluginContent['PluginContent']);
 			}
 		}
@@ -216,8 +228,6 @@ class SlugHelperEventListener extends BcHelperEventListener {
 		
 		$pattern = '/href\=\"(.+)\/archives\/(.+)\"/';
 		if (!empty($no)) {
-			// URLのスラッグ設定情報を設定する
-			$this->slugConfigs = $this->Slug->slugConfigs;
 			// single以外のarchivesへのリンクの場合、種類別でURLを調整する
 			if ($judgeArchives) {
 				switch ($parseUrl['pass']['0']) {
