@@ -1,0 +1,33 @@
+@charset "utf-8";
+/**
+ * [ADMIN] Slug
+ * 
+ * スラッグ用のスタイル
+ */
+
+/* スラッグ入力欄 text
+-------------------------------- */
+#WrapperSlugNameForm {
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+/* スラッグURL表示部分
+-------------------------------- */
+#WrapperSlugNameUrl {
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+#WrapperSlugNameUrl .box-tolink {
+	text-align: left;
+	display: inline;
+}
+
+#WrapperSlugConfig {
+	margin-top: 8px;
+}
+
+#WrapperSlugConfigPermalinkStructure {
+	margin-bottom: 7px;
+}
