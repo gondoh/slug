@@ -37,7 +37,7 @@ class SlugConfig extends BcPluginAppModel {
 /**
  * 現在の archives 除外設定
  * 
- * @var string
+ * @var boolean
  */
 	public $ignore_archives = false;
 	
@@ -79,7 +79,7 @@ class SlugConfig extends BcPluginAppModel {
  * @return void
  */
 	public function setIgnoreArchives($blogContentId = null) {
-		if($blogContentId) {
+		if ($blogContentId) {
 			$slugConfigData = $this->findByBlogContentId($blogContentId);
 			$this->id = $slugConfigData['SlugConfig']['id'];
 			$this->ignore_archives = $slugConfigData['SlugConfig']['ignore_archives'];

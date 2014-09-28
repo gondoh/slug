@@ -68,7 +68,7 @@ class SlugModelEventListener extends BcModelEventListener {
 		// TODO get_recent_entries に呼ばれる find 判定に、より良い方法があったら改修する
 		if (!empty($event->data[0]['fields'])) {
 			if (count($event->data[0]['fields']) === 2) {
-				if(($event->data[0]['fields']['0'] == 'no') && ($event->data[0]['fields']['1'] == 'name')) {
+				if (($event->data[0]['fields']['0'] == 'no') && ($event->data[0]['fields']['1'] == 'name')) {
 					$event->data[0]['fields'][] = 'id';
 					$event->data[0]['fields'][] = 'posts_date';
 					$event->data[0]['fields'][] = 'blog_category_id';
@@ -220,7 +220,7 @@ class SlugModelEventListener extends BcModelEventListener {
 		$modelId = $oldModelId = null;
 		if ($Model->alias == 'BlogPost') {
 			$modelId = $contentId;
-			if(!empty($params['pass'][1])) {
+			if (!empty($params['pass'][1])) {
 				$oldModelId = $params['pass'][1];
 			}
 		}

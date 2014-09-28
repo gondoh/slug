@@ -19,7 +19,7 @@
 	App::uses('BlogContent', 'Blog.Model');
 	$BlogContentModel = new BlogContent();
 	$blogContentDatas = $BlogContentModel->find('list', array('recursive' => -1));
-	if($blogContentDatas) {
+	if ($blogContentDatas) {
 		CakePlugin::load('Slug');
 		App::uses('SlugConfig', 'Slug.Model');
 		$SlugConfigModel = new SlugConfig();
@@ -27,7 +27,7 @@
 		foreach ($blogContentDatas as $key => $blog) {
 			$slugConfigData = $SlugConfigModel->findByBlogContentId($key);
 			$savaData = array();
-			if(!$slugConfigData) {
+			if (!$slugConfigData) {
 				$savaData['SlugConfig']['blog_content_id'] = $key;
 				$savaData['SlugConfig']['permalink_structure'] = 0;
 				$savaData['SlugConfig']['ignore_archives'] = false;
@@ -51,7 +51,7 @@
 		foreach ($posts as $key => $post) {
 			$slugData = $SlugModel->findByBlogPostId($post['BlogPost']['id']);
 			$savaData = array();
-			if(!$slugData) {
+			if (!$slugData) {
 				$savaData['Slug']['blog_post_id'] = $post['BlogPost']['id'];
 				$savaData['Slug']['blog_content_id'] = $post['BlogPost']['blog_content_id'];
 				$savaData['Slug']['blog_post_no'] = $post['BlogPost']['no'];

@@ -88,9 +88,9 @@ class SlugHelperEventListener extends BcHelperEventListener {
 	public function formAfterInput(CakeEvent $event) {
 		$Form = $event->subject();
 		// ブログ記事編集画面のタイトル入力欄の下にスラッグ入力欄を表示する
-		if($Form->request->params['controller'] == 'blog_posts'){
-			if($Form->request->params['action'] == 'admin_add' || $Form->request->params['action'] == 'admin_edit'){
-				if($event->data['fieldName'] == 'BlogPost.name') {
+		if ($Form->request->params['controller'] == 'blog_posts'){
+			if ($Form->request->params['action'] == 'admin_add' || $Form->request->params['action'] == 'admin_edit'){
+				if ($event->data['fieldName'] == 'BlogPost.name') {
 					$event->data['out'] = $event->data['out'] . $Form->element('Slug.slug_form');
 				}
 			}
@@ -99,7 +99,7 @@ class SlugHelperEventListener extends BcHelperEventListener {
 		if ($Form->request->params['controller'] == 'blog_contents'){
 			// ブログ設定編集画面にスラッグ設定欄を表示する
 			if ($Form->request->params['action'] == 'admin_edit' || $Form->request->params['action'] == 'admin_add'){
-				if($event->data['fieldName'] == 'BlogContent.exclude_search') {
+				if ($event->data['fieldName'] == 'BlogContent.exclude_search') {
 					$event->data['out'] = $event->data['out'] . $Form->element('Slug.slug_config_form');
 				}
 			}
