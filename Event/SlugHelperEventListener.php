@@ -16,8 +16,7 @@ class SlugHelperEventListener extends BcHelperEventListener {
 	public $events = array(
 		'Form.afterInput',
 		'Form.afterCreate',
-		'Html.afterGetLink',
-		'afterElement'
+		'Html.afterGetLink'
 	);
 	
 /**
