@@ -13,7 +13,7 @@ class SlugHelper extends AppHelper {
  *
  * @var array
  */
-	public $helpers = array('Blog', 'Html');
+	public $helpers = array('bcBaser', 'Blog', 'BcHtml', 'Html');
 	
 /**
  * SlugConfigモデル
@@ -59,7 +59,12 @@ class SlugHelper extends AppHelper {
  * @return string
  */
 	public function getSlugName($slug, $post) {
-		$this->slugConfigs = $this->SlugConfigModel->findByBlogContentId($slug['blog_content_id']);
+		$this->slugConfigs = $this->SlugConfigModel->find('first', array(
+			'conditions' => array(
+				'SlugConfig.blog_content_id' => $slug['blog_content_id']
+			),
+			'recursive' => -1
+		));
 		
 		if (empty($slug['name'])) {
 			$slug['name'] = $post['no'];
@@ -120,7 +125,12 @@ class SlugHelper extends AppHelper {
  * @return string
  */
 	public function getSlugUrl($slug, $post){
-		$this->slugConfigs = $this->SlugConfigModel->findByBlogContentId($post['blog_content_id']);
+		$this->slugConfigs = $this->SlugConfigModel->find('first', array(
+			'conditions' => array(
+				'SlugConfig.blog_content_id' => $post['blog_content_id']
+			),
+			'recursive' => -1
+		));
 		
 		$actionName = '/archives';
 		// スラッグ設定情報でarchives除外設定を有効化している場合は、URLからarchivesを除外する
@@ -131,28 +141,33 @@ class SlugHelper extends AppHelper {
 		$slugUrl = '';
 		// スラッグ設定情報に設定しているブログ記事URLの形式に、URLを設定する
 		switch ($this->slugConfigs['SlugConfig']['permalink_structure']) {
-			case 1:
+			case '1':
 				// スラッグ
 				$slugUrl = $actionName . '/' . $slug['name'];
 				break;
 			
-			case 2:
+			case '2':
 				// 記事ID
 				$slugUrl = $actionName . '/' . $post['id'];
+				break;
 			
-			case 3:
+			case '3':
 				// 記事ID（6桁）
 				$slugUrl = $actionName . '/' . sprintf('%06d', $post['id']);
+				break;
 			
-			case 4:
+			case '4':
 				// /2012/12/01/sample-post/
 				$slugUrl = $actionName . '/' . date('Y/m/d', strtotime($post['posts_date'])) . '/' . $slug['name'];
+				break;
 			
-			case 5:
+			case '5':
 				// /2012/12/sample-post/
 				$slugUrl = $actionName . '/' . date('Y/m', strtotime($post['posts_date'])) . '/' . $slug['name'];
+				break;
 			
 			default:
+				// デフォルト
 				$slugUrl = $actionName . '/' . $post['no'];
 				break;
 		}
