@@ -60,17 +60,40 @@ class SlugAppController extends BcPluginAppController {
 	public function beforeFilter() {
 		parent::beforeFilter();
 		$judgeSlugConfigUse = false;
-		$datas = $this->SlugConfig->find('all', array('recursive' => -1));
-		if ($datas) {
-			$judgeSlugConfigUse = true;
-		} else {
-			$this->setMessage('「スラッグ設定データ」にてスラッグ設定用のデータを作成して下さい。', true);
-		}
-		$this->set('judgeSlugConfigUse', $judgeSlugConfigUse);
+		$judgeSlugUse = false;
+		$message = '';
 		
 		// ブログ情報を取得
 		$BlogContentModel = ClassRegistry::init('Blog.BlogContent');
 		$this->blogContentDatas = $BlogContentModel->find('list', array('recursive' => -1));
+		// スラッグ設定データを取得
+		$datas = $this->SlugConfig->find('all', array('recursive' => -1));
+		
+		// スラッグ設定データ数よりブログ設定データの方が多ければ、メニューを表示する
+		if (count($this->blogContentDatas) > count($datas)) {
+			$message .= '「スラッグ設定データ作成」にてスラッグ設定用のデータを作成して下さい。';
+		} else {
+			$judgeSlugConfigUse = true;
+		}
+		
+		// ブログ記事データを取得
+		$BlogPostModel = ClassRegistry::init('Blog.BlogPost');
+		$blogPostDatas = $BlogPostModel->find('list', array('recursive' => -1));
+		// スラッグデータを取得
+		$dataList = $this->Slug->find('all', array('recursive' => -1));
+		// スラッグデータ数よりブログ記事データの方が多ければ、メニューを表示する
+		if (count($blogPostDatas) > count($dataList)) {
+			$message .= '「スラッグ一括設定」にてスラッグ用のデータを作成して下さい。';
+		} else {
+			$judgeSlugUse = true;
+		}
+		
+		$this->set('judgeSlugConfigUse', $judgeSlugConfigUse);
+		$this->set('judgeSlugUse', $judgeSlugUse);
+		
+		if ($message) {
+			$this->setMessage($message, true);
+		}
 		
 		App::import('Helper', 'Slug.Slug');
 		$this->SlugHelper = new SlugHelper(new View());

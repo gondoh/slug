@@ -7,10 +7,7 @@
  * @package			Slug
  * @license			MIT
  */
-/**
- * Include files
- */
-App::import('Controller', 'Slug.SlugApp');
+App::uses('SlugApp', 'Slug.Controller');
 class SlugsController extends SlugAppController {
 /**
  * コントローラー名

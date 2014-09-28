@@ -13,17 +13,20 @@
 	<td>
 		<ul>
 			<li><?php $this->BcBaser->link('スラッグ一覧', array('plugin' => 'slug', 'admin' => true, 'controller' => 'slugs', 'action'=>'index')) ?></li>
+			<?php if(!$judgeSlugUse): ?>
 			<li><?php $this->BcBaser->link('スラッグ一括設定', array('plugin' => 'slug', 'admin' => true, 'controller' => 'slugs', 'action'=>'batch')) ?></li>
+			<?php endif ?>
 		</ul>
 	</td>
 </tr>
 <tr>
 	<th>スラッグ設定管理メニュー</th>
 	<td>
-		<ul><?php if($judgeSlugConfigUse): ?>
+		<ul>
 			<li><?php $this->BcBaser->link('スラッグ設定一覧', array('plugin' => 'slug', 'admin' => true, 'controller' => 'slug_configs', 'action'=>'index')) ?></li>
-			<?php endif ?>
+			<?php if(!$judgeSlugConfigUse): ?>
 			<li><?php $this->BcBaser->link('スラッグ設定データ作成', array('plugin' => 'slug', 'admin' => true, 'controller' => 'slug_configs', 'action'=>'first')) ?></li>
+			<?php endif ?>
 		</ul>
 	</td>
 </tr>

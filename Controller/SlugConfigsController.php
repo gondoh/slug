@@ -7,10 +7,7 @@
  * @package			Slug
  * @license			MIT
  */
-/**
- * Include files
- */
-App::import('Controller', 'Slug.SlugApp');
+App::uses('SlugApp', 'Slug.Controller');
 class SlugConfigsController extends SlugAppController {
 /**
  * コントローラー名
@@ -24,7 +21,7 @@ class SlugConfigsController extends SlugAppController {
  * 
  * @var array
  */
-	public $uses = array('Slug.SlugConfig');
+	public $uses = array('Slug.SlugConfig', 'Slug.Slug');
 	
 /**
  * ぱんくずナビ
