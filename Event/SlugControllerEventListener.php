@@ -59,26 +59,6 @@ class SlugControllerEventListener extends BcControllerEventListener {
 	public $SlugConfigModel = null;
 	
 /**
- * constructer
- * 
- * @return void
- */
-	public function __construct() {
-		parent::__construct();
-		
-		if (ClassRegistry::isKeySet('Slug.SlugConfig')) {
-			$this->SlugConfigModel = ClassRegistry::getObject('Slug.SlugConfig');
-		} else {
-			$this->SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
-		}
-		$this->slugConfigs = $this->SlugConfigModel->read();
-		$this->SlugModel = ClassRegistry::init('Slug.Slug');
-		
-		App::import('Helper', 'Slug.Slug');
-		$this->Slug = new SlugHelper(new View());
-	}
-	
-/**
  * initialize
  * 
  * @param CakeEvent $event
@@ -88,7 +68,21 @@ class SlugControllerEventListener extends BcControllerEventListener {
 		// BlogHelper の不在エラーが出るため読込
 		$Controller->helpers[] = 'Blog.Blog';
 		// Slugヘルパーの追加
-		$Controller->helpers[] = 'Slug.Slug';		
+		$Controller->helpers[] = 'Slug.Slug';
+		
+		if (ClassRegistry::isKeySet('Slug.SlugConfig')) {
+			$this->SlugConfigModel = ClassRegistry::getObject('Slug.SlugConfig');
+		} else {
+			$this->SlugConfigModel = ClassRegistry::init('Slug.SlugConfig');
+		}
+		if (ClassRegistry::isKeySet('Slug.Slug')) {
+			$this->SlugModel = ClassRegistry::getObject('Slug.Slug');
+		} else {
+			$this->SlugModel = ClassRegistry::init('Slug.Slug');
+		}
+		
+		App::import('Helper', 'Slug.Slug');
+		$this->Slug = new SlugHelper(new View());
 	}
 	
 /**
@@ -220,9 +214,7 @@ class SlugControllerEventListener extends BcControllerEventListener {
 		// プレビュー時に未定義エラーが出るため判定
 		if (!empty($Controller->request->params['plugin'])) {
 			if ($Controller->request->params['plugin'] == 'blog') {
-				if ($Controller->request->params['action'] == 'posts' || 
-					$Controller->request->params['action'] == 'index' || 
-					$Controller->request->params['action'] == 'archives') {
+				if (in_array($Controller->request->params['action'], $this->Slug->blogArchives)) {
 					foreach ($Controller->viewVars['posts'] as $key => $post) {
 						$Controller->viewVars['posts'][$key]['BlogPost']['no'] = $this->Slug->getSlugName($post['Slug'], $post['BlogPost']);
 					}
