@@ -37,11 +37,18 @@ class SlugHelper extends AppHelper {
 	public $blogPostData = array();
 	
 /**
+ * ブログ記事一覧表示の際に、URL書換えを実施するアクション判定
+ * 
+ * @var array
+ */
+	public $blogArchives = array('posts', 'index', 'archives');
+	
+/**
  * ブログアーカイブ
  * 
  * @var array
  */
-	public $blogArchives = array(
+	public $blogArchivesTypes = array(
 		'category', 'tag', 'date', 'author'
 	);
 	
