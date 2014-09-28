@@ -203,6 +203,7 @@ class SlugsController extends SlugAppController {
 					'Slug.name' => $this->data['Slug']['name'],
 					'Slug.blog_content_id' => $this->data['Slug']['blog_content_id']
 				),
+				'fields' => array('id', 'name'),
 				'recursive' => -1
 			));
 			if ($datas) {
