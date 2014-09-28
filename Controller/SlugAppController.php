@@ -148,7 +148,8 @@ class SlugAppController extends BcPluginAppController {
 			$this->setMessage($message, false, true);
 			$this->redirect(array('action' => 'index'));
 		} else {
-			$this->Session->setFlash('データベース処理中にエラーが発生しました。');
+			$message = 'データベース処理中にエラーが発生しました。';
+			$this->setMessage($message, true);
 		}
 		$this->redirect(array('action' => 'index'));
 	}
