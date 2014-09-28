@@ -19,6 +19,7 @@ class SlugControllerEventListener extends BcControllerEventListener {
 		'beforeRender',
 		'Blog.BlogPosts.beforeRender',
 		'Blog.BlogContents.beforeRender',
+		'afterElement',
 		'shutdown'
 	);
 	
@@ -113,19 +114,26 @@ class SlugControllerEventListener extends BcControllerEventListener {
 					
 					$slug = '';
 					$paramsCount = count($Controller->request->params['pass']);
-					if ($paramsCount == 4) {
-						$postDayBegin = $Controller->request->params['pass']['0'] . '/' . $Controller->request->params['pass']['1'] . '/' . $Controller->request->params['pass']['2'];
-						$postDayEnd = $Controller->request->params['pass']['0'] . '/' . $Controller->request->params['pass']['1'] . '/' . $Controller->request->params['pass']['2'] . ' 23:59:59';
-						$slug = $Controller->request->params['pass']['3'];
-					} elseif ($paramsCount == 3) {
-						$postDayBegin = $Controller->request->params['pass']['0'] . '/' . $Controller->request->params['pass']['1'] . '/' . '01';
-						$postDayEnd = date($Controller->request->params['pass']['0'] . '-' . $Controller->request->params['pass']['1'] . '-t') . ' 23:59:59';
-						$slug = $Controller->request->params['pass']['2'];
-					} elseif ($paramsCount == 2) {
-						// TODO カテゴリ名を含む場合のブログ記事詳細
-						$slug = $Controller->request->params['pass']['1'];
-					} else {
-						$slug = $Controller->request->params['pass']['0'];
+					switch ($paramsCount) {
+						case 4:
+							$postDayBegin = $Controller->request->params['pass']['0'] . '/' . $Controller->request->params['pass']['1'] . '/' . $Controller->request->params['pass']['2'];
+							$postDayEnd = $Controller->request->params['pass']['0'] . '/' . $Controller->request->params['pass']['1'] . '/' . $Controller->request->params['pass']['2'] . ' 23:59:59';
+							$slug = $Controller->request->params['pass']['3'];
+							break;
+						
+						case 3:
+							$postDayBegin = $Controller->request->params['pass']['0'] . '/' . $Controller->request->params['pass']['1'] . '/' . '01';
+							$postDayEnd = date($Controller->request->params['pass']['0'] . '-' . $Controller->request->params['pass']['1'] . '-t') . ' 23:59:59';
+							$slug = $Controller->request->params['pass']['2'];
+							break;
+						
+						case 2:
+							// TODO カテゴリ名を含む場合のブログ記事詳細
+							$slug = $Controller->request->params['pass']['1'];
+							break;
+						default:
+							$slug = $Controller->request->params['pass']['0'];
+							break;
 					}
 					
 					if ($this->slugConfigs['SlugConfig']['permalink_structure'] === '2' || $this->slugConfigs['SlugConfig']['permalink_structure'] === '3') {
@@ -210,9 +218,11 @@ class SlugControllerEventListener extends BcControllerEventListener {
 		$Controller = $event->subject();
 		// blogPosts、ブログのindex、ブログのarchives で実行
 		// プレビュー時に未定義エラーが出るため判定
-		if (!empty($Controller->params['plugin'])) {
-			if ($Controller->params['plugin'] == 'blog') {
-				if ($Controller->request->params['action'] == 'posts' || $Controller->request->params['action'] == 'index' || $Controller->request->params['action'] == 'archives') {
+		if (!empty($Controller->request->params['plugin'])) {
+			if ($Controller->request->params['plugin'] == 'blog') {
+				if ($Controller->request->params['action'] == 'posts' || 
+					$Controller->request->params['action'] == 'index' || 
+					$Controller->request->params['action'] == 'archives') {
 					foreach ($Controller->viewVars['posts'] as $key => $post) {
 						$Controller->viewVars['posts'][$key]['BlogPost']['no'] = $this->Slug->getSlugName($post['Slug'], $post['BlogPost']);
 					}
@@ -222,11 +232,11 @@ class SlugControllerEventListener extends BcControllerEventListener {
 				// /BLOG/archives/detail にアクセスされた場合は notFound にする
 				// TODO この仕様で良いのかどうかはのちのちの意見で再考していく必要あり
 				if ($Controller->request->params['action'] == 'archives') {
-					$paramsCount = count($Controller->params['pass']);
+					$paramsCount = count($Controller->request->params['pass']);
 					if ($paramsCount <= 2) {
 						if ($this->slugConfigs['SlugConfig']['ignore_archives']) {
 							$regex = '/\/archives\//';
-							if (preg_match($regex, $Controller->params['url']['url'])) {
+							if (preg_match($regex, $Controller->request->params['url']['url'])) {
 								$Controller->notFound();
 							}
 						}
@@ -234,7 +244,57 @@ class SlugControllerEventListener extends BcControllerEventListener {
 				}
 			}
 		}
-		
+	}
+	
+/**
+ * afterElement
+ * 
+ * @param CakeEvent $event
+ * @return string 
+ */
+	public function afterElement(CakeEvent $event) {
+		$Controller = $event->subject();
+		if (empty($Controller->request->params['prefix']) || ($Controller->request->params['prefix'] != 'admin')) {
+			// プレビュー時に Undefined index が出るため判定
+			if (!empty($Controller->request->params['plugin'])) {
+				if ($Controller->request->params['plugin'] == 'blog') {
+					
+					if (preg_match('/^paginations\/.*/', $event->data['name'])) {
+						if ($this->slugConfigs['SlugConfig']['ignore_archives']) {
+							if ($Controller->request->params['action'] == 'archives') {
+								$pattern = '/href\=\"(.+?)\/archives\/(.+?)\"/';
+								$event->data['out'] = preg_replace($pattern, 'href="$1' . '/$2' . '"', $event->data['out']);
+							}
+						}
+					}
+					
+				}
+			}
+		}
+		return $event->data['out'];
+	}
+	
+/**
+ * beforeElement：未使用：コード内コメント参照
+ * 
+ * @param type $name
+ * @param type $params
+ * @param type $loadHelpers
+ * @param type $subDir
+ * @return array $params
+ */
+	public function beforeElement($name, $params, $loadHelpers, $subDir) {
+		if (empty($this->request->params['prefix']) || ($this->request->params['prefix'] != 'admin')) {
+			// if($name == 'paginations/simple' || $name == 'paginations/default') {
+			if (preg_match('/^paginations\/.*/', $name)) {
+				if ($this->request->params['action'] == 'archives') {
+					// ここで action を省略しても、最終的に Router:LINE:800 で index が付けられてしまう
+					// unset($this->View->passedArgs['action']);
+					// $this->View->passedArgs['action'] = '';
+				}
+			}
+		}
+		return $params;
 	}
 	
 /**
