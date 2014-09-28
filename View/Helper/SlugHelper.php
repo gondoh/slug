@@ -212,14 +212,28 @@ class SlugHelper extends AppHelper {
  * @return boolean
  */
 	public function judgeAppearInputSlug($data) {
-		if (!$data) {
-			return true;
-		} elseif ($data === '1' || $data === '4' || $data === '5') {
-			// 記事タイトル or /2012/12/01/sample-post/ or /2012/12/sample-post/
-			return true;
+		$judgeUseSlugInput = false;
+		// p($this->_View->Slug->SlugConfigModel->permalink_structure);
+		switch ($data) {
+			case '1':
+				// 記事タイトル
+				$judgeUseSlugInput = true;
+				break;
+			
+			case '4':
+				// /2012/12/01/sample-post/
+				$judgeUseSlugInput = true;
+				break;
+			
+			case '5':
+				// /2012/12/sample-post/
+				$judgeUseSlugInput = true;
+				break;
+			
+			default:
+				break;
 		}
-		
-		return false;
+		return $judgeUseSlugInput;
 	}
 	
 /**
