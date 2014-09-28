@@ -14,7 +14,7 @@
 	<?php echo $this->BcForm->create('SlugConfig', array('url' => array('action' => 'edit'))) ?>
 <?php endif ?>
 
-<h2><?php echo $blogContentDatas[$this->data['SlugConfig']['blog_content_id']] ?></h2>
+<h2><?php echo $blogContentDatas[$this->request->data['SlugConfig']['blog_content_id']] ?></h2>
 
 <?php $this->BcBaser->element('slug_config_form') ?>
 

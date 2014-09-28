@@ -89,11 +89,11 @@ class SlugsController extends SlugAppController {
  * @return void
  */
 	public function admin_batch() {
-		if ($this->data) {
+		if ($this->request->data) {
 			// 既にスラッグ登録のあるブログ記事は除外する
 			// 登録済のスラッグを取得する
 			$slugs = $this->Slug->find('list', array(
-				'conditions' => array('Slug.blog_content_id' => $this->data['Slug']['blog_content_id']),
+				'conditions' => array('Slug.blog_content_id' => $this->request->data['Slug']['blog_content_id']),
 				'fields' => 'blog_post_id',
 				'recursive' => -1));
 			// スラッグの登録がないブログ記事を取得する
@@ -102,13 +102,13 @@ class SlugsController extends SlugAppController {
 				$datas = $BlogPostModel->find('all', array(
 					'conditions' => array(
 						'NOT' => array('BlogPost.id' => $slugs),
-						'BlogPost.blog_content_id' => $this->data['Slug']['blog_content_id']),
+						'BlogPost.blog_content_id' => $this->request->data['Slug']['blog_content_id']),
 					'fields' => array('id', 'no', 'name'),
 					'recursive' => -1));
 			} else {
 				$datas = $BlogPostModel->find('all', array(
 					'conditions' => array(
-						'BlogPost.blog_content_id' => $this->data['Slug']['blog_content_id']),
+						'BlogPost.blog_content_id' => $this->request->data['Slug']['blog_content_id']),
 					'fields' => array('id', 'no', 'name'),
 					'recursive' => -1));
 			}
@@ -117,18 +117,18 @@ class SlugsController extends SlugAppController {
 			$count = 0;
 			if ($datas) {
 				foreach ($datas as $data) {
-					$this->data['Slug']['blog_post_id'] = $data['BlogPost']['id'];
-					$this->data['Slug']['blog_post_no'] = $data['BlogPost']['no'];
-					$this->data['Slug']['name'] = $data['BlogPost']['name'];
-					$this->Slug->create($this->data);
-					if ($this->Slug->save($this->data, false)) {
+					$this->request->data['Slug']['blog_post_id'] = $data['BlogPost']['id'];
+					$this->request->data['Slug']['blog_post_no'] = $data['BlogPost']['no'];
+					$this->request->data['Slug']['name'] = $data['BlogPost']['name'];
+					$this->Slug->create($this->request->data);
+					if ($this->Slug->save($this->request->data, false)) {
 						$count++;
 					} else {
 						$this->log('ID:' . $data['BlogPost']['id'] . 'のブログ記事のスラッグ登録に失敗');
 					}
 
 					// 重複スラッグを探索して、重複していれば重複個数＋１をつける
-					$duplicateDatas = $this->Slug->searchDuplicateSlug($this->data, $this->Slug->getLastInsertId());
+					$duplicateDatas = $this->Slug->searchDuplicateSlug($this->request->data, $this->Slug->getLastInsertId());
 					if ($duplicateDatas) {
 						$saveData = $this->Slug->read(null, $this->Slug->getLastInsertId());
 						$saveData['Slug']['name'] = $this->Slug->makeSlugName($duplicateDatas, $saveData);
@@ -197,11 +197,11 @@ class SlugsController extends SlugAppController {
 		$this->layout = null;
 		$result = true;
 		
-		if ($this->data) {
+		if ($this->request->data) {
 			$datas = $this->Slug->find('all', array(
 				'conditions' => array(
-					'Slug.name' => $this->data['Slug']['name'],
-					'Slug.blog_content_id' => $this->data['Slug']['blog_content_id']
+					'Slug.name' => $this->request->data['Slug']['name'],
+					'Slug.blog_content_id' => $this->request->data['Slug']['blog_content_id']
 				),
 				'fields' => array('id', 'name'),
 				'recursive' => -1
@@ -210,7 +210,7 @@ class SlugsController extends SlugAppController {
 				$result = false;
 				// 編集対応のため、重複スラッグが存在する場合でも、同じ id のものはOKとみなす
 				foreach ($datas as $data) {
-					if ($this->data['Slug']['id'] == $data['Slug']['id']) {
+					if ($this->request->data['Slug']['id'] == $data['Slug']['id']) {
 						$result = true;
 						break;
 					}

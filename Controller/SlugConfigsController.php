@@ -94,17 +94,17 @@ class SlugConfigsController extends SlugAppController {
  * @return void
  */
 	public function admin_first() {
-		if ($this->data) {
+		if ($this->request->data) {
 			$count = 0;
 			if ($this->blogContentDatas) {
 				foreach ($this->blogContentDatas as $key => $blog) {
 					$slugConfigData = $this->SlugConfig->findByBlogContentId($key);
 					if (!$slugConfigData) {
-						$this->data['SlugConfig']['blog_content_id'] = $key;
-						$this->data['SlugConfig']['permalink_structure'] = 0;
-						$this->data['SlugConfig']['ignore_archives'] = false;
-						$this->SlugConfig->create($this->data);
-						if (!$this->SlugConfig->save($this->data, false)) {
+						$this->request->data['SlugConfig']['blog_content_id'] = $key;
+						$this->request->data['SlugConfig']['permalink_structure'] = 0;
+						$this->request->data['SlugConfig']['ignore_archives'] = false;
+						$this->SlugConfig->create($this->request->data);
+						if (!$this->SlugConfig->save($this->request->data, false)) {
 							$this->log(sprintf('ブログID：%s 用のスラッグ設定登録に失敗しました。', $key));
 						} else {
 							$count++;

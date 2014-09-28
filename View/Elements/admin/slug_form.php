@@ -17,14 +17,14 @@ $this->BcBaser->js('Slug.admin/slug', false);
 
 <?php if($this->request->action == 'admin_edit'): ?>
 <div id="SlugPublishUrl" class="display-none">
-	<?php echo $this->BcBaser->getUri('/' . $blogContent['BlogContent']['name'] . $this->Slug->getSlugUrl($this->data['Slug'], $this->data['BlogPost'])) ?>
+	<?php echo $this->BcBaser->getUri('/' . $blogContent['BlogContent']['name'] . $this->Slug->getSlugUrl($this->request->data['Slug'], $this->request->data['BlogPost'])) ?>
 </div>
 <?php endif ?>
 
 <?php echo $this->BcForm->hidden('Slug.id') ?>
 <?php echo $this->BcForm->hidden('Slug.blog_content_id') ?>
 
-<?php if($this->Slug->judgeAppearInputSlug($this->data['SlugConfig']['permalink_structure'])): ?>
+<?php if($this->Slug->judgeAppearInputSlug($this->request->data['SlugConfig']['permalink_structure'])): ?>
 <div id="WrapperSlugNameForm">
 	<?php echo $this->BcForm->label('Slug.name', 'スラッグ') ?>
 	<?php echo $this->BcForm->input('Slug.name', array('type' => 'text', 'size' => 40, 'maxlength' => 255, 'counter' => true)) ?>
@@ -43,20 +43,20 @@ $this->BcBaser->js('Slug.admin/slug', false);
 		<?php if($this->BcForm->value('BlogPost.status')): ?>
 			<?php if($this->BcForm->value('Slug.name')): ?>
 		URL：<?php $this->BcBaser->link(
-				$this->BcBaser->getUri('/' . $blogContent['BlogContent']['name'] . $this->Slug->getSlugUrl($this->data['Slug'], $this->data['BlogPost'])),
-				'/' . $blogContent['BlogContent']['name'] . $this->Slug->getSlugUrl($this->data['Slug'], $this->data['BlogPost'])) ?>
+				$this->BcBaser->getUri('/' . $blogContent['BlogContent']['name'] . $this->Slug->getSlugUrl($this->request->data['Slug'], $this->request->data['BlogPost'])),
+				'/' . $blogContent['BlogContent']['name'] . $this->Slug->getSlugUrl($this->request->data['Slug'], $this->request->data['BlogPost'])) ?>
 			<?php elseif($this->BcForm->value('Slug.name')): ?>
-		URL：<?php echo $this->BcBaser->getUri('/' . $blogContent['BlogContent']['name'] . $this->Slug->getSlugUrl($this->data['Slug'], $this->data['BlogPost'])) ?>
+		URL：<?php echo $this->BcBaser->getUri('/' . $blogContent['BlogContent']['name'] . $this->Slug->getSlugUrl($this->request->data['Slug'], $this->request->data['BlogPost'])) ?>
 			<?php endif ?>
 		<?php else: ?>
 			<?php if($this->BcForm->value('Slug.name')): ?>
-		URL：<?php echo $this->BcBaser->getUri('/' . $blogContent['BlogContent']['name'] . $this->Slug->getSlugUrl($this->data['Slug'], $this->data['BlogPost'])) ?>
+		URL：<?php echo $this->BcBaser->getUri('/' . $blogContent['BlogContent']['name'] . $this->Slug->getSlugUrl($this->request->data['Slug'], $this->request->data['BlogPost'])) ?>
 			<?php endif ?>
 		<?php endif ?>
 	</div>
 <?php endif ?>
 
-<?php if($this->Slug->judgeAppearInputSlug($this->data['SlugConfig']['permalink_structure'])): ?>
+<?php if($this->Slug->judgeAppearInputSlug($this->request->data['SlugConfig']['permalink_structure'])): ?>
 <?php echo $this->BcBaser->img('admin/icn_help.png',array('id' => 'helpSlugName', 'class' => 'btn help', 'alt' => 'ヘルプ')) ?>
 	<div id="helptextSlugName" class="helptext">
 		<ul>
