@@ -285,7 +285,7 @@ class SlugHelper extends AppHelper {
 	public function getContentsSearchUrl($data = array()) {
 		$blogLink = '';
 		if ($data['Content']['model'] == 'BlogPost') {
-			$bcBaser = new BcBaserHelper();
+			$bcBaser = new BcBaserHelper(new View());
 			$blogLink = $bcBaser->getUri('/' . $this->blogPostData['BlogContent']['name'] . $this->getSlugUrl($this->blogPostData['Slug'], $this->blogPostData['BlogPost']));
 		}
 		return $blogLink;
