@@ -199,7 +199,7 @@ class SlugHelperEventListener extends BcHelperEventListener {
 			}
 		}
 		
-		$pattern = '/href\=\"(.+)\/archives\/(.+)\"/';
+		$pattern = '/href\=\"(.+)\/archives\/(.+?)\"/';
 		if (!empty($no)) {
 			// single以外のarchivesへのリンクの場合、種類別でURLを調整する
 			if ($judgeArchives) {
